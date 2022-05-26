@@ -1,24 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from "react";
+import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./config/context";
+import Navigator from "./screens/Navigator";
+import { setCSSVariables } from "./utils";
+import "./App.css";
 
 function App() {
+  useEffect(() => {
+    const color = window.localStorage.getItem("color");
+    const font = window.localStorage.getItem("font");
+    const theme = window.localStorage.getItem("theme");
+
+    setCSSVariables(theme, color, font);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="App">
+          <Navigator />
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

@@ -1,38 +1,168 @@
-.App {
-  text-align: center;
+.col-4-8 {
+  width: 40% !important;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.col-7-2 {
+  width: 60% !important;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.h-100vh {
+  height: 100vh !important;
+}
+body *::-webkit-scrollbar {
+  width: 5px;
+}
+body *::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 50px;
+}
+@media screen and (min-width: 992px) {
+  .col-lg-7-2 {
+    width: 60% !important;
+  }
+  .col-lg-4-8 {
+    width: 40% !important;
   }
 }
-
-.App-header {
-  background-color: #282c34;
+.main > .content {
+  width: 100%;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
-
-.App-link {
-  color: #61dafb;
+.main {
+  flex-grow: 1;
+  border-right: solid 1px var(--border);
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+@media screen and (min-width: 690px) {
+  .main > .content {
+    width: 592px !important;
   }
-  to {
-    transform: rotate(360deg);
+  .main {
+    flex-grow: 0;
+    border-right: none;
   }
+}
+@media screen and (min-width: 992px) {
+  .main > .content {
+    width: 894px !important;
+  }
+  .main {
+    flex-grow: 0;
+  }
+}
+@media screen and (min-width: 1265px) {
+  .main > .content {
+    width: 990px !important;
+  }
+  .main {
+    flex-grow: 0;
+  }
+}
+.suggestions {
+  height: 100vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+}
+.selected {
+  border-right: solid var(--app-color);
+}
+.main {
+  min-height: 100vh;
+}
+.h-100-vh {
+  height: 100vh;
+}
+.form-control {
+  color: var(--text-primary) !important;
+}
+.btn {
+  color: var(--text-primary);
+}
+.overflow-y-auto{
+  overflow-y: auto !important;
+}
+.pointer {
+  cursor: pointer;
+}
+.hover-underline:hover {
+  text-decoration: underline;
+}
+.hover:hover {
+  background-color: var(--hover) !important;
+  color: currentColor;
+}
+.hovered {
+  background-color: var(--hover) !important;
+}
+.btn:focus {
+  box-shadow: none !important;
+}
+.border {
+  border: solid 1px var(--border) !important;
+}
+.border-top {
+  border-top: solid 1px var(--border) !important;
+}
+.border-bottom {
+  border-bottom: solid 1px var(--border) !important;
+}
+.border-end {
+  border-right: solid 1px var(--border) !important;
+}
+.border-start {
+  border-left: solid 1px var(--border) !important;
+}
+a {
+  text-decoration: none;
+  color: var(--text-primary) !important;
+}
+.bg-primary {
+  background-color: var(--bg-primary) !important;
+}
+.bg-secondary {
+  background-color: var(--bg-secondary) !important;
+}
+.bg-muted {
+  background-color: var(--bg-muted) !important;
+}
+.text-primary {
+  color: var(--text-primary) !important;
+}
+.text-secondary {
+  color: var(--text-secondary) !important;
+}
+.text-muted {
+  color: var(--text-muted) !important;
+}
+.text-app {
+  color: var(--app-color) !important;
+}
+.bg-app {
+  background-color: var(--app-color) !important;
+}
+.fs-0 {
+  font-size: 75px !important;
+}
+.fs-1 {
+  font-size: var(--fs-1) !important;
+}
+.fs-2 {
+  font-size: var(--fs-2) !important;
+}
+.fs-3 {
+  font-size: var(--fs-3) !important;
+}
+.fs-4 {
+  font-size: var(--fs-4) !important;
+}
+.fs-5 {
+  font-size: var(--fs-5) !important;
+}
+.fs-6 {
+  font-size: var(--fs-6) !important;
+}
+.fs-7 {
+  font-size: var(--fs-7) !important;
+}
+.form-control:focus{
+  border-color: var(--app-color) !important;
+  box-shadow: none;
 }
