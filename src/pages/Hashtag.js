@@ -11,7 +11,7 @@ export default function Hashtag() {
 
   useEffect(() => {
     getHashtagTweets(hashtag)
-      .then((res) => setTweets(res || []))
+      .then((res) => setTweets(res.data || []))
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   }, [hashtag]);

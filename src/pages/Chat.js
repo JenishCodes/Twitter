@@ -3,11 +3,13 @@ import List from "../components/List";
 import Header from "../components/Header";
 import { AuthContext } from "../config/context";
 import { getChats } from "../services/chat";
+import { useNavigate } from "react-router-dom";
 
 export default function Message() {
   const { user } = useContext(AuthContext);
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getChats(user._id)
@@ -34,17 +36,20 @@ export default function Message() {
           <List
             key={index}
             className="hover pointer"
-            action={"/messages/" + chat.user._id}
+            onClick={() =>
+              navigate("/messages/" + chat.user._id, {
+                state: { user: chat.user },
+              })
+            }
             data={{
+              image_url: chat.user.profile_image_url,
               title: chat.user.name,
               subtitle: chat.lastMessage._id
                 ? chat.lastMessage.text
                   ? chat.lastMessage.text
                   : "This Message has been deleted"
                 : "",
-              image_url: chat.user.profile_image_url,
             }}
-            actionState={{ user: chat.user }}
           />
         ))
       ) : (

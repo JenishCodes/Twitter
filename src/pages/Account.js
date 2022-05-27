@@ -2,9 +2,12 @@ import React, { useContext } from "react";
 import { AuthContext } from "../config/context";
 import Header from "../components/Header";
 import List from "../components/List";
+import { useNavigate } from "react-router-dom";
 
 export default function Account() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   return (
     <div>
       <Header title="Your Account" backArrow />
@@ -15,7 +18,7 @@ export default function Account() {
             subtitle: "@" + user.account_name,
           }}
           className="hover"
-          action="account_name"
+          onClick={() => navigate("account_name")}
           actionButton={<i className="fa fa-chevron-right text-muted"></i>}
         ></List>
         <List
@@ -24,7 +27,7 @@ export default function Account() {
             subtitle: user.email,
           }}
           className="hover"
-          action="email"
+          onClick={() => navigate("email")}
           actionButton={<i className="fa fa-chevron-right text-muted"></i>}
         ></List>
         <List
@@ -33,7 +36,7 @@ export default function Account() {
             subtitle: "+91 7096132190",
           }}
           className="hover"
-          action="phone"
+          onClick={() => navigate("phone")}
           actionButton={<i className="fa fa-chevron-right text-muted"></i>}
         ></List>
       </div>
@@ -44,7 +47,7 @@ export default function Account() {
             subtitle: "India",
           }}
           className="hover"
-          action="country"
+          onClick={() => navigate("country")}
           actionButton={<i className="fa fa-chevron-right text-muted"></i>}
         ></List>
         <List
@@ -53,7 +56,7 @@ export default function Account() {
             subtitle: "Male",
           }}
           className="hover"
-          action="gender"
+          onClick={() => navigate("gender")}
           actionButton={<i className="fa fa-chevron-right text-muted"></i>}
         ></List>
         <List

@@ -12,71 +12,29 @@ const router = express.Router();
 router.get("/search", async function (req, res) {
   try {
     var results;
+    const query = req.query.name_query.replace("@", "");
+
     if (req.query.deep_search === "true") {
-      if (req.query.name_query.charAt(0) === "@") {
-        results = await User.find(
-          {
-            $or: [
-              {
-                account_name: {
-                  $regex: new RegExp(
-                    "^" + req.query.name_query.slice(1) + ".*"
-                  ),
-                },
-              },
-              {
-                description: {
-                  $regex: new RegExp(req.query.name_query.slice(1)),
-                },
-              },
-              { name: { $regex: new RegExp(req.query.name_query.slice(1)) } },
-            ],
-          },
-          {
-            name: 1,
-            auth_id: 1,
-            account_name: 1,
-            profile_image_url: 1,
-            description: 1,
-          }
-        )
-          .skip(10 * req.query.cursor)
-          .limit(10);
-      } else {
-        results = await User.find(
-          {
-            $or: [
-              { account_name: { $regex: new RegExp(req.query.name_query) } },
-              { description: { $regex: new RegExp(req.query.name_query) } },
-              { name: { $regex: new RegExp(req.query.name_query) } },
-            ],
-          },
-          {
-            name: 1,
-            auth_id: 1,
-            account_name: 1,
-            profile_image_url: 1,
-            description: 1,
-          }
-        )
-          .skip(10 * req.query.cursor)
-          .limit(10);
-      }
+      results = await User.find({
+        $or: [
+          { account_name: { $regex: new RegExp("^" + query + ".*") } },
+          { name: { $regex: new RegExp(query, "i") } },
+          { description: { $regex: new RegExp(query, "i") } },
+        ],
+      })
+        .select("name auth_id account_name profile_image_url description")
+        .skip(parseInt(req.query.limit) * parseInt(req.query.cursor))
+        .limit(parseInt(req.query.limit));
     } else {
-      results = await User.find(
-        {
-          account_name: {
-            $regex: new RegExp("^" + req.query.name_query.slice(1) + ".*"),
-          },
-        },
-        {
-          name: 1,
-          auth_id: 1,
-          account_name: 1,
-          profile_image_url: 1,
-          description: 1,
-        }
-      ).limit(req.query.limit);
+      results = await User.find({
+        $or: [
+          { account_name: { $regex: new RegExp("^" + query + ".*") } },
+          { name: { $regex: new RegExp(query, "i") } },
+        ],
+      })
+        .select("name auth_id account_name profile_image_url description")
+        .skip(parseInt(req.query.limit) * parseInt(req.query.cursor))
+        .limit(parseInt(req.query.limit));
     }
 
     res.send({ data: results });
@@ -111,12 +69,7 @@ router.post("/history", async function (req, res) {
       history.updatedAt = Date.now();
       history.save();
     } else {
-      history = new History({
-        user_id: req.body.user_id,
-        title: req.body.title,
-        image_url: req.body.image_url,
-        subtitle: req.body.subtitle,
-      });
+      history = new History(req.body);
       history.save();
     }
 

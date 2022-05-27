@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import List from "../components/List";
 import { getTweetFavoriters } from "../services/favorite";
@@ -9,6 +9,7 @@ export default function Reactions() {
   const { account_name, status_id, reaction_type } = useParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (reaction_type === "likes") {
@@ -51,7 +52,7 @@ export default function Reactions() {
               image_url: user.profile_image_url,
               context: user.description,
             }}
-            action={"/" + user.account_name}
+            onClick={()=>navigate("/" + user.account_name)}
           />
         ))
       ) : (

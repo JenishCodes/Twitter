@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Tweet from "../components/Tweet";
 import List from "../components/List";
-import Searchbar from "../components/Searchbar";
 import Tabbar from "../components/Tabbar";
 import Trend from "../components/Trend";
 import { searchHashtags } from "../services/hashtag";
 import { searchTweets } from "../services/tweet";
 import { searchUser } from "../services/user";
-import Header from "../components/Header";
 
 export default function Search() {
   const [hashtags, setHashtags] = useState([]);
@@ -20,53 +18,72 @@ export default function Search() {
   const [loading, setLoading] = useState(false);
   const { search_type } = useParams();
   const { search } = useLocation();
-  const [query] = useState(new URLSearchParams(search).get("q"));
+  const [query, setQuery] = useState(search.replace("?q=", "").split("&")[0]);
+  const navigate = useNavigate();
 
-  const [tabs] = useState([
-    {
-      name: "Tweet",
-      code: "tweets",
-      url: "../search/tweets?q=" + query,
-    },
-    {
-      name: "User",
-      code: "users",
-      url: "../search/users?q=" + query,
-    },
-    {
-      name: "Hashtag",
-      code: "hashtags",
-      url: "../search/hashtags?q=" + query,
-    },
-  ]);
+  const [tabs, setTabs] = useState([]);
 
   useEffect(() => {
-    if (search_type === "hashtags" && hashtags.length === 0) {
-      searchHashtags(query, hashCursor)
+    setTabs([
+      {
+        name: "Tweet",
+        code: "tweets",
+        url: "../search/tweets?q=" + query,
+      },
+      {
+        name: "User",
+        code: "users",
+        url: "../search/users?q=" + query,
+      },
+      {
+        name: "Hashtag",
+        code: "hashtags",
+        url: "../search/hashtags?q=" + query,
+      },
+    ])
+  }, [query]);
+
+
+  useEffect(() => {
+    setLoading(true);
+    const q = search.replace("?q=", "").split("&")[0];
+
+    if (q !== query) {
+      setHashCursor(0);
+      setHashtags([]);
+      setUserCursor(0);
+      setUsers([]);
+      setTweetCursor(0);
+      setTweets([]);
+      setQuery(q);
+    }
+
+    if (search_type === "hashtags" && (q !== query || hashCursor === 0)) {
+      searchHashtags(q, 0, 10)
         .then((res) => {
-          setHashCursor(hashCursor + 1);
-          setHashtags(res);
+          setHashCursor(1);
+          setHashtags(res.data);
         })
         .catch((err) => console.log(err))
         .finally(() => setLoading(false));
-    } else if (search_type === "users" && users.length === 0) {
-      searchUser(query, true, userCursor)
+    } else if (search_type === "users" && (q !== query || userCursor === 0)) {
+      searchUser(q, true, 0, 10)
         .then((res) => {
-          setUserCursor(userCursor + 1);
-          setUsers(res);
+          setUserCursor(1);
+          setUsers(res.data);
         })
         .catch((err) => console.log(err))
         .finally(() => setLoading(false));
-    } else if (search_type === "tweets" && tweets.length === 0) {
-      searchTweets(query, tweetCursor)
+    } else if (search_type === "tweets" && (q !== query || tweetCursor === 0)) {
+      searchTweets(q, 0, 10)
         .then((res) => {
-          setTweetCursor(tweetCursor + 1);
-          setTweets(res);
+          setTweetCursor(1);
+          setTweets(res.data);
         })
         .catch((err) => console.log(err))
         .finally(() => setLoading(false));
     }
-  }, [search_type, query]);
+  }, [search_type, search]);
 
   return (
     <div>
@@ -74,19 +91,19 @@ export default function Search() {
         {search_type === "tweets"
           ? tweets.length > 0
             ? tweets.map((tweet) => (
-                <Tweet
-                  key={tweet._id}
-                  tweet={tweet}
-                />
-              ))
+              <Tweet
+                key={tweet._id}
+                tweet={tweet}
+              />
+            ))
             : !loading && (
-                <div className="text-center text-muted mt-3">
-                  No tweets found
-                </div>
-              )
+              <div className="text-center text-muted mt-3">
+                No tweets found
+              </div>
+            )
           : search_type === "users"
-          ? users.length > 0
-            ? users.map((user) => (
+            ? users.length > 0
+              ? users.map((user) => (
                 <List
                   key={user.auth_id}
                   className="hover"
@@ -96,29 +113,29 @@ export default function Search() {
                     image_url: user.profile_image_url,
                     context: user.description,
                   }}
-                  action={"/" + user.account_name}
+                  onClick={() => navigate("/" + user.account_name)}
                 />
               ))
-            : !loading && (
+              : !loading && (
                 <div className="text-center text-muted mt-3">
                   No users found
                 </div>
               )
-          : search_type === "hashtags"
-          ? hashtags.length > 0
-            ? hashtags.map((hashtag) => (
-                <Trend
-                  key={hashtag.tag}
-                  hashtag={hashtag.tag}
-                  tweets={hashtag.tweet_count}
-                />
-              ))
-            : !loading && (
-                <div className="text-center text-muted mt-3">
-                  No hashtags found
-                </div>
-              )
-          : null}
+            : search_type === "hashtags"
+              ? hashtags.length > 0
+                ? hashtags.map((hashtag) => (
+                  <Trend
+                    key={hashtag.tag}
+                    hashtag={hashtag.tag}
+                    tweets={hashtag.tweet_count}
+                  />
+                ))
+                : !loading && (
+                  <div className="text-center text-muted mt-3">
+                    No hashtags found
+                  </div>
+                )
+              : null}
         {loading ? (
           <div className="text-center my-5">
             <div

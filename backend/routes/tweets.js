@@ -13,7 +13,7 @@ router.get("/search", async function (req, res) {
     const results = await Tweet.find(
       {
         text: {
-          $regex: new RegExp(req.query.search_query),
+          $regex: new RegExp(req.query.search_query, "i"),
         },
         "referenced_tweet.type": { $ne: "retweet" },
       },

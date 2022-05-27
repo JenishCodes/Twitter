@@ -37,14 +37,14 @@ export default function Editor(props) {
       setSearchData([]);
     } else if (word.charAt(0) === "@" && word.length > 1) {
       setTweetInnerHTML(newText);
-      searchUser(word, false).then((data) => {
+      searchUser(word, false, 0, 3).then((res) => {
         setSearchDataType("user");
-        setSearchData(data);
+        setSearchData(res.data);
       });
     } else if (word.charAt(0) === "#" && word.length > 1) {
       setTweetInnerHTML(newText);
-      setSearchDataType("hashtag");
-      searchHashtags(word).then((data) => setSearchData(data));
+      setSearchDataType("hashtag", 0, 3);
+      searchHashtags(word, 0, 3).then((res) => setSearchData(res.data));
     } else {
       setSearchData([]);
     }
@@ -91,7 +91,9 @@ export default function Editor(props) {
       {props.replying_to ? (
         <div className="text-muted ms-4 ps-5 fs-6 fst-italic">
           <span>Replying to </span>
-          <Link className="hover-underline" to={"/" + props.replying_to}>@{props.replying_to}</Link>
+          <Link className="hover-underline" to={"/" + props.replying_to}>
+            @{props.replying_to}
+          </Link>
         </div>
       ) : null}
       <div className="p-3 d-flex">
@@ -123,23 +125,20 @@ export default function Editor(props) {
               <div className="auto-compelete bg-primary border-rounded">
                 {searchData.map((search, index) =>
                   searchDataType === "user" ? (
-                    <div
+                    <List
                       key={index}
-                      onClick={()=>handleOnClick("@" + search.account_name)}
-                    >
-                      <List
-                        className="hover"
-                        data={{
-                          title: search.name,
-                          image_url: search.profile_image_url,
-                          subtitle: search.account_name,
-                        }}
-                      />
-                    </div>
+                      className="hover"
+                      data={{
+                        title: search.name,
+                        image_url: search.profile_image_url,
+                        subtitle: search.account_name,
+                      }}
+                      onClick={() => handleOnClick("@" + search.account_name)}
+                    />
                   ) : (
                     <div
                       key={index}
-                      onClick={()=>handleOnClick("#" + search.tag)}
+                      onClick={() => handleOnClick("#" + search.tag)}
                     >
                       <Trend
                         hashtag={"#" + search.tag}

@@ -10,7 +10,7 @@ import { auth, storage } from "../config/firebase";
 import api from "./api";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-export async function searchUser(name_query, deep_search, cursor = 0) {
+export async function searchUser(name_query, deep_search, cursor, limit) {
   try {
     const res = await api.get(
       "/user/search?name_query=" +
@@ -18,9 +18,11 @@ export async function searchUser(name_query, deep_search, cursor = 0) {
         "&deep_search=" +
         deep_search +
         "&cursor=" +
-        cursor
+        cursor +
+        "&limit=" +
+        limit
     );
-    return res.data.data;
+    return res.data;
   } catch (err) {
     console.log(err);
   }
@@ -43,18 +45,13 @@ export async function getSeachHistory(user_id) {
     console.log(err);
   }
 }
-export async function addSeachHistory(
-  id,
-  name,
-  account_name,
-  profile_image_url = null
-) {
+export async function addSeachHistory(user_id, title, subtitle=null, image_url=null) {
   try {
     const res = await api.post("/user/history", {
-      user_id: id,
-      title: name,
-      image_url: profile_image_url,
-      subtitle: account_name,
+      user_id,
+      title,
+      subtitle,
+      image_url,
     });
 
     return res.data;

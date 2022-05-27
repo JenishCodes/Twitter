@@ -9,25 +9,24 @@ router.get("/search", async function (req, res) {
     var results;
 
     if (req.query.tag_query.charAt(0) === "#") {
-      results = await Hashtag.find(
-        {
-          tag: {
-            $regex: new RegExp("^" + req.query.tag_query.slice(1) + ".*"),
-          },
+      results = await Hashtag.find({
+        tag: {
+          $regex: new RegExp("^" + req.query.tag_query.slice(1) + ".*", "i"),
         },
-        { tag: 1, _id: 0, tweet_count: { $size: "$tweets" } }
-      )
-        .skip(10 * req.query.cursor)
-        .limit(10);
+      })
+        .select({ tag: 1, tweet_count: { $size: "$tweets" } })
+        .skip(req.query.limit * req.query.cursor)
+        .limit(req.query.limit);
     } else {
       results = await Hashtag.find(
         {
-          tag: { $regex: new RegExp(req.query.tag_query) },
+          tag: { $regex: new RegExp(req.query.tag_query, "i") },
         },
         { tag: 1, _id: 0, tweet_count: { $size: "$tweets" } }
       )
-        .skip(10 * req.query.cursor)
-        .limit(10);
+        .select({ tag: 1, tweet_count: { $size: "$tweets" } })
+        .skip(req.query.limit * req.query.cursor)
+        .limit(req.query.limit);
     }
 
     res.send({ data: results });

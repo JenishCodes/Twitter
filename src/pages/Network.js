@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Tabbar from "../components/Tabbar";
 import { getFollowers, getFollowing } from "../services/friendship";
 import List from "../components/List";
@@ -14,6 +14,7 @@ export default function Network() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) {
@@ -79,7 +80,7 @@ export default function Network() {
                     image_url: friend.profile_image_url,
                     context: friend.description,
                   }}
-                  action={"/" + friend.account_name}
+                  onClick={() => navigate("/" + friend.account_name)}
                 />
               ))
             : !loading && (
@@ -96,7 +97,7 @@ export default function Network() {
                   image_url: friend.profile_image_url,
                   context: friend.description,
                 }}
-                action={"/" + friend.account_name}
+                onClick={() => navigate("/" + friend.account_name)}
               />
             ))
           : !loading && (

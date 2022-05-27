@@ -88,10 +88,17 @@ export async function getTweetTimeline(tweet_id) {
   }
 }
 
-export async function searchTweets(query, cursor = 0) {
+export async function searchTweets(query, cursor, limit) {
   try {
-    const res = await api.get("/tweet/search?search_query=" + query + "&cursor=" + cursor);
-    return res.data.data;
+    const res = await api.get(
+      "/tweet/search?search_query=" +
+        query +
+        "&cursor=" +
+        cursor +
+        "&limit=" +
+        limit
+    );
+    return res.data;
   } catch (err) {
     throw err;
   }

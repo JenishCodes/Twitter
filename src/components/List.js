@@ -7,24 +7,20 @@ export default function List(props) {
   return props.data ? (
     <div
       className={"list px-3 py-2 " + props.className}
-      onClick={() =>
-        props.action
-          ? navigate(props.action, { state: props.actionState })
-          : null
-      }
+      onClick={props.onClick}
     >
       <div className="d-flex align-items-center">
-        {props.data.image ? (
-          props.data.image
-        ) : props.data.image_url ? (
-          <div className="me-3 image">
+        <div className="me-3 image">
+          {props.data.image ? (
+            props.data.image
+          ) : props.data.image_url ? (
             <img
               className="w-100 h-auto rounded-circle"
               src={props.data.image_url}
               alt=""
             />
-          </div>
-        ) : null}
+          ) : null}
+        </div>
         <div className="flex-grow-1 details">
           <div className="d-flex align-items-center justify-content-between">
             <div className="w-75">
@@ -33,7 +29,9 @@ export default function List(props) {
                 <div className="text-muted oneline">{props.data.subtitle}</div>
               ) : null}
             </div>
-            <div className="ms-3">{props.actionButton ? props.actionButton : null}</div>
+            <div className="ms-3">
+              {props.actionButton ? props.actionButton : null}
+            </div>
           </div>
           {props.data.context ? <div>{props.data.context}</div> : null}
         </div>
