@@ -37,18 +37,18 @@ export default function Home() {
       <div className="feed">
         {feed.length > 0
           ? feed.map((tweet, index) =>
-              tweet.referenced_tweet.length > 0 ? (
-                <div key={index}>
-                  <Tweet lowerlink tweet={tweet.referenced_tweet[0]} />
-                  <Tweet upperlink tweet={tweet} />
-                </div>
-              ) : (
-                <Tweet key={index} tweet={tweet} />
-              )
+            tweet.referenced_tweet.length > 0 ? (
+              <div key={index}>
+                <Tweet lowerlink tweet={tweet.referenced_tweet[0]} />
+                <Tweet upperlink tweet={tweet} />
+              </div>
+            ) : (
+              <Tweet key={index} tweet={tweet} />
             )
+          )
           : !loading && (
-              <div className="text-center text-muted mt-5">No tweets yet</div>
-            )}
+            <div className="text-center text-muted mt-5">No tweets yet</div>
+          )}
 
         {loading ? (
           <div className="d-flex justify-content-center align-items-center h-100">
@@ -58,6 +58,7 @@ export default function Home() {
           </div>
         ) : null}
       </div>
+      {feed.length ? <div className="h-50-vh"></div> : null}
     </div>
   );
 }

@@ -34,17 +34,11 @@ export default function Bookmark() {
           </div>
         </div>
       ) : tweets.length > 0 ? (
-        tweets.map((tweet, index) => (
-          <Tweet
-            key={index}
-            tweet={{ ...tweet, author: null }}
-            user={tweet.author}
-          />
-        ))
+        tweets.map((tweet, index) => <Tweet key={index} tweet={tweet} />)
       ) : (
         <div className="text-center text-muted mt-5">No bookmarks yet</div>
       )}
-      {tweets.length > 0 ? <div className="my-5 py-5"></div> : null}
+      {tweets.length > 0 ? <div className="h-50-vh"></div> : null}
     </div>
   );
 }

@@ -141,26 +141,19 @@ router.post("/create", async function (req, res) {
 
 router.get("/replies", async function (req, res) {
   try {
-    var replies = await Tweet.find({
-      referenced_tweet: {
-        $elemMatch: { id: req.query.id, type: "replied_to" },
-      },
-    });
-
-    const authors = await Promise.all(
-      replies.map(
-        async (reply) =>
-          await User.findById(reply.author_id, {
-            name: 1,
-            account_name: 1,
-            profile_image_url: 1,
-            auth_id: 1,
-          })
-      )
-    );
-
-    replies = replies.map((reply, index) => {
-      return { ...reply._doc, author: authors[index] };
+    const replies = await Tweet.find({
+      "referenced_tweet.type": "replied_to",
+      "referenced_tweet.id": req.query.id,
+    }).populate("author_id", {
+      name: 1,
+      account_name: 1,
+      auth_id: 1,
+      profile_image_url: 1,
+    }).transform(function (docs) {
+      return docs.map((doc) => {
+        const { author_id, ...resDoc } = doc._doc;
+        return { ...resDoc, author: author_id };
+      });
     });
 
     res.send({ data: replies });
@@ -173,24 +166,31 @@ router.get("/replies", async function (req, res) {
 
 router.get("/references", async function (req, res) {
   try {
-    const tweet = await Tweet.findById(req.query.id, {
-      referenced_tweet: 1,
-      _id: 0,
-    });
+    const referenced_tweets = await Tweet.findById(req.query.id)
+      .select("referenced_tweet")
+      .populate("referenced_tweet.id")
+      .transform(function (doc) {
+        const { referenced_tweet, ...restDoc } = doc._doc;
+        const newRefTweets = referenced_tweet.map((ref) => {
+          return { type: ref.type, ...ref.id._doc };
+        });
+        return newRefTweets
+      });
 
-    const referenced_tweets = await Promise.all(
-      tweet.referenced_tweet.map(async (reference) => {
-        const ref_tweet = await Tweet.findById(reference.id);
-        if (ref_tweet) {
-          const ref_tweet_author = await User.findById(ref_tweet.author_id);
-          return { ...ref_tweet._doc, author: ref_tweet_author };
+    const result = await Promise.all(
+      referenced_tweets.map(async (reference) => {
+        if (reference.author_id) {
+          const ref_tweet_author = await User.findById(reference.author_id).select(
+            "name account_name auth_id profile_image_url"
+          );
+          return { ...reference, author: ref_tweet_author };
         } else {
           return null;
         }
       })
     );
 
-    res.send({ data: referenced_tweets });
+    res.send({ data: result });
   } catch (err) {
     console.log(err.message);
     res.status(400);

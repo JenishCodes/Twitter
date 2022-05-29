@@ -20,6 +20,7 @@ export default function Trending() {
         <Trend hashtag="Movies" tweets={42} />
         <Trend hashtag="Music" tweets={40} />
       </div>
+      <div className="h-50-vh"></div>
     </div>
   );
 }

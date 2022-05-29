@@ -129,7 +129,7 @@ export default function Chat(props) {
                   message={message}
                   align={message.senderId === user._id ? "end" : "start"}
                   handleDelete={handleDelete}
-                  lastTime={
+                  nextTime={
                     index < messages.length - 1
                       ? messages[index + 1].createdAt
                       : null

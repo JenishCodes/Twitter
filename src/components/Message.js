@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { timeConverter } from "../utils";
+import { timeFormatter } from "../utils";
 
 export default function Message(props) {
   const [time, setTime] = useState("");
-  const { message, align, handleDelete, lastTime } = props;
+  const { message, align, handleDelete, nextTime } = props;
 
   useEffect(() => {
-    setTime(timeConverter(message.createdAt, lastTime));
+    setTime(
+      timeFormatter(message.createdAt.seconds * 1000, true, false, nextTime)
+    );
   }, []);
 
   return (
@@ -15,9 +17,7 @@ export default function Message(props) {
         {align === "end" ? (
           <div
             className="message-delete btn hover me-3"
-            onClick={() => {
-              handleDelete(message._id);
-            }}
+            onClick={() => handleDelete(message._id)}
             style={{ height: "fit-content" }}
           >
             <i className="bi bi-trash text-muted"></i>

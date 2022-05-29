@@ -56,7 +56,7 @@ const Tweet = mongoose.model(
         url_link_click: { type: Number, default: 0 },
         user_profile_click: { type: Number, default: 0 },
       },
-      referenced_tweet: {
+      referenced_tweet: [{
         type: {
           type: String,
           enum: ["replied_to", "retweet_of", "quoated_from"],
@@ -66,7 +66,7 @@ const Tweet = mongoose.model(
           ref: "Tweet",
         },
         _id: false,
-      },
+      }],
     },
     { timestamps: true }
   )

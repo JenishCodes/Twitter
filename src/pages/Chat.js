@@ -55,7 +55,7 @@ export default function Message() {
       ) : (
         <div className="text-center text-muted mt-5">No messages yet</div>
       )}
-      {chats.length > 0 ? <div className="my-5 py-5"></div> : null}
+      {chats.length > 0 ? <div className="h-50-vh"></div> : null}
     </div>
   );
 }

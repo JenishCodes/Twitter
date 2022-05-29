@@ -213,6 +213,7 @@
   opacity: 1;
 }
 .searchbar .auto-suggestions {
+  display: none;
   z-index: 10;
 }
 .searchbar > .suggestions > div {
@@ -234,7 +235,10 @@
 .sidebar .nav-icon i {
   width: 30px;
 }
-
+.sidebar .nav-icon .bi.bi-hash.fw-bold::before{
+  font-weight: bold !important;
+  color: #000000;
+}
 .sidebar .nav {
   transition-duration: 0.2s;
   width: max-content;
@@ -251,6 +255,21 @@
 @media screen and (max-width: 1199px) {
   .sidebar > div {
     width: 80px;
+  }
+  .sidebar .nav {
+    font-size: 22px;
+    padding: 10px 15px;
+    border-radius: 50px;
+    transition-duration: 0.2s;
+    width: max-content;
+  }
+  .sidebar .nav-icon {
+    margin: 0;
+  }
+}
+@media screen and (max-width: 575px) {
+  .sidebar > div {
+    width: 100%;
   }
   .sidebar .nav {
     font-size: 22px;

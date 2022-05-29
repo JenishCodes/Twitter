@@ -24,6 +24,7 @@ import Country from "../pages/Country";
 import Gender from "../pages/Gender";
 import Phone from "../pages/Phone";
 import Trending from "../pages/Trending";
+import Notifications from "../pages/Notifications";
 
 export default function AppScreen() {
   return (
@@ -52,6 +53,8 @@ export default function AppScreen() {
                   )
                 }
               />
+
+              <Route path="notifications" element={<Notifications />} />
 
               <Route path="bookmarks" element={<Bookmark />} />
 

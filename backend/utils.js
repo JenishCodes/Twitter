@@ -94,7 +94,7 @@ exports.getTweets = async function getTweets(ids) {
             referenced_tweet: [refTweet],
           };
         } else {
-          return {...refTweet, message: tweet.author.account_name + " Retweeted"};
+          return { ...refTweet, message: tweet.author.account_name + " Retweeted" };
         }
       }
     })

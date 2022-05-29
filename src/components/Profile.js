@@ -90,7 +90,7 @@ export default function Profile(props) {
           ) : null}
           <div className="text-muted me-4">
             <i className="bi bi-calendar-fill me-2 fs-4"></i>
-            <span>Joined {new Date(props.user.created_at).toDateString()}</span>
+            <span>Joined {new Date(props.user.createdAt).toDateString()}</span>
           </div>
           {props.user.url ? (
             <div className="text-muted me-4">

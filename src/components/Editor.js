@@ -6,13 +6,13 @@ import { postTweet } from "../services/tweet";
 import { searchUser } from "../services/user";
 import { parseTweet } from "../utils";
 import List from "./List";
-import Trend from "./Trend";
 
 export default function Editor(props) {
   const [text, setText] = useState();
   const { user } = useContext(AuthContext);
   const [searchData, setSearchData] = useState([]);
   const [searchDataType, setSearchDataType] = useState("");
+  const [loading, setLoading] = useState(false);
   const tweet = useRef();
 
   const setTweetInnerHTML = (newText) => {
@@ -60,6 +60,7 @@ export default function Editor(props) {
   };
 
   const handlePost = () => {
+    setLoading(true);
     if (props.replying_to) {
       const referenced_tweet = props.referenced_tweet;
       referenced_tweet.push({ type: "replied_to", id: props.tweet_id });
@@ -75,14 +76,14 @@ export default function Editor(props) {
           setText("");
           tweet.current.innerHTML = "";
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err)).finally(() => setLoading(false));
     } else {
       postTweet(text, user._id)
         .then(() => {
           setText("");
           tweet.current.innerHTML = "";
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err)).finally(() => setLoading(false));
     }
   };
 
@@ -110,14 +111,13 @@ export default function Editor(props) {
               ref={tweet}
               className="pb-3 text-field w-100 fs-3"
               onInputCapture={(e) =>
-                handleTextChange(e.currentTarget.innerText)
+                !loading ? handleTextChange(e.currentTarget.innerText) : null
               }
               spellCheck={true}
             ></div>
             <div
-              className={`z-index-1 position-absolute top-0 left-0 fs-3 text-muted ${
-                text && text !== "\n" ? "d-none" : ""
-              }`}
+              className={`z-index-1 position-absolute top-0 left-0 fs-3 text-muted ${text && text !== "\n" ? "d-none" : ""
+                }`}
             >
               What's Happening
             </div>
@@ -127,7 +127,7 @@ export default function Editor(props) {
                   searchDataType === "user" ? (
                     <List
                       key={index}
-                      className="hover"
+                      className="hover pointer"
                       data={{
                         title: search.name,
                         image_url: search.profile_image_url,
@@ -136,16 +136,18 @@ export default function Editor(props) {
                       onClick={() => handleOnClick("@" + search.account_name)}
                     />
                   ) : (
-                    <div
+                    <List
                       key={index}
+                      className="hover pointer"
                       onClick={() => handleOnClick("#" + search.tag)}
-                    >
-                      <Trend
-                        hashtag={"#" + search.tag}
-                        tweets={search.tweet_count}
-                        noAction
-                      />
-                    </div>
+                      data={{
+                        title: "#" + search.tag,
+                        subtitle: search.tweet_count + " Tweets",
+                        image: <div className="text-primary rounded-circle border px-2">
+                          <i className="bi bi-hash fs-1"></i>
+                        </div>
+                      }}
+                    />
                   )
                 )}
               </div>
@@ -159,11 +161,18 @@ export default function Editor(props) {
             <div>
               <div
                 onClick={handlePost}
-                className={`btn text-white btn-primary rounded-pill py-1 px-3 ${
-                  text ? "" : "disabled"
-                }`}
+                className={`btn text-white btn-primary rounded-pill py-1 px-3 ${text && !loading ? "" : "disabled"
+                  }`}
               >
-                Tweet
+                {loading ?
+                  <div
+                    className="spinner-border text-white"
+                    style={{ width: "1rem", height: "1rem", margin: "0 13px" }}
+                    role="status"
+                  >
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  : "Tweet"}
               </div>
             </div>
           </div>

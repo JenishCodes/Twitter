@@ -116,7 +116,7 @@ export default function Network() {
         ) : null}
         {(friendship_type === "following" && following.length > 0) ||
         (friendship_type === "followers" && followers.length > 0) ? (
-          <div className="my-5 py-5"></div>
+          <div className="h-50-vh"></div>
         ) : null}
       </Tabbar>
     </div>

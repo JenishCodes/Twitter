@@ -158,32 +158,37 @@ router.get("/tweets/replies", async function (req, res) {
 
 router.get("/tweets/retweets", async function (req, res) {
   try {
-    const user = await getUser(req.query.account_name);
+    const user = await User.findOne({ account_name: req.query.account_name }).select("_id");
 
-    var tweet_ids = await Tweet.aggregate([
-      {
-        $match: {
-          author_id: user.data._id,
-          "referenced_tweet.type": "retweet_of",
-        },
-      },
-      {
-        $project: {
-          referenced_tweet: "$referenced_tweet.id",
-          _id: 0,
-        },
-      },
-    ]);
+    const retweets = await Tweet.find({
+      author_id: user._id,
+      "referenced_tweet.type": "retweet_of",
+    }).sort({ createdAt: -1 })
+      .select("referenced_tweet -_id")
+      .populate("referenced_tweet.id")
+      .transform(function (docs) {
+        return docs.map((doc) => {
+          const { referenced_tweet } = doc._doc;
+          const ref = referenced_tweet[referenced_tweet.length - 1]
+          return { type: ref.type, ...ref.id._doc }
+        });
+      });
 
-    const ans = await getTweets(
-      tweet_ids.map((tweet_id) => tweet_id.referenced_tweet)
+    const result = await Promise.all(
+      retweets.map(async (reference) => {
+        if (reference.author_id) {
+          const ref_tweet_author = await User.findById(reference.author_id).select(
+            "name account_name auth_id profile_image_url"
+          );
+          return { ...reference, author: ref_tweet_author };
+        } else {
+          return null;
+        }
+      })
     );
+    console.log(result);
 
-    ans.data.sort((a, b) => {
-      return b.createdAt - a.createdAt;
-    });
-
-    res.send({ data: ans.data });
+    res.send({ data: result });
   } catch (err) {
     console.log(err);
     res.status(400);

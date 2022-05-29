@@ -60,6 +60,7 @@ export default function Reactions() {
           No {reaction_type} yet
         </div>
       )}
+      {data.length > 0 ? <div className="h-50-vh"></div> : null}
     </div>
   );
 }

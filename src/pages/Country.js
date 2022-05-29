@@ -11,7 +11,7 @@ export default function Country(props) {
         <div className="form-floating my-3">
           <select
             type="text"
-            className="form-select rounded-5"
+            className="form-select rounded-5 text-primary"
             id="country-input"
             style={{ backgroundColor: "transparent" }}
             onChange={(e) => setCountry(e.currentTarget.value)}

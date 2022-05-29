@@ -14,7 +14,7 @@ export default function Searchbar() {
   const { user } = useContext(AuthContext);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [focused, setFocused] = useState(false);
+  const [focused, setFocused] = useState(true);
   const [results, setResults] = useState([]);
   const [history, setHistory] = useState([]);
   const navigate = useNavigate();
@@ -147,18 +147,18 @@ export default function Searchbar() {
       searchQuery[0] === "#"
         ? `/hashtag/${searchQuery.substring(1)}`
         : searchQuery[0] === "@"
-        ? `/${searchQuery.substring(1)}`
-        : `/search/tweets?q=${searchQuery}`
+          ? `/${searchQuery.substring(1)}`
+          : `/search/tweets?q=${searchQuery}`
     );
 
     setQuery("");
   };
 
   return (
-    <div className="searchbar">
+    <div id="searchbar" className="searchbar">
       <div className="rounded-pill bg-muted ps-2 pe-1 d-flex align-items-center">
         <i
-          className="bi bi-search mx-2 px-1 fs-6 fw-light"
+          className="bi bi-search mx-2 px-1 fw-light"
           placeholder="Search Twitter"
         ></i>
         <form onSubmit={handleSubmit} className="flex-grow-1">
@@ -168,7 +168,8 @@ export default function Searchbar() {
             type="text"
             placeholder="Search Twitter"
             className="text-primary w-100"
-            onFocus={() => setFocused(true)}
+            list="search-history"
+            // onFocus={() => setFocused(true)}
             // onBlur={() => setFocused(false)}
             value={query}
             autoComplete="off"
@@ -177,17 +178,20 @@ export default function Searchbar() {
         {query ? (
           <div className="btn hover rounded-circle py-1 px-2">
             <i
-              className="bi bi-x-circle-fill text-muted"
+              className="bi bi-x-circle fs-4 text-muted"
               onClick={() => setQuery("")}
             ></i>
           </div>
         ) : null}
       </div>
 
+      {/* <div
+        className={`auto-suggestions bg-muted position-relative ${focused ? "d-block" : "d-none"
+          }`}
+      > */}
       <div
-        className={`auto-suggestions bg-muted position-relative ${
-          focused ? "d-block" : "d-none"
-        }`}
+        id="auto-suggestions"
+        className="auto-suggestions bg-muted position-relative"
       >
         <div className="position-absolute bg-muted rounded-3 my-1 w-100">
           {loading ? (
@@ -201,7 +205,9 @@ export default function Searchbar() {
               </div>
             </div>
           ) : (
-            <div className="pb-2">
+              <div className="pb-2" id="search-history" role={
+                "listbox"
+            }>
               <div className="d-flex px-3 py-2 justify-content-between">
                 <div className="fs-3">{query ? "Results" : "Recent"}</div>
                 {query ? null : (
@@ -218,12 +224,12 @@ export default function Searchbar() {
                     data={
                       result.type === "user"
                         ? {
-                            image_url: result.profile_image_url,
-                            title: result.name,
-                            subtitle: result.account_name,
-                          }
+                          image_url: result.profile_image_url,
+                          title: result.name,
+                          subtitle: result.account_name,
+                        }
                         : result.type === "hashtag"
-                        ? {
+                          ? {
                             image: (
                               <div className="text-primary rounded-circle border px-2">
                                 <i className="bi bi-hash fs-1"></i>
@@ -232,7 +238,7 @@ export default function Searchbar() {
                             title: result.tag,
                             subtitle: result.tweet_count + " Tweets",
                           }
-                        : {
+                          : {
                             ...result,
                             image: !result.image_url ? (
                               result.subtitle ? (
@@ -249,12 +255,17 @@ export default function Searchbar() {
                     }
                     onClick={() => handleClick(result)}
                     actionButton={
-                      <div
-                        className="btn hover py-0 px-1 rounded-circle"
-                        onClick={(e) => handleDeleteHistory(e, result._id)}
-                      >
-                        <i className="bi bi-x fs-3 text-primary"></i>
-                      </div>
+                      result.type === "history" ?
+                        <div
+                          className="btn hover py-0 px-1 rounded-circle"
+                          onClick={(e) => handleDeleteHistory(e, result._id)}
+                        >
+                          <i className="bi bi-x fs-3 text-muted"></i>
+                        </div> : <div
+                          className="py-0 px-1 rounded-circle"
+                        >
+                          <i className="bi bi-arrow-up-left-circle fs-3 text-muted"></i>
+                        </div>
                     }
                   />
                 ))

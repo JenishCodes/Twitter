@@ -96,6 +96,8 @@ export default function User() {
         })
         .catch((err) => console.log(err))
         .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
   }, [
     profile_type,
@@ -147,7 +149,7 @@ export default function User() {
                 ? retweets.map((retweet) => (
                     <Tweet
                       key={retweet._id}
-                      tweeet={retweet}
+                      tweet={retweet}
                     />
                   ))
                 : !loading && (
@@ -208,7 +210,7 @@ export default function User() {
           </div>
         </div>
       ) : null}
-      <div className="my-5 py-5"></div>
+      <div className="h-50-vh"></div>
     </div>
   );
 }

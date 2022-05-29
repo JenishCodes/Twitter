@@ -8,7 +8,7 @@ import {
 import { AuthContext } from "../config/context";
 
 import { deleteTweet, getRetweeters, postTweet } from "../services/tweet";
-import { parseTweet } from "../utils";
+import { parseTweet, timeFormatter } from "../utils";
 import {
   bookmarkTweet,
   pinTweet,
@@ -107,6 +107,7 @@ export default function Tweet(props) {
 
   const handleBookmark = (e) => {
     e.stopPropagation();
+    return;
     if (bookmarked) {
       unbookmarkTweet(data._id, user._id).catch((err) => console.log(err));
       setBookmarked(false);
@@ -123,9 +124,8 @@ export default function Tweet(props) {
       }
     >
       <div
-        className={`tweet hover pointer border-0 px-3 ${
-          props.upperlink ? "py-0" : "pt-2"
-        } ${props.lowerlink ? "" : "border-bottom"} w-100 text-start`}
+        className={`tweet hover pointer border-0 px-3 ${props.upperlink ? "py-0" : "pt-2"
+          } ${props.lowerlink ? "" : "border-bottom"} w-100 text-start`}
       >
         {props.upperlink ? (
           <div style={{ width: "48px", marginBottom: "6px" }}>
@@ -188,7 +188,7 @@ export default function Tweet(props) {
                 </div>
                 <div className="text-muted">
                   {" "}
-                  · {new Date(data.createdAt).toDateString()}
+                  · {timeFormatter(data.createdAt)}
                 </div>
               </div>
               <div className="actions position-relative">
@@ -206,46 +206,43 @@ export default function Tweet(props) {
                   aria-labelledby="menu"
                 >
                   {data.author._id === user._id ? (
-                    <div>
-                      <div
-                        className="d-flex text-start text-primary py-1 px-3 hover btn fs-6"
-                        onClick={handlePinTweet}
-                      >
-                        <i
-                          className={`bi bi-pin-angle${
-                            user.pinned_tweet_id === data._id ? "-fill" : ""
+                    <div
+                      className="d-flex text-start text-primary dropdown-item py-1 px-3 hover btn fs-6"
+                      onClick={handlePinTweet}
+                    >
+                      <i
+                        className={`bi bi-pin-angle${user.pinned_tweet_id === data._id ? "-fill" : ""
                           } me-3`}
-                        ></i>
-                        <div>
-                          {user.pinned_tweet_id === data._id
-                            ? "Unpin Tweet"
-                            : "Pin Tweet"}
-                        </div>
-                      </div>
-                      <div className="d-flex text-start text-danger py-1 px-3 hover btn fs-6">
-                        <i className="bi bi-trash me-3"></i>
-                        <div>Delete</div>
+                      ></i>
+                      <div>
+                        {user.pinned_tweet_id === data._id
+                          ? "Unpin Tweet"
+                          : "Pin Tweet"}
                       </div>
                     </div>
                   ) : (
-                    <div>
-                      <div
-                        className="text-start text-primary d-flex py-1 px-3 hover btn fs-6"
-                        onClick={handleBookmark}
-                      >
-                        <i
-                          className={`bi bi-bookmark${
-                            bookmarked ? "-fill" : ""
+                    <div
+                      className="text-start text-primary d-flex dropdown-item py-1 px-3 hover btn fs-6"
+                      onClick={handleBookmark}
+                    >
+                      <i
+                        className={`bi bi-bookmark${bookmarked ? "-fill" : ""
                           } me-3`}
-                        ></i>
-                        <div>
-                          {bookmarked ? "Remove Bookmark" : "Add Bookmark"}
-                        </div>
+                      ></i>
+                      <div>
+                        {bookmarked ? "Remove Bookmark" : "Add Bookmark"}
                       </div>
-                      <div className="text-start text-primary d-flex py-1 px-3 hover btn fs-6">
-                        <i className="bi bi-flag me-3"></i>
-                        <div>Report Tweet</div>
-                      </div>
+                    </div>
+                  )}
+                  {data.author._id === user._id ? (
+                    <div className="text-start text-primary d-flex dropdown-item py-1 px-3 hover btn fs-6">
+                      <i className="bi bi-flag me-3"></i>
+                      <div>Report Tweet</div>
+                    </div>
+                  ) : (
+                    <div className="d-flex text-start text-danger dropdown-item py-1 px-3 hover btn fs-6">
+                      <i className="bi bi-trash me-3"></i>
+                      <div>Delete</div>
                     </div>
                   )}
                 </div>
@@ -271,9 +268,8 @@ export default function Tweet(props) {
                 </div>
                 <div className="flex-grow-1">
                   <div
-                    className={`d-flex align-items-center btn p-0 text-${
-                      retweeted ? "success" : "muted"
-                    }`}
+                    className={`d-flex align-items-center btn p-0 text-${retweeted ? "success" : "muted"
+                      }`}
                     onClick={handleRetweet}
                   >
                     <div className="me-2">
@@ -284,16 +280,14 @@ export default function Tweet(props) {
                 </div>
                 <div className="flex-grow-1">
                   <div
-                    className={`d-flex h-100 align-items-center btn p-0 text-${
-                      liked ? "danger" : "muted"
-                    }`}
+                    className={`d-flex h-100 align-items-center btn p-0 text-${liked ? "danger" : "muted"
+                      }`}
                     onClick={handleLike}
                   >
                     <div className="me-2">{data.public_metrics.like_count}</div>
                     <i
-                      className={`bi rounded-circle hover px-2 py-1 bi-heart${
-                        liked ? "-fill" : ""
-                      } `}
+                      className={`bi rounded-circle hover px-2 py-1 bi-heart${liked ? "-fill" : ""
+                        } `}
                     ></i>
                   </div>
                 </div>

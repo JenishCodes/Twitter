@@ -9,14 +9,13 @@ import {
 } from "../services/tweet";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Tweet from "../components/Tweet";
-import List from "../components/List";
 import { AuthContext } from "../config/context";
 import {
   getTweetFavoriters,
   makeFavorite,
   removeFavorite,
 } from "../services/favorite";
-import { parseTweet } from "../utils";
+import { parseTweet, timeFormatter } from "../utils";
 import {
   bookmarkTweet,
   pinTweet,
@@ -159,30 +158,30 @@ export default function Status() {
       <div className="reference-list" ref={tweetRef}>
         {references
           ? references.map((reference, index) =>
-              reference ? (
-                <Tweet
+            reference ? (
+              <Tweet
+                key={index}
+                tweet={reference}
+                upperlink={index !== 0}
+                lowerlink
+                reply_to={
+                  index !== 0
+                    ? references[index - 1].author.account_name
+                    : null
+                }
+              />
+            ) : (
+              <div className="px-3">
+                <div
                   key={index}
-                  tweet={reference}
-                  upperlink={index !== 0}
-                  lowerlink
-                  reply_to={
-                    index !== 0
-                      ? references[index - 1].author.account_name
-                      : null
-                  }
-                />
-              ) : (
-                <div className="px-3">
-                  <div
-                    key={index}
-                    className="bg-muted text-muted p-3"
-                    style={{ borderRadius: "1rem" }}
-                  >
-                    This Tweet was deleted by the Tweet author.
-                  </div>
+                  className="bg-muted text-muted p-3"
+                  style={{ borderRadius: "1rem" }}
+                >
+                  This Tweet was deleted by the Tweet author.
                 </div>
-              )
+              </div>
             )
+          )
           : null}
       </div>
 
@@ -228,9 +227,8 @@ export default function Status() {
                           onClick={handlePinTweet}
                         >
                           <i
-                            className={`bi bi-pin-angle${
-                              user.pinned_tweet_id === status_id ? "-fill" : ""
-                            } me-3`}
+                            className={`bi bi-pin-angle${user.pinned_tweet_id === status_id ? "-fill" : ""
+                              } me-3`}
                           ></i>
                           <div>
                             {user.pinned_tweet_id === status_id
@@ -253,9 +251,8 @@ export default function Status() {
                           onClick={handleBookmark}
                         >
                           <i
-                            className={`bi bi-bookmark${
-                              bookmarked ? "-fill" : ""
-                            } me-3`}
+                            className={`bi bi-bookmark${bookmarked ? "-fill" : ""
+                              } me-3`}
                           ></i>
                           <div>
                             {bookmarked ? "Remove Bookmark" : "Add Bookmark"}
@@ -282,9 +279,9 @@ export default function Status() {
                 }}
               ></div>
             ) : null}
-            {tweet.created_at ? (
+            {tweet.createdAt ? (
               <div className="text-muted mt-2 fs-5">
-                {new Date(tweet.created_at).toUTCString()}
+                {timeFormatter(tweet.createdAt, true, true)}
               </div>
             ) : null}
             <hr className="my-3" />
@@ -315,9 +312,8 @@ export default function Status() {
               <div className="flex-grow-1 text-center">
                 <div
                   onClick={handleRetweet}
-                  className={`btn py-2 rounded-circle hover text-${
-                    retweeted ? "success" : "muted"
-                  }`}
+                  className={`btn py-2 rounded-circle hover text-${retweeted ? "success" : "muted"
+                    }`}
                 >
                   <i className="bi fs-3 bi-arrow-repeat "></i>
                 </div>
@@ -325,9 +321,8 @@ export default function Status() {
               <div className="flex-grow-1 text-center">
                 <div
                   onClick={handleLike}
-                  className={`btn py-2 rounded-circle hover text-${
-                    liked ? "danger" : "muted"
-                  }`}
+                  className={`btn py-2 rounded-circle hover text-${liked ? "danger" : "muted"
+                    }`}
                 >
                   <i className={`bi fs-3 bi-heart${liked ? "-fill" : ""} `}></i>
                 </div>
@@ -353,15 +348,15 @@ export default function Status() {
 
       {replies
         ? replies.map((reply) => (
-            <Tweet
-              key={reply._id}
-              tweet={reply}
-              reply_to={account_name}
-            />
-          ))
+          <Tweet
+            key={reply._id}
+            tweet={reply}
+            reply_to={account_name}
+          />
+        ))
         : null}
 
-      <div className="py-5 my-5"></div>
+      <div className="h-50-vh"></div>
     </div>
   );
 }

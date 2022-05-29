@@ -85,6 +85,20 @@ const colors = {
   orange: [["--app-color", "#FF7A00"]],
   green: [["--app-color", "#00BA7C"]],
 };
+const months = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 
 export function setCSSVariables(theme, color, font) {
   const root = document.documentElement;
@@ -137,7 +151,7 @@ export function extractEntities(tweet) {
     if (char === "@" || char === "#") {
       var end = tweet.indexOf(" ", i + 1);
 
-      if (end < 0) end = tweet.length + end;
+      if (end < 0) end = tweet.length + end + 1;
 
       if (char === "@") {
         mentions.push({
@@ -158,69 +172,50 @@ export function extractEntities(tweet) {
   return { hashtags, mentions, urls: [] };
 }
 
-export const timeConverter = (timestamp, lastTime) => {
-  const a = new Date(timestamp.seconds * 1000);
+export const timeFormatter = (
+  timestamp,
+  includeTime = false,
+  fullDate = false,
+  lastTime = null
+) => {
+  const then = new Date(timestamp);
+  const now = new Date();
 
-  if (!lastTime) {
-    return (
-      a.getHours() +
-      ":" +
-      a.getMinutes() +
-      " " +
-      a.toLocaleTimeString().slice(8, 11)
-    );
+  if (lastTime) {
+    const prev = new Date(lastTime.seconds * 1000);
+    if (prev.getTime() - then.getTime() < 60000) {
+      return null;
+    }
   }
 
-  const b = new Date(lastTime.seconds * 1000);
+  var ans = then.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  if (b.getTime() - a.getTime() < 60000) {
-    return "";
-  } else if (b.getTime() - a.getTime() < 86400000) {
-    return (
-      a.getHours() +
-      ":" +
-      a.getMinutes() +
-      " " +
-      a.toLocaleTimeString().slice(8, 11)
-    );
-  } else if (b.getTime() - a.getTime() < 31536000000) {
-    return (
-      a.getDay() +
-      " " +
-      a.getHours() +
-      ":" +
-      a.getMinutes() +
-      " " +
-      a.toLocaleTimeString().slice(8, 11)
-    );
-  } else {
-    return (
-      months[a.getMonth()] +
-      " " +
-      a.getDate() +
-      ", " +
-      a.getFullYear() +
-      ", " +
-      a.getHours() +
-      ":" +
-      a.getMinutes() +
-      " " +
-      a.toLocaleTimeString().slice(8, 11)
-    );
+  if (!fullDate) {
+    if (now.getFullYear() === then.getFullYear()) {
+      if (
+        now.getMonth() === then.getMonth() &&
+        now.getDate() === then.getDate()
+      ) {
+        ans = "";
+      } else {
+        ans = ans.slice(0, ans.indexOf(","));
+      }
+    }
   }
+
+  if (includeTime) {
+    ans =
+      (ans ? ans + " · " : "") +
+      then.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+  }
+
+  return ans;
 };
