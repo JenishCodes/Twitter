@@ -5,13 +5,10 @@
   top: 0%;
   width: 100%;
 }
-.chat .content {
-  height: calc(100vh - 55px);
-  overflow-y: scroll;
-}
 .chat .text-box {
   position: sticky;
   bottom: 0%;
+  top: calc(100% - 55px);
 }
 .chat .text-input {
   outline: none;
@@ -169,7 +166,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 100%;
 }
 .model-overlay {
   z-index: 100;
@@ -268,6 +264,9 @@
   }
 }
 @media screen and (max-width: 575px) {
+  .sidebar > div >div{
+    border-top: solid 1px var(--border);
+  }
   .sidebar > div {
     width: 100%;
   }
@@ -313,7 +312,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 100%;
 }
 .dropdown-menu{
   min-width: auto;

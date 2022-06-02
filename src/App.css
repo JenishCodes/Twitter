@@ -21,6 +21,14 @@ body *::-webkit-scrollbar-thumb {
   .h-sm-auto{
     height: auto !important;
   }
+  .main{
+    border: none;
+  }
+}
+@media screen and (max-width: 992px) {
+  .main{
+    border-right: solid 1px var(--border);
+  }
 }
 @media screen and (min-width: 992px) {
   .col-lg-7-2 {
@@ -36,7 +44,7 @@ body *::-webkit-scrollbar-thumb {
 }
 .main {
   flex-grow: 1;
-  border-right: solid 1px var(--border);
+  border-left: solid 1px var(--border);
 }
 @media screen and (min-width: 690px) {
   .main > .content {
@@ -44,7 +52,6 @@ body *::-webkit-scrollbar-thumb {
   }
   .main {
     flex-grow: 0;
-    border-right: none;
   }
 }
 @media screen and (min-width: 992px) {

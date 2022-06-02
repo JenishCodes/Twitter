@@ -26,7 +26,9 @@ export default function Chat(props) {
 
       const unsub = getNewMessage(chatId, (message) => {
         if (message._id !== messages[messages.length - 1]._id) {
-          setMessages(messages.concat([message]));
+          const newList = [...messages, message];
+          setMessages(newList);
+          window.scrollTo(0, document.body.scrollHeight);
         }
       });
 
@@ -34,7 +36,7 @@ export default function Chat(props) {
         unsub();
       };
     }
-  }, [cursor]);
+  }, [cursor, messages]);
 
   useEffect(() => {
     const chatId = [user._id, user_id].sort().join("~");
@@ -78,7 +80,7 @@ export default function Chat(props) {
   };
 
   return (
-    <div className="chat">
+    <div className="chat h-100">
       <div className="main-content d-flex flex-column">
         <div className="header">
           <div className="d-flex px-2 align-items-center">
@@ -142,8 +144,11 @@ export default function Chat(props) {
           </div>
         </div>
       </div>
-      <div className="text-box bg-primary d-flex align-items-center px-2 border-top py-2">
-        <div className="btn hover rounded-circle">
+      <div className="text-box w-100 bg-primary d-flex align-items-center px-2 border-top py-2">
+        <div
+          className="btn hover rounded-circle"
+          onClick={() => console.log(messages)}
+        >
           <i className="bi bi-image"></i>
         </div>
         <div className="btn hover rounded-circle">

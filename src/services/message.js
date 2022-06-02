@@ -12,6 +12,7 @@ import {
   collection,
   limit,
   serverTimestamp,
+  updateDoc,
 } from "firebase/firestore";
 import { store } from "../config/firebase";
 
@@ -50,25 +51,6 @@ export async function getChatMessages(chatId, page, userId = null) {
   }
 }
 
-// export async function getChatMessages(chatId, page, limit, userId) {
-//   try {
-//     const res = await api.get(
-//       "/message/" +
-//         chatId +
-//         "?page=" +
-//         page +
-//         "&limit=" +
-//         limit +
-//         "&userId=" +
-//         userId
-//     );
-
-//     return res.data;
-//   } catch (err) {
-//     throw err;
-//   }
-// }
-
 export async function sendMessage(message) {
   try {
     const res = await addDoc(collection(store, "messages"), {
@@ -89,32 +71,24 @@ export async function sendMessage(message) {
   }
 }
 
-// export async function sendMessage(message) {
-//   try {
-//     const res = await api.post("/message", message);
-
-//     return res.data;
-//   } catch (err) {
-//     throw err;
-//   }
-// }
-
 export async function deleteMessage(messageId) {
   try {
-    const res = await deleteDoc(doc(store, "messages", messageId));
+    // const res = await deleteDoc(doc(store, "messages", messageId));
+    // const lastMessage = await getDocs(
+    //   query(
+    //     collection(store, "messages"),
+    //     where("chatId", "==", res.chatId),
+    //     orderBy("createdAt", "desc"),
+    //     limit(1)
+    //   )
+    // );
 
-    return res;
+    // await updateDoc(doc(store, "chats", res.chatId), {
+    //   lastMessageId: lastMessage.docs[0].id,
+    // });
+
+    // return res;
   } catch (err) {
     throw err;
   }
 }
-
-// export async function deleteMessage(messageId) {
-//   try {
-//     const res = await api.delete("/message/" + messageId);
-
-//     return res.data;
-//   } catch (err) {
-//     throw err;
-//   }
-// }

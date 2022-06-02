@@ -9,10 +9,10 @@ export default function Sidebar() {
   return user ? (
     <header
       role="banner"
-      className="sidebar ps-sm-0 ps-md-5 ps-lg-0 d-flex justify-content-end position-relative border-end"
+      className="sidebar ps-sm-0 ps-lg-0 d-flex justify-content-end position-relative"
     >
       <div className="position-relative">
-        <div className="position-fixed h-100 h-sm-auto w-inherit bottom-sm-0">
+        <div className="position-fixed h-100 h-sm-auto w-inherit bottom-sm-0 bg-primary">
           <div className="d-flex flex-sm-column px-xl-3 px-1 justify-content-between h-100">
             <div className="d-flex flex-sm-column flex-grow-1 align-items-center">
               <div className="w-100 d-none d-sm-block">
