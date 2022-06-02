@@ -20,7 +20,7 @@ export default function Account() {
               <i className="bi bi-person-fill fs-2 mx-2"></i>
             </div>,
           }}
-          className="hover"
+          className="hover pointer"
           onClick={() => navigate("account_name")}
           actionButton={<i className="bi bi-chevron-right text-muted"></i>}
         ></List>
@@ -32,7 +32,7 @@ export default function Account() {
               <i className="bi bi-envelope fs-2 mx-2"></i>
             </div>
           }}
-          className="hover"
+          className="hover pointer"
           onClick={() => navigate("email")}
           actionButton={<i className="bi bi-chevron-right text-muted"></i>}
         ></List>
@@ -44,7 +44,7 @@ export default function Account() {
               <i className="bi bi-phone fs-2 mx-2"></i>
             </div>
           }}
-          className="hover"
+          className="hover pointer"
           onClick={() => navigate("phone")}
           actionButton={<i className="bi bi-chevron-right text-muted"></i>}
         ></List>
@@ -58,7 +58,7 @@ export default function Account() {
               <i className="bi bi-globe fs-2 mx-2"></i>
             </div>
           }}
-          className="hover"
+          className="hover pointer"
           onClick={() => navigate("country")}
           actionButton={<i className="bi bi-chevron-right text-muted"></i>}
         ></List>
@@ -70,7 +70,7 @@ export default function Account() {
               <i className="bi bi-gender-ambiguous fs-3 mx-2"></i>
             </div>
           }}
-          className="hover"
+          className="hover pointer"
           onClick={() => navigate("gender")}
           actionButton={<i className="bi bi-chevron-right text-muted"></i>}
         ></List>

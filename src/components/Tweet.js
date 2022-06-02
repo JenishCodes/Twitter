@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   makeFavorite,
   removeFavorite,
@@ -107,7 +107,6 @@ export default function Tweet(props) {
 
   const handleBookmark = (e) => {
     e.stopPropagation();
-    return;
     if (bookmarked) {
       unbookmarkTweet(data._id, user._id).catch((err) => console.log(err));
       setBookmarked(false);

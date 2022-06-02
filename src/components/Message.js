@@ -35,7 +35,7 @@ export default function Message(props) {
         </div>
       </div>
       {time ? (
-        <div className="message-time text-muted text-end fs-7 mb-2">{time}</div>
+        <div className={`message-time text-muted text-${align} fs-7 mb-2 mt-1`}>{time}</div>
       ) : null}
     </div>
   );

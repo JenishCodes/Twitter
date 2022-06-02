@@ -32,7 +32,7 @@ export default function AppScreen() {
       <Sidebar />
       <main className="main">
         <div className="row m-0 content">
-          <div className="position-relative p-0 col-lg-7-2 col-sm-12 col-md-11">
+          <div className="position-relative p-0 col-lg-7-2 col-sm-12">
             <Routes>
               <Route index element={<Navigate to="/home" />} />
               <Route path="signin" element={<Navigate to="/home" />} />

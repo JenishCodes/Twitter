@@ -1,9 +1,6 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
 
 export default function List(props) {
-  const navigate = useNavigate();
-
   return props.data ? (
     <div
       className={"list px-3 py-2 " + props.className}

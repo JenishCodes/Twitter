@@ -39,11 +39,11 @@ export default function Profile(props) {
   return props.user ? (
     <div className="profile">
       <div className="poster">
-        <img
+        {props.user.banner_image_url?<img
           className="w-100 h-100"
           src={props.user.banner_image_url}
           alt="banner"
-        />
+        />:null}
       </div>
       <div className="photo-btn d-flex justify-content-between px-3">
         <div className="photo w-25">

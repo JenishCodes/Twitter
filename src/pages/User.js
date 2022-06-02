@@ -13,11 +13,11 @@ export default function User() {
   const [retweets, setRetweets] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [mentions, setMentions] = useState([]);
-  const [tweetCursor, setTweetCursor] = useState(0);
-  const [replyCursor, setReplyCursor] = useState(0);
-  const [retweetCursor, setRetweetCursor] = useState(0);
-  const [favoriteCursor, setFavoriteCursor] = useState(0);
-  const [mentionCursor, setMentionCursor] = useState(0);
+  const [tweetCursor] = useState(0);
+  const [replyCursor] = useState(0);
+  const [retweetCursor] = useState(0);
+  const [favoriteCursor] = useState(0);
+  const [mentionCursor] = useState(0);
   const [loading, setLoading] = useState(true);
   const { account_name, profile_type } = useParams();
   const [tabs] = useState([
@@ -134,10 +134,7 @@ export default function User() {
             {profile_type === "replies"
               ? replies.length > 0
                 ? replies.map((reply) => (
-                    <Tweet
-                      key={reply._id}
-                      tweet={reply}
-                    />
+                    <Tweet key={reply._id} tweet={reply} />
                   ))
                 : !loading && (
                     <div className="text-center text-muted mt-5">
@@ -147,10 +144,7 @@ export default function User() {
               : profile_type === "retweets"
               ? retweets.length > 0
                 ? retweets.map((retweet) => (
-                    <Tweet
-                      key={retweet._id}
-                      tweet={retweet}
-                    />
+                    <Tweet key={retweet._id} tweet={retweet} />
                   ))
                 : !loading && (
                     <div className="text-center text-muted mt-5">
@@ -160,10 +154,7 @@ export default function User() {
               : profile_type === "likes"
               ? favorites.length > 0
                 ? favorites.map((favorite) => (
-                    <Tweet
-                      key={favorite._id}
-                      tweet={favorite}
-                    />
+                    <Tweet key={favorite._id} tweet={favorite} />
                   ))
                 : !loading && (
                     <div className="text-center text-muted mt-5">No Likes</div>
@@ -171,10 +162,7 @@ export default function User() {
               : profile_type === "mentions"
               ? mentions.length > 0
                 ? mentions.map((mention) => (
-                    <Tweet
-                      key={mention._id}
-                      tweet={mention}
-                    />
+                    <Tweet key={mention._id} tweet={mention} />
                   ))
                 : !loading && (
                     <div className="text-center text-muted mt-5">
@@ -183,11 +171,7 @@ export default function User() {
                   )
               : tweets.length > 0
               ? tweets.map((tweet) => (
-                  <Tweet
-                    key={tweet._id}
-                    mode="tweet"
-                    tweet={tweet}
-                  />
+                  <Tweet key={tweet._id} mode="tweet" tweet={tweet} />
                 ))
               : !loading && (
                   <div className="text-center text-muted mt-5">No Tweets</div>

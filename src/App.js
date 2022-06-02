@@ -7,16 +7,19 @@ import "./App.css";
 
 function App() {
   useEffect(() => {
-    document.addEventListener('mouseup', function (e) {
-      var container = document.getElementById('searchbar');
+    document.addEventListener("mouseup", function (e) {
+      var container = document.getElementById("searchbar");
+      var suggestion_box = document.getElementById("auto-suggestions");
 
-      if (!container.contains(e.target)) {
-        document.getElementById('auto-suggestions').style.display = 'none';
-      } else {
-        document.getElementById('auto-suggestions').style.display = 'block';
+      if (container && suggestion_box) {
+        if (!container.contains(e.target)) {
+          suggestion_box.style.display = "none";
+        } else {
+          suggestion_box.style.display = "block";
+        }
       }
     });
-    
+
     const color = window.localStorage.getItem("color");
     const font = window.localStorage.getItem("font");
     const theme = window.localStorage.getItem("theme");

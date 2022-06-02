@@ -1,18 +1,18 @@
 import api from "./api";
 import {
   addDoc,
-  deleteDoc,
+  // deleteDoc,
   getDocs,
   orderBy,
   query,
   setDoc,
-  startAt,
+  // startAt,
   where,
   doc,
   collection,
-  limit,
+  // limit,
   serverTimestamp,
-  updateDoc,
+  // updateDoc,
 } from "firebase/firestore";
 import { store } from "../config/firebase";
 

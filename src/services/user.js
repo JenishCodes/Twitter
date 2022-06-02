@@ -45,7 +45,12 @@ export async function getSeachHistory(user_id) {
     console.log(err);
   }
 }
-export async function addSeachHistory(user_id, title, subtitle=null, image_url=null) {
+export async function addSeachHistory(
+  user_id,
+  title,
+  subtitle = null,
+  image_url = null
+) {
   try {
     const res = await api.post("/user/history", {
       user_id,

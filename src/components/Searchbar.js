@@ -14,7 +14,7 @@ export default function Searchbar() {
   const { user } = useContext(AuthContext);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [focused, setFocused] = useState(true);
+  // const [focused, setFocused] = useState(true);
   const [results, setResults] = useState([]);
   const [history, setHistory] = useState([]);
   const navigate = useNavigate();

@@ -85,20 +85,6 @@ const colors = {
   orange: [["--app-color", "#FF7A00"]],
   green: [["--app-color", "#00BA7C"]],
 };
-const months = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
 
 export function setCSSVariables(theme, color, font) {
   const root = document.documentElement;
