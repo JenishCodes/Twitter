@@ -42,10 +42,12 @@ export default function EditProfile(props) {
 
   return (
     <div className="edit-profile">
-      <Header title="Edit Profile" backArrow />
+      <Header title="Edit Profile" subtitle={"@" + user.account_name} backArrow />
       <div className="editprofile pb-5">
         <div className="poster">
-          <img className="w-100 h-100" src={bannerUrl} alt="banner" />
+          {bannerUrl && (
+            <img className="w-100 h-100" src={bannerUrl} alt="banner" />
+          )}
           <div className="backdrop-banner"></div>
           <div
             className="camera-plus rounded-circle btn bg-primary hover"

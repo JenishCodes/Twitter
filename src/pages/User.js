@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../components/Header";
+import Loading from "../components/Loading";
 import Profile from "../components/Profile";
 import Tabbar from "../components/Tabbar";
 import Tweet from "../components/Tweet";
@@ -183,18 +184,14 @@ export default function User() {
           <div className="text-center text-muted mt-5">User not found</div>
         )
       )}
-      {loading ? (
-        <div className="text-center my-5">
-          <div
-            className="spinner-border text-app"
-            style={{ width: "1.5rem", height: "1.5rem" }}
-            role="status"
-          >
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      ) : null}
-      <div className="h-50-vh"></div>
+
+      <Loading
+        show={loading}
+        style={{ width: "1.5rem", height: "1.5rem" }}
+        className="my-5 text-app"
+      />
+
+      {user ? <div className="h-50-vh"></div> : null}
     </div>
   );
 }

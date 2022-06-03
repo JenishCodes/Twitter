@@ -47,9 +47,9 @@ export default function AppScreen() {
                 path="trending"
                 element={
                   window.screen.width > 991 ? (
-                    <Trending />
+                    <Navigate to="/notifications" replace />
                   ) : (
-                    <Navigate to="home" replace />
+                    <Trending />
                   )
                 }
               />

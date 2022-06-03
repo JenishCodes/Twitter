@@ -7,7 +7,9 @@ export default function Header(props) {
 
   return props.title ? (
     <div
-      className={`header px-2 position-sticky py-1`}
+      className={`header px-2 position-sticky ${
+        props.backArrow ? "py-1" : "py-2"
+      }`}
     >
       <div className="d-flex align-items-center">
         {props.backArrow ? (

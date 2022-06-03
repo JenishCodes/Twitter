@@ -22,21 +22,25 @@ import {
   unbookmarkTweet,
   unpinTweet,
 } from "../services/user";
+import Loading from "../components/Loading";
 
 export default function Status() {
   const { user } = useContext(AuthContext);
   const { account_name, status_id } = useParams();
   const [tweet, setTweet] = useState();
+  const [show, setShow] = useState(false);
   const [references, setReferences] = useState();
   const [replies, setReplies] = useState();
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [retweeted, setRetweeted] = useState(false);
   const [menuVisisble, setMenuVisisble] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const tweetRef = useRef();
 
   useEffect(() => {
+    setLoading(true);
     getTweetTimeline(status_id)
       .then((res) => {
         setTweet(res.data);
@@ -44,7 +48,8 @@ export default function Status() {
         setReplies(res.includes.replies);
         window.scroll(0, tweetRef.current.scrollHeight);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
 
     getTweetFavoriters(status_id, true)
       .then((res) => setLiked(res.data.includes(user._id)))
@@ -144,44 +149,39 @@ export default function Status() {
     <div className="h-100">
       <Header title="Tweet" backArrow />
 
-      {tweet ? null : (
-        <div className="text-center my-5">
-          <div
-            className="spinner-border text-app"
-            style={{ width: "1.5rem", height: "1.5rem" }}
-            role="status"
-          >
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      )}
+      <Loading
+        show={loading}
+        className="my-5 text-app"
+        style={{ width: "1.5rem", height: "1.5rem" }}
+      />
+
       <div className="reference-list" ref={tweetRef}>
         {references
           ? references.map((reference, index) =>
-            reference ? (
-              <Tweet
-                key={index}
-                tweet={reference}
-                upperlink={index !== 0}
-                lowerlink
-                reply_to={
-                  index !== 0
-                    ? references[index - 1].author.account_name
-                    : null
-                }
-              />
-            ) : (
-              <div className="px-3">
-                <div
+              reference ? (
+                <Tweet
                   key={index}
-                  className="bg-muted text-muted p-3"
-                  style={{ borderRadius: "1rem" }}
-                >
-                  This Tweet was deleted by the Tweet author.
+                  tweet={reference}
+                  upperlink={index !== 0}
+                  lowerlink
+                  reply_to={
+                    index !== 0
+                      ? references[index - 1].author.account_name
+                      : null
+                  }
+                />
+              ) : (
+                <div className="px-3">
+                  <div
+                    key={index}
+                    className="bg-muted text-muted p-3"
+                    style={{ borderRadius: "1rem" }}
+                  >
+                    This Tweet was deleted by the Tweet author.
+                  </div>
                 </div>
-              </div>
+              )
             )
-          )
           : null}
       </div>
 
@@ -227,8 +227,9 @@ export default function Status() {
                           onClick={handlePinTweet}
                         >
                           <i
-                            className={`bi bi-pin-angle${user.pinned_tweet_id === status_id ? "-fill" : ""
-                              } me-3`}
+                            className={`bi bi-pin-angle${
+                              user.pinned_tweet_id === status_id ? "-fill" : ""
+                            } me-3`}
                           ></i>
                           <div>
                             {user.pinned_tweet_id === status_id
@@ -251,8 +252,9 @@ export default function Status() {
                           onClick={handleBookmark}
                         >
                           <i
-                            className={`bi bi-bookmark${bookmarked ? "-fill" : ""
-                              } me-3`}
+                            className={`bi bi-bookmark${
+                              bookmarked ? "-fill" : ""
+                            } me-3`}
                           ></i>
                           <div>
                             {bookmarked ? "Remove Bookmark" : "Add Bookmark"}
@@ -284,36 +286,43 @@ export default function Status() {
                 {timeFormatter(tweet.createdAt, true, true)}
               </div>
             ) : null}
-            <hr className="my-3" />
+            <hr className="mt-3 mb-2" />
             {tweet.public_metrics ? (
               <div className="d-flex">
-                <div className="me-3">
-                  {tweet.public_metrics.reply_count} Replies
+                <div className="me-3 text-muted">
+                  <span className="text-primary fw-bold">{tweet.public_metrics.reply_count + " "}</span>
+                  Replies
                 </div>
                 <div className="me-3 hover-underline">
-                  <Link to="retweets">
-                    {tweet.public_metrics.retweet_count} Retweets
+                  <Link className="text-muted" to="retweets">
+                    <span className="text-primary fw-bold">{tweet.public_metrics.retweet_count + " "}</span>
+                    Retweets
                   </Link>
                 </div>
                 <div className="me-3 hover-underline">
-                  <Link to="likes">
-                    {tweet.public_metrics.like_count} Likes
+                  <Link className="text-muted" to="likes">
+                    <span className="text-primary fw-bold">{tweet.public_metrics.like_count + " "}</span>
+                    Likes
                   </Link>
                 </div>
               </div>
             ) : null}
-            <hr className="mt-3 mb-1" />
+            <hr className="mt-2 mb-1" />
             <div className="d-flex">
               <div className="flex-grow-1 text-center">
-                <div className="text-muted btn py-2 rounded-circle hover">
+                <div
+                  className="text-muted btn py-1 px-2 rounded-circle hover"
+                  onClick={() => setShow(!show)}
+                >
                   <i className="bi fs-3 bi-arrow-return-left"></i>
                 </div>
               </div>
               <div className="flex-grow-1 text-center">
                 <div
                   onClick={handleRetweet}
-                  className={`btn py-2 rounded-circle hover text-${retweeted ? "success" : "muted"
-                    }`}
+                  className={`btn py-1 px-2 rounded-circle hover text-${
+                    retweeted ? "success" : "muted"
+                  }`}
                 >
                   <i className="bi fs-3 bi-arrow-repeat "></i>
                 </div>
@@ -321,39 +330,35 @@ export default function Status() {
               <div className="flex-grow-1 text-center">
                 <div
                   onClick={handleLike}
-                  className={`btn py-2 rounded-circle hover text-${liked ? "danger" : "muted"
-                    }`}
+                  className={`btn py-1 px-2 rounded-circle hover text-${
+                    liked ? "danger" : "muted"
+                  }`}
                 >
                   <i className={`bi fs-3 bi-heart${liked ? "-fill" : ""} `}></i>
                 </div>
               </div>
               <div className="flex-grow-1 text-center">
-                <div className="text-muted btn py-2 hover rounded-circle">
+                <div className="text-muted btn py-1 px-2 hover rounded-circle">
                   <i className="bi fs-3 bi-share"></i>
                 </div>
               </div>
             </div>
-            <hr className="mb-3 mt-1" />
           </div>
+          <hr className="mb-0 mt-1" />
         </div>
       ) : null}
 
-      {tweet ? (
-        <Editor
-          replying_to={account_name}
-          tweet_id={status_id}
-          referenced_tweet={tweet ? tweet.referenced_tweet : []}
-        />
-      ) : null}
+      <Editor
+        show={show}
+        setShow={setShow}
+        referenced_tweets={tweet ? tweet.referenced_tweet : []}
+        reference_tweet={tweet}
+      />
 
       {replies
         ? replies.map((reply) => (
-          <Tweet
-            key={reply._id}
-            tweet={reply}
-            reply_to={account_name}
-          />
-        ))
+            <Tweet key={reply._id} tweet={reply} reply_to={account_name} />
+          ))
         : null}
 
       <div className="h-50-vh"></div>

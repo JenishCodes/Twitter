@@ -1,8 +1,9 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Tabbar(props) {
   const navigate = useNavigate();
+
   return (
     <div className="tabbar">
       <div className="header position-sticky">
@@ -24,25 +25,24 @@ export default function Tabbar(props) {
             ) : null}
           </div>
         </div>
-        <div className="pages d-flex justify-content-around border-bottom">
+        <div className="pages d-flex justify-content-evenly border-bottom overflow-x-auto">
           {props.tabs
             ? props.tabs.map((tab) => (
-                <Link
+                <div
                   key={tab.name}
-                  replace
-                  to={tab.url}
-                  className="flex-grow-1 py-0 btn text-muted text-center"
+                  onClick={() => navigate(tab.path, { replace: true })}
+                  className="p-0 mx-3 border-0 btn text-muted text-center"
                 >
                   <div
                     className={
                       props.activeTab === tab.code
-                        ? "tab m-auto p-2 active rounded"
-                        : "tab m-auto p-2"
+                        ? "tab m-auto py-2 active rounded"
+                        : "tab m-auto py-2"
                     }
                   >
                     {tab.name}
                   </div>
-                </Link>
+                </div>
               ))
             : null}
         </div>

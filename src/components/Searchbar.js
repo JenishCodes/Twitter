@@ -9,12 +9,12 @@ import {
 import { AuthContext } from "../config/context";
 import { useNavigate } from "react-router-dom";
 import { searchHashtags } from "../services/hashtag";
+import Loading from "./Loading";
 
 export default function Searchbar() {
   const { user } = useContext(AuthContext);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  // const [focused, setFocused] = useState(true);
   const [results, setResults] = useState([]);
   const [history, setHistory] = useState([]);
   const navigate = useNavigate();
@@ -147,8 +147,8 @@ export default function Searchbar() {
       searchQuery[0] === "#"
         ? `/hashtag/${searchQuery.substring(1)}`
         : searchQuery[0] === "@"
-          ? `/${searchQuery.substring(1)}`
-          : `/search/tweets?q=${searchQuery}`
+        ? `/${searchQuery.substring(1)}`
+        : `/search/tweets?q=${searchQuery}`
     );
 
     setQuery("");
@@ -169,8 +169,6 @@ export default function Searchbar() {
             placeholder="Search Twitter"
             className="text-primary w-100"
             list="search-history"
-            // onFocus={() => setFocused(true)}
-            // onBlur={() => setFocused(false)}
             value={query}
             autoComplete="off"
           />
@@ -184,52 +182,34 @@ export default function Searchbar() {
           </div>
         ) : null}
       </div>
-
-      {/* <div
-        className={`auto-suggestions bg-muted position-relative ${focused ? "d-block" : "d-none"
-          }`}
-      > */}
       <div
         id="auto-suggestions"
         className="auto-suggestions bg-muted position-relative"
       >
         <div className="position-absolute bg-muted rounded-3 my-1 w-100">
-          {loading ? (
-            <div className="my-4 text-center">
-              <div
-                className="spinner-border text-app"
-                style={{ width: "1.5rem", height: "1.5rem" }}
-                role="status"
-              >
-                <span className="visually-hidden">Loading...</span>
-              </div>
+          <div className="pb-2" id="search-history" role="listbox">
+            <div className="d-flex px-3 py-2 justify-content-between">
+              <div className="fs-3">{query ? "Results" : "Recent"}</div>
+              {query ? null : (
+                <div className="fs-6 btn hover" onClick={handleClearAll}>
+                  Clear All
+                </div>
+              )}
             </div>
-          ) : (
-              <div className="pb-2" id="search-history" role={
-                "listbox"
-            }>
-              <div className="d-flex px-3 py-2 justify-content-between">
-                <div className="fs-3">{query ? "Results" : "Recent"}</div>
-                {query ? null : (
-                  <div className="fs-6 btn hover" onClick={handleClearAll}>
-                    Clear All
-                  </div>
-                )}
-              </div>
-              {results.length > 0 ? (
-                results.map((result, index) => (
+            {results.length > 0
+              ? results.map((result, index) => (
                   <List
                     className="hover pointer"
                     key={index}
                     data={
                       result.type === "user"
                         ? {
-                          image_url: result.profile_image_url,
-                          title: result.name,
-                          subtitle: result.account_name,
-                        }
+                            image_url: result.profile_image_url,
+                            title: result.name,
+                            subtitle: result.account_name,
+                          }
                         : result.type === "hashtag"
-                          ? {
+                        ? {
                             image: (
                               <div className="text-primary rounded-circle border px-2">
                                 <i className="bi bi-hash fs-1"></i>
@@ -238,7 +218,7 @@ export default function Searchbar() {
                             title: result.tag,
                             subtitle: result.tweet_count + " Tweets",
                           }
-                          : {
+                        : {
                             ...result,
                             image: !result.image_url ? (
                               result.subtitle ? (
@@ -255,27 +235,32 @@ export default function Searchbar() {
                     }
                     onClick={() => handleClick(result)}
                     actionButton={
-                      result.type === "history" ?
+                      result.type === "history" ? (
                         <div
                           className="btn hover py-0 px-1 rounded-circle"
                           onClick={(e) => handleDeleteHistory(e, result._id)}
                         >
                           <i className="bi bi-x fs-3 text-muted"></i>
-                        </div> : <div
-                          className="py-0 px-1 rounded-circle"
-                        >
+                        </div>
+                      ) : (
+                        <div className="py-0 px-1 rounded-circle">
                           <i className="bi bi-arrow-up-left-circle fs-3 text-muted"></i>
                         </div>
+                      )
                     }
                   />
                 ))
-              ) : (
-                <div className="text-center text-muted fw-bold mb-4 mt-2">
-                  {query ? "No Search Results" : "No Search History"}
-                </div>
-              )}
-            </div>
-          )}
+              : !loading && (
+                  <div className="text-center text-muted fw-bold mb-4 mt-2">
+                    {query ? "No Search Results" : "No Search History"}
+                  </div>
+                )}
+          </div>
+          <Loading
+            show={loading}
+            className="my-4 text-app"
+            style={{ width: "1.5rem", height: "1.5rem" }}
+          />
         </div>
       </div>
     </div>

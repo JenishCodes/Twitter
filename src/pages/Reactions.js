@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import List from "../components/List";
+import Loading from "../components/Loading";
 import { getTweetFavoriters } from "../services/favorite";
 import { getRetweeters } from "../services/tweet";
 
@@ -31,35 +32,33 @@ export default function Reactions() {
         title={reaction_type === "likes" ? "Liked By" : "Retweeted By"}
         backArrow
       />
-      {loading ? (
-        <div className="text-center my-5">
-          <div
-            className="spinner-border text-app"
-            style={{ width: "1.5rem", height: "1.5rem" }}
-            role="status"
-          >
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      ) : data.length > 0 ? (
-        data.map((user) => (
-          <List
-            className="hover"
-            key={user._id}
-            data={{
-              title: user.name,
-              subtitle: user.account_name,
-              image_url: user.profile_image_url,
-              context: user.description,
-            }}
-            onClick={()=>navigate("/" + user.account_name)}
-          />
-        ))
-      ) : (
-        <div className="text-center text-muted mt-5">
-          No {reaction_type} yet
-        </div>
-      )}
+
+      <Loading
+        show={loading}
+        className="my-5 text-app"
+        style={{ width: "1.5rem", height: "1.5rem" }}
+      />
+
+      {data.length > 0
+        ? data.map((user) => (
+            <List
+              className="hover"
+              key={user._id}
+              data={{
+                title: user.name,
+                subtitle: user.account_name,
+                image_url: user.profile_image_url,
+                context: user.description,
+              }}
+              onClick={() => navigate("/" + user.account_name)}
+            />
+          ))
+        : !loading && (
+            <div className="text-center text-muted mt-5">
+              No {reaction_type} yet
+            </div>
+          )}
+
       {data.length > 0 ? <div className="h-50-vh"></div> : null}
     </div>
   );

@@ -9,6 +9,7 @@ body {
   color: var(--text-primary);
   font-size: var(--fs-5);
   overflow-y: scroll;
+  overflow-x: hidden;
   min-height: 100vh;
 }
 

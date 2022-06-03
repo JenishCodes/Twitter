@@ -8,6 +8,7 @@ import {
 } from "../services/message";
 import { AuthContext } from "../config/context";
 import { getNewMessage } from "../services/chat";
+import Loading from "../components/Loading";
 
 export default function Chat(props) {
   const navigate = useNavigate();
@@ -114,33 +115,26 @@ export default function Chat(props) {
         </div>
         <div className="content flex-grow-1">
           <div className="messages-container px-3">
-            {loading ? (
-              <div className="text-center mt-5">
-                <div
-                  className="spinner-border text-app"
-                  style={{ width: "1.5rem", height: "1.5rem" }}
-                  role="status"
-                >
-                  <span className="visually-hidden">Loading...</span>
-                </div>
-              </div>
-            ) : messages.length > 0 ? (
-              messages.map((message, index) => (
-                <Message
-                  key={index}
-                  message={message}
-                  align={message.senderId === user._id ? "end" : "start"}
-                  handleDelete={handleDelete}
-                  nextTime={
-                    index < messages.length - 1
-                      ? messages[index + 1].createdAt
-                      : null
-                  }
-                />
-              ))
-            ) : (
-              ""
-            )}
+            <Loading
+              show={loading}
+              className="my-5 text-app"
+              style={{ width: "1.5rem", height: "1.5rem" }}
+            />
+            {messages.length > 0
+              ? messages.map((message, index) => (
+                  <Message
+                    key={index}
+                    message={message}
+                    align={message.senderId === user._id ? "end" : "start"}
+                    handleDelete={handleDelete}
+                    nextTime={
+                      index < messages.length - 1
+                        ? messages[index + 1].createdAt
+                        : null
+                    }
+                  />
+                ))
+              : null}
           </div>
         </div>
       </div>
@@ -160,9 +154,13 @@ export default function Chat(props) {
             onChange={(e) => setText(e.target.value)}
             value={text}
             placeholder="Type message here"
-            className="w-100 text-input rounded-pill text-primary flex-grow-1 px-3 py-1"
+            className="w-100 text-input text-primary flex-grow-1 py-1"
           />
         </div>
+        <div
+          className="bg-secondary"
+          style={{ width: "1px", height: "100%" }}
+        ></div>
         <div className="btn hover rounded-circle" onClick={handleSubmit}>
           <i className="bi bi-send"></i>
         </div>

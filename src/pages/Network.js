@@ -4,6 +4,7 @@ import Tabbar from "../components/Tabbar";
 import { getFollowers, getFollowing } from "../services/friendship";
 import List from "../components/List";
 import { getUser } from "../services/user";
+import Loading from "../components/Loading";
 
 export default function Network() {
   const { friendship_type, account_name } = useParams();
@@ -68,6 +69,11 @@ export default function Network() {
           },
         ]}
       >
+        <Loading
+          show={loading}
+          style={{ width: "1.5rem", height: "1.5rem" }}
+          className="mt-5 text-app"
+        />
         {friendship_type === "following"
           ? following.length > 0
             ? following.map((friend) => (
@@ -86,34 +92,26 @@ export default function Network() {
             : !loading && (
                 <div className="text-center text-muted mt-5">No following</div>
               )
-          : followers.length > 0
-          ? followers.map((friend) => (
-              <List
-                className="hover pointer"
-                key={friend.account_name}
-                data={{
-                  title: friend.name,
-                  subtitle: friend.account_name,
-                  image_url: friend.profile_image_url,
-                  context: friend.description,
-                }}
-                onClick={() => navigate("/" + friend.account_name)}
-              />
-            ))
-          : !loading && (
-              <div className="text-center text-muted mt-5">No followers</div>
-            )}
-        {loading ? (
-          <div className="text-center my-5">
-            <div
-              className="spinner-border text-app"
-              style={{ width: "1.5rem", height: "1.5rem" }}
-              role="status"
-            >
-              <span className="visually-hidden">Loading...</span>
-            </div>
-          </div>
-        ) : null}
+          : friendship_type === "followers"
+          ? followers.length > 0
+            ? followers.map((friend) => (
+                <List
+                  className="hover pointer"
+                  key={friend.account_name}
+                  data={{
+                    title: friend.name,
+                    subtitle: friend.account_name,
+                    image_url: friend.profile_image_url,
+                    context: friend.description,
+                  }}
+                  onClick={() => navigate("/" + friend.account_name)}
+                />
+              ))
+            : !loading && (
+                <div className="text-center text-muted mt-5">No followers</div>
+              )
+          : null}
+
         {(friendship_type === "following" && following.length > 0) ||
         (friendship_type === "followers" && followers.length > 0) ? (
           <div className="h-50-vh"></div>

@@ -12,8 +12,13 @@
 }
 .chat .text-input {
   outline: none;
-  border: solid 1px #007bbf;
+  border: 0px;
+  border-bottom: solid 2px var(--border);
   background-color: transparent;
+  transition: border-color 0.1s ease-in-out;
+}
+.chat .text-input:focus {
+  border-color: var(--app-color);
 }
 
 .display .blue {
@@ -69,7 +74,6 @@
 .edit-profile .photo {
   margin-top: -12.5%;
   position: relative;
-  z-index: 3;
 }
 .edit-profile .photo img {
   border: solid 5px var(--bg-primary) !important;
@@ -81,7 +85,7 @@
   position: relative;
 }
 .edit-profile .camera-plus {
-  z-index: 5;
+  z-index: 1;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -94,7 +98,6 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 2;
 }
 .edit-profile .backdrop-image {
   background: rgba(0, 0, 0, 0.25);
@@ -104,7 +107,6 @@
   transform: translate(-50%, -50%);
   width: calc(100% - 10px);
   height: calc(100% - 10px);
-  z-index: 3;
   border-radius: 50%;
 }
 .editor textarea {
@@ -120,16 +122,15 @@
 .editor .editor-area {
   width: calc(100% - 1rem - 48px);
 }
-.editor .z-index-1 {
-  z-index: -1;
-}
 .editor .text-field {
   overflow-wrap: break-word;
   white-space: pre-wrap;
-  min-height: var(--fs-1);
-  -webkit-user-modify: read-write;
   overflow-y: hidden;
   outline: none;
+  min-height: calc(4 * var(--fs-1));
+}
+.editor .text-field:empty:before{
+  content: attr(placeholder);
 }
 .editor .auto-compelete {
   position: absolute;
@@ -145,7 +146,7 @@
 .header {
   backdrop-filter: blur(12px);
   backface-visibility: rgb(0, 0, 0);
-  z-index: 1000;
+  z-index: 2;
   top: 0%;
 }
 .header .subtitle {
@@ -168,19 +169,8 @@
   text-overflow: ellipsis;
 }
 .model-overlay {
-  z-index: 100;
-  top: 0%;
-  left: 0%;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-}
-.model {
-  border-radius: 20px;
-  overflow-y: hidden;
+  z-index: 10;
+  backdrop-filter: contrast(0.7);
 }
 .profile > * > .photo {
   margin-top: -12.5%;
@@ -210,7 +200,7 @@
 }
 .searchbar .auto-suggestions {
   display: none;
-  z-index: 10;
+  z-index: 5;
 }
 .searchbar > .suggestions > div {
   background-color: black;
@@ -231,7 +221,7 @@
 .sidebar .nav-icon i {
   width: 30px;
 }
-.sidebar .nav-icon .bi.bi-hash.fw-bold::before{
+.sidebar .nav-icon .bi.bi-hash.fw-bold::before {
   font-weight: bold !important;
   color: #000000;
 }
@@ -264,7 +254,7 @@
   }
 }
 @media screen and (max-width: 575px) {
-  .sidebar > div >div{
+  .sidebar > div > div {
     border-top: solid 1px var(--border);
   }
   .sidebar > div {
@@ -285,6 +275,12 @@
   border-bottom: solid 5px;
   border-color: var(--app-color) !important;
   color: var(--text-primary) !important;
+}
+.tabbar .pages::-webkit-scrollbar {
+  height: 2px;
+}
+.tabbar .pages::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
 }
 .tabbar .tab {
   flex-grow: 1;
@@ -313,20 +309,20 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.dropdown-menu{
+.dropdown-menu {
   min-width: auto;
   width: max-content;
 }
 
-.chat .profile-image{
+.chat .profile-image {
   width: 30px;
   height: 30px;
 }
 
-.text-message-container .message-delete{
+.text-message-container .message-delete {
   display: none;
 }
 
-.text-message-container:hover .message-delete{
+.text-message-container:hover .message-delete {
   display: block;
 }

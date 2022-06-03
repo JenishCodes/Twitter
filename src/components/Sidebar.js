@@ -1,20 +1,33 @@
-import React, { useContext } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useContext, useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../config/context";
+import Editor from "./Editor";
 
 export default function Sidebar() {
   const { user } = useContext(AuthContext);
   const { pathname } = useLocation();
+  const [show, setShow] = useState(true);
+  const [compose, setCompose] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setShow(
+      !["/home", "/messages", "/notifications", "/trending"].includes(pathname)
+    );
+  }, [pathname]);
 
   return user ? (
     <header
       role="banner"
-      className="sidebar ps-sm-0 ps-lg-0 d-flex justify-content-end position-relative"
+      className={`sidebar ps-sm-0 ps-lg-0 d-flex justify-content-end position-relative d-sm-block ${
+        show ? "d-none" : ""
+      }`}
     >
       <div className="position-relative">
+        <Editor show={compose} setShow={setCompose} />
         <div className="position-fixed h-100 h-sm-auto w-inherit bottom-sm-0 bg-primary">
           <div className="d-flex flex-sm-column px-xl-3 px-1 justify-content-between h-100">
-            <div className="d-flex flex-sm-column flex-grow-1 align-items-center">
+            <div className="d-flex flex-sm-column flex-grow-1 align-items-center py-sm-0 py-1">
               <div className="w-100 d-none d-sm-block">
                 <Link to="/home">
                   <div className="px-3 mx-auto mx-xl-0 hover py-2 nav rounded-pill py-2 align-items-center p-3 text-primary btn">
@@ -25,9 +38,9 @@ export default function Sidebar() {
                 </Link>
               </div>
               <div className="w-100">
-                <Link
-                  to="/home"
-                  className="nav hover rounded-pill mx-auto mx-xl-0 py-2 align-items-center ps-3 fs-3 pe-xl-4 pe-3 text-primary btn"
+                <div
+                  className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-2 px-sm-3 fs-3 pe-xl-4 text-primary btn"
+                  onClick={() => navigate("/home")}
                 >
                   <div className="nav-icon">
                     <i
@@ -43,30 +56,38 @@ export default function Sidebar() {
                   >
                     Home
                   </span>
-                </Link>
+                </div>
               </div>
 
               <div className="w-100 d-lg-none">
-                <Link
-                  to="/trending"
-                  style={{ padding: "1.25px 11.5px" }}
-                  className="nav hover rounded-pill mx-auto align-items-center text-primary btn"
+                <div
+                  onClick={() => navigate("/trending")}
+                  className="nav hover rounded-pill mx-auto py-sm-1 py-0 align-items-center px-2 text-primary btn"
                 >
-                  <div className="nav-icon">
+                  <div className="nav-icon mx-sm-1">
                     <i
-                      className={`bi bi-hash ${
+                      className={`fs-1 bi bi-hash ${
                         pathname === "/trending" ? "fw-blod" : ""
                       }`}
-                      style={{ fontSize: "36px" }}
                     ></i>
                   </div>
-                </Link>
+                </div>
               </div>
 
+              <div className="w-100 d-sm-none d-block">
+                <div
+                  onClick={() => setCompose(true)}
+                  className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-sm-3 fs-3 pe-xl-4 px-2 text-primary bg-app btn"
+                >
+                  <div className="nav-icon">
+                    <i className="bi bi-plus-circle"></i>
+                  </div>
+                </div>
+              </div>
               <div className="w-100">
-                <Link
-                  to="/notifications"
-                  className="nav hover rounded-pill mx-auto mx-xl-0 py-2 align-items-center ps-3 fs-3 pe-xl-4 pe-3 text-primary btn"
+                <div
+                  onClick={() => navigate("/notifications")}
+                  className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-sm-3 fs-3 pe-xl-4 px-2 text-primary btn"
                 >
                   <div className="nav-icon">
                     <i
@@ -82,12 +103,12 @@ export default function Sidebar() {
                   >
                     Notifications
                   </span>
-                </Link>
+                </div>
               </div>
               <div className="w-100">
-                <Link
-                  to="/messages"
-                  className="nav hover rounded-pill mx-auto mx-xl-0 py-2 align-items-center ps-3 fs-3 pe-xl-4 pe-3 text-primary btn"
+                <div
+                  onClick={() => navigate("/messages")}
+                  className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-sm-3 fs-3 pe-xl-4 px-2 text-primary btn"
                 >
                   <div className="nav-icon">
                     <i
@@ -103,13 +124,13 @@ export default function Sidebar() {
                   >
                     Messages
                   </span>
-                </Link>
+                </div>
               </div>
 
               <div className="w-100 d-none d-sm-block">
-                <Link
-                  to="/bookmarks"
-                  className="nav hover rounded-pill mx-auto mx-xl-0 py-2 align-items-center ps-3 fs-3 pe-xl-4 pe-3 text-primary btn"
+                <div
+                  onClick={() => navigate("/bookmarks")}
+                  className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 align-items-center px-sm-3 fs-3 pe-xl-4 text-primary btn"
                 >
                   <div className="nav-icon">
                     <i
@@ -125,12 +146,12 @@ export default function Sidebar() {
                   >
                     Bookmarks
                   </span>
-                </Link>
+                </div>
               </div>
               <div className="w-100 d-none d-sm-block">
-                <Link
-                  to={"/" + user.account_name}
-                  className="nav hover rounded-pill mx-auto mx-xl-0 py-2 align-items-center ps-3 fs-3 pe-xl-4 pe-3 text-primary btn"
+                <div
+                  onClick={() => navigate("/" + user.account_name)}
+                  className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 align-items-center px-sm-3 fs-3 pe-xl-4 text-primary btn"
                 >
                   <div className="nav-icon">
                     <i
@@ -150,12 +171,12 @@ export default function Sidebar() {
                   >
                     Profile
                   </span>
-                </Link>
+                </div>
               </div>
               <div className="w-100 d-none d-sm-block">
-                <Link
-                  to="/settings"
-                  className="nav hover rounded-pill mx-auto mx-xl-0 py-2 align-items-center ps-3 fs-3 pe-xl-4 pe-3 text-primary btn"
+                <div
+                  onClick={() => navigate("/settings")}
+                  className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 align-items-center px-sm-3 fs-3 pe-xl-4 text-primary btn"
                 >
                   <div className="nav-icon">
                     <i
@@ -171,11 +192,12 @@ export default function Sidebar() {
                   >
                     Settings
                   </span>
-                </Link>
+                </div>
               </div>
               <div className="w-100 mt-2 d-none d-sm-block">
-                <Link
+                <div
                   to="/"
+                  onClick={() => setCompose(true)}
                   className="nav hover rounded-pill w-100 mx-auto bg-app py-2 fs-3 text-white btn"
                 >
                   <div className="nav-icon d-xl-none mx-auto">
@@ -184,10 +206,13 @@ export default function Sidebar() {
                   <span className="nav-title d-xl-block mx-auto d-none">
                     Tweet
                   </span>
-                </Link>
+                </div>
               </div>
             </div>
-            <Link className="hover rounded-pill btn my-3 p-2 d-none d-sm-block" to="/logout">
+            <div
+              onClick={() => navigate("/logout")}
+              className="hover rounded-pill btn my-3 p-2 d-none d-sm-block"
+            >
               <div className="d-flex align-items-center">
                 <div className="profile-image mx-auto me-xl-3">
                   <img
@@ -206,7 +231,7 @@ export default function Sidebar() {
                   </div>
                 </div>
               </div>
-            </Link>
+            </div>
           </div>
         </div>
       </div>

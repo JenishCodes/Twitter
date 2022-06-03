@@ -172,9 +172,9 @@ export default function Tweet(props) {
             }
           >
             <div className="info d-flex align-items-center position-relative">
-              <div className="d-flex flex-grow-1">
+              <div className="d-flex flex-grow-1 flex-wrap">
                 <div
-                  className="name me-1 fw-bold hover-underline"
+                  className="name me-1 fw-bold hover-underline oneline"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate("/" + data.author.account_name);
@@ -182,12 +182,15 @@ export default function Tweet(props) {
                 >
                   {data.author.name}
                 </div>
-                <div className="username text-muted me-1">
+                <div className="d-flex">
+
+                <div className="username text-muted me-1 oneline">
                   @{data.author.account_name}
                 </div>
                 <div className="text-muted">
                   {" "}
                   · {timeFormatter(data.createdAt)}
+                </div>
                 </div>
               </div>
               <div className="actions position-relative">

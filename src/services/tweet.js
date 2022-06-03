@@ -6,7 +6,6 @@ export async function postTweet(
   user_id,
   reference_type = null,
   referenced_tweet = null,
-  in_reply_to_account_name = null
 ) {
   try {
     const entities = extractEntities(text);
@@ -16,7 +15,6 @@ export async function postTweet(
         author_id: user_id,
         text,
         referenced_tweet,
-        in_reply_to_account_name,
         entities,
       });
     } else if (reference_type === "retweet_of") {

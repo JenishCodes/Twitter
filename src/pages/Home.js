@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import Header from "../components/Header";
-import Editor from "../components/Editor";
 import { AuthContext } from "../config/context";
 import { getUserFeed } from "../services/user";
 import Tweet from "../components/Tweet";
+import Loading from "../components/Loading";
 
 export default function Home() {
   const [lastLikedTweet, setLastLikedTweet] = useState(0);
@@ -14,6 +14,7 @@ export default function Home() {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
+    setLoading(true);
     getUserFeed(
       user.account_name,
       lastTweet,
@@ -33,10 +34,13 @@ export default function Home() {
   return (
     <div className="h-100">
       <Header title="Home" arrow={false} />
-      <Editor />
-      <div className="feed">
-        {feed.length > 0
-          ? feed.map((tweet, index) =>
+      <Loading
+        show={loading}
+        style={{ width: "1.5rem", height: "1.5rem" }}
+        className="mt-5 text-app"
+      />
+      {feed.length > 0
+        ? feed.map((tweet, index) =>
             tweet.referenced_tweet.length > 0 ? (
               <div key={index}>
                 <Tweet lowerlink tweet={tweet.referenced_tweet[0]} />
@@ -46,18 +50,10 @@ export default function Home() {
               <Tweet key={index} tweet={tweet} />
             )
           )
-          : !loading && (
+        : !loading && (
             <div className="text-center text-muted mt-5">No tweets yet</div>
           )}
 
-        {loading ? (
-          <div className="d-flex justify-content-center align-items-center h-100">
-            <div className="spinner-border text-primary" role="status">
-              <span className="sr-only">Loading...</span>
-            </div>
-          </div>
-        ) : null}
-      </div>
       {feed.length ? <div className="h-50-vh"></div> : null}
     </div>
   );

@@ -36,14 +36,16 @@ export default function Profile(props) {
     }
   };
 
-  return props.user ? (
+  return (
     <div className="profile">
       <div className="poster">
-        {props.user.banner_image_url?<img
-          className="w-100 h-100"
-          src={props.user.banner_image_url}
-          alt="banner"
-        />:null}
+        {props.user.banner_image_url ? (
+          <img
+            className="w-100 h-100"
+            src={props.user.banner_image_url}
+            alt="banner"
+          />
+        ) : null}
       </div>
       <div className="photo-btn d-flex justify-content-between px-3">
         <div className="photo w-25">
@@ -60,13 +62,17 @@ export default function Profile(props) {
           <div className="btn text-primary rounded-circle hover border px-2 py-1 mx-2">
             <i
               className="bi bi-envelope fs-3"
-              onClick={() => navigate("/messages/" + props.user._id, { state: { user: props.user } })}
+              onClick={() =>
+                navigate("/messages/" + props.user._id, {
+                  state: { user: props.user },
+                })
+              }
             ></i>
           </div>
           <div
-            className={`btn hover ${
-              freindshipStatus === "Follow" ? "bg-app text-secondary" : ""
-            } rounded-pill border px-3`}
+            className={`btn border hover fw-bold ${
+              freindshipStatus === "Follow" ? "bg-app text-white" : ""
+            } rounded-pill px-3`}
             onClick={handleClick}
           >
             {freindshipStatus}
@@ -100,28 +106,25 @@ export default function Profile(props) {
           ) : null}
         </div>
         <div className="statics d-flex mt-3 mb-2">
-          <Link to={`/${props.user.account_name}/network/following`} state={props.user}>
+          <Link
+            to={`/${props.user.account_name}/network/following`}
+            state={props.user}
+          >
             <div className="d-flex me-4">
               <span>{props.user.following_count}</span>
               <span className="text-muted ms-1">Following</span>
             </div>
           </Link>
-          <Link to={`/${props.user.account_name}/network/followers`} state={props.user}>
+          <Link
+            to={`/${props.user.account_name}/network/followers`}
+            state={props.user}
+          >
             <div className="d-flex">
               <span>{props.user.followers_count}</span>
               <span className="text-muted ms-1">Followers</span>
             </div>
           </Link>
         </div>
-      </div>
-    </div>
-  ) : (
-    <div className="w-100 py-5 text-center">
-      <div
-        className="spinner-border spinner-border-sm text-app m-auto"
-        role="status"
-      >
-        <span className="sr-only">Loading...</span>
       </div>
     </div>
   );

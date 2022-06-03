@@ -7,6 +7,7 @@ import Trend from "../components/Trend";
 import { searchHashtags } from "../services/hashtag";
 import { searchTweets } from "../services/tweet";
 import { searchUser } from "../services/user";
+import Loading from "../components/Loading";
 
 export default function Search() {
   const [hashtags, setHashtags] = useState([]);
@@ -40,9 +41,8 @@ export default function Search() {
         code: "hashtags",
         url: "../search/hashtags?q=" + query,
       },
-    ])
+    ]);
   }, [query]);
-
 
   useEffect(() => {
     setLoading(true);
@@ -88,22 +88,22 @@ export default function Search() {
   return (
     <div>
       <Tabbar activeTab={search_type} tabs={tabs} title="Search Results">
+        <Loading
+          show={loading}
+          className="my-5 text-app"
+          style={{ width: "1.5rem", height: "1.5rem" }}
+        />
         {search_type === "tweets"
           ? tweets.length > 0
-            ? tweets.map((tweet) => (
-              <Tweet
-                key={tweet._id}
-                tweet={tweet}
-              />
-            ))
+            ? tweets.map((tweet) => <Tweet key={tweet._id} tweet={tweet} />)
             : !loading && (
-              <div className="text-center text-muted mt-3">
-                No tweets found
-              </div>
-            )
+                <div className="text-center text-muted mt-3">
+                  No tweets found
+                </div>
+              )
           : search_type === "users"
-            ? users.length > 0
-              ? users.map((user) => (
+          ? users.length > 0
+            ? users.map((user) => (
                 <List
                   key={user.auth_id}
                   className="hover"
@@ -116,36 +116,31 @@ export default function Search() {
                   onClick={() => navigate("/" + user.account_name)}
                 />
               ))
-              : !loading && (
+            : !loading && (
                 <div className="text-center text-muted mt-3">
                   No users found
                 </div>
               )
-            : search_type === "hashtags"
-              ? hashtags.length > 0
-                ? hashtags.map((hashtag) => (
-                  <Trend
-                    key={hashtag.tag}
-                    hashtag={hashtag.tag}
-                    tweets={hashtag.tweet_count}
-                  />
-                ))
-                : !loading && (
-                  <div className="text-center text-muted mt-3">
-                    No hashtags found
-                  </div>
-                )
-              : null}
-        {loading ? (
-          <div className="text-center my-5">
-            <div
-              className="spinner-border text-app"
-              style={{ width: "1.5rem", height: "1.5rem" }}
-              role="status"
-            >
-              <span className="visually-hidden">Loading...</span>
-            </div>
-          </div>
+          : search_type === "hashtags"
+          ? hashtags.length > 0
+            ? hashtags.map((hashtag) => (
+                <Trend
+                  key={hashtag.tag}
+                  hashtag={hashtag.tag}
+                  tweets={hashtag.tweet_count}
+                />
+              ))
+            : !loading && (
+                <div className="text-center text-muted mt-3">
+                  No hashtags found
+                </div>
+              )
+          : null}
+
+        {(search_type === "tweets" && tweets.length > 0) ||
+        (search_type === "users" && users.length > 0) ||
+        (search_type === "hashtags" && hashtags.length > 0) ? (
+          <div className="h-50-vh"></div>
         ) : null}
       </Tabbar>
     </div>

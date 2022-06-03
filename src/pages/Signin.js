@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Loading from "../components/Loading";
 import Modal from "../components/Modal";
 import { signin, signUpWithGoogle } from "../services/user";
 
@@ -17,23 +18,19 @@ export default function Signin() {
 
   const handleGoogleSignin = () => {
     setLoading(true);
-    signUpWithGoogle("")
+    signUpWithGoogle("");
     setLoading(false);
   };
 
   return (
     <div className="signin p-3">
       {loading ? (
-        <Modal bg_color="rgba(0, 0, 0, 0.4)">
-          <div className="text-center my-5">
-            <div
-              className="spinner-border text-app"
-              style={{ width: "1.5rem", height: "1.5rem" }}
-              role="status"
-            >
-              <span className="visually-hidden">Loading...</span>
-            </div>
-          </div>
+        <Modal bgColor="rgba(0, 0, 0, 0.4)">
+          <Loading
+            show={loading}
+            className="my-5 text-app"
+            style={{ width: "1.5rem", height: "1.5rem" }}
+          />
         </Modal>
       ) : null}
       <div
