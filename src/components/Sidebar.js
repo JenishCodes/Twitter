@@ -76,7 +76,10 @@ export default function Sidebar() {
 
               <div className="w-100 d-sm-none d-block">
                 <div
-                  onClick={() => setCompose(true)}
+                  onClick={() => {
+                    document.body.style.overflowY = "hidden";
+                    setCompose(true);
+                  }}
                   className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-sm-3 fs-3 pe-xl-4 px-2 text-primary bg-app btn"
                 >
                   <div className="nav-icon">
@@ -197,8 +200,11 @@ export default function Sidebar() {
               <div className="w-100 mt-2 d-none d-sm-block">
                 <div
                   to="/"
-                  onClick={() => setCompose(true)}
-                  className="nav hover rounded-pill w-100 mx-auto bg-app py-2 fs-3 text-white btn"
+                  onClick={() => {
+                    document.body.style.overflowY = "hidden";
+                    setCompose(true);
+                  }}
+                  className="nav hover compose-btn rounded-pill mx-auto bg-app py-2 fs-3 text-white btn"
                 >
                   <div className="nav-icon d-xl-none mx-auto">
                     <i className="bi bi-plus-circle"></i>

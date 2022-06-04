@@ -24,27 +24,27 @@ export default function User() {
   const [tabs] = useState([
     {
       name: "Tweets",
-      url: `../`,
+      path: `../`,
       code: undefined,
     },
     {
       name: "Replies",
-      url: `../replies`,
+      path: `../replies`,
       code: "replies",
     },
     {
       name: "Retweets",
-      url: `../retweets`,
+      path: `../retweets`,
       code: "retweets",
     },
     {
       name: "Likes",
-      url: `../likes`,
+      path: `../likes`,
       code: "likes",
     },
     {
       name: "Mentions",
-      url: `../mentions`,
+      path: `../mentions`,
       code: "mentions",
     },
   ]);

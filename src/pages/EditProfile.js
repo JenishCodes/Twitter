@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../config/context";
 import { editProfile } from "../services/user";
 import Header from "../components/Header";
+import Loading from "../components/Loading";
 
 export default function EditProfile(props) {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export default function EditProfile(props) {
   const [banner, setBanner] = useState();
   const [imageUrl, setImageUrl] = useState();
   const [bannerUrl, setBannerUrl] = useState();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -28,6 +30,7 @@ export default function EditProfile(props) {
   }, [user]);
 
   const handleClick = () => {
+    setLoading(true);
     editProfile({
       name,
       description,
@@ -37,12 +40,17 @@ export default function EditProfile(props) {
       banner_image_url: banner,
     })
       .then(() => navigate(`/${user.account_name}`, { replace: true }))
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   };
 
   return (
     <div className="edit-profile">
-      <Header title="Edit Profile" subtitle={"@" + user.account_name} backArrow />
+      <Header
+        title="Edit Profile"
+        subtitle={"@" + user.account_name}
+        backArrow
+      />
       <div className="editprofile pb-5">
         <div className="poster">
           {bannerUrl && (
@@ -93,11 +101,26 @@ export default function EditProfile(props) {
           </div>
           <div className="btns py-2">
             <div
-              className={`btn hover bg-app fw-bold rounded-pill px-3`}
               onClick={handleClick}
+              className={`btn text-white btn-primary fw-bold rounded-pill py-1 px-3${
+                loading ? " disabled" : ""
+              }`}
             >
-              Save
+              {loading ? (
+                <Loading
+                  show={true}
+                  style={{
+                    width: "1rem",
+                    height: "1rem",
+                    margin: "0 9.5px",
+                  }}
+                  className="text-white"
+                />
+              ) : (
+                "Save"
+              )}
             </div>
+            
           </div>
         </div>
         <div className="form-floating mx-4 my-4">

@@ -186,7 +186,15 @@ export const timeFormatter = (
         now.getMonth() === then.getMonth() &&
         now.getDate() === then.getDate()
       ) {
-        ans = "";
+        if (now.getHours() === then.getHours()) {
+          if (now.getMinutes() === then.getMinutes()) {
+            return "now";
+          } else {
+            return `${now.getMinutes() - then.getMinutes()}m`;
+          }
+        } else {
+          return `${now.getHours() - then.getHours()}h`;
+        }
       } else {
         ans = ans.slice(0, ans.indexOf(","));
       }

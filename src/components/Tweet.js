@@ -123,8 +123,9 @@ export default function Tweet(props) {
       }
     >
       <div
-        className={`tweet hover pointer border-0 px-3 ${props.upperlink ? "py-0" : "pt-2"
-          } ${props.lowerlink ? "" : "border-bottom"} w-100 text-start`}
+        className={`tweet hover pointer border-0 px-3 ${
+          props.upperlink ? "py-0" : "pt-2"
+        } ${props.lowerlink ? "" : "border-bottom"} w-100 text-start`}
       >
         {props.upperlink ? (
           <div style={{ width: "48px", marginBottom: "6px" }}>
@@ -183,14 +184,13 @@ export default function Tweet(props) {
                   {data.author.name}
                 </div>
                 <div className="d-flex">
-
-                <div className="username text-muted me-1 oneline">
-                  @{data.author.account_name}
-                </div>
-                <div className="text-muted">
-                  {" "}
-                  · {timeFormatter(data.createdAt)}
-                </div>
+                  <div className="username text-muted me-1 oneline">
+                    @{data.author.account_name}
+                  </div>
+                  <div className="text-muted">
+                    {" "}
+                    · {timeFormatter(data.createdAt)}
+                  </div>
                 </div>
               </div>
               <div className="actions position-relative">
@@ -213,8 +213,9 @@ export default function Tweet(props) {
                       onClick={handlePinTweet}
                     >
                       <i
-                        className={`bi bi-pin-angle${user.pinned_tweet_id === data._id ? "-fill" : ""
-                          } me-3`}
+                        className={`bi bi-pin-angle${
+                          user.pinned_tweet_id === data._id ? "-fill" : ""
+                        } me-3`}
                       ></i>
                       <div>
                         {user.pinned_tweet_id === data._id
@@ -228,8 +229,9 @@ export default function Tweet(props) {
                       onClick={handleBookmark}
                     >
                       <i
-                        className={`bi bi-bookmark${bookmarked ? "-fill" : ""
-                          } me-3`}
+                        className={`bi bi-bookmark${
+                          bookmarked ? "-fill" : ""
+                        } me-3`}
                       ></i>
                       <div>
                         {bookmarked ? "Remove Bookmark" : "Add Bookmark"}
@@ -260,18 +262,19 @@ export default function Tweet(props) {
 
             <div className="mt-3 mb-2">
               <div className="d-flex">
-                <div className="flex-grow-1">
-                  <div className="d-flex align-items-center text-muted btn p-0">
+                <div className="col-3">
+                  <div className="d-flex w-min align-items-center text-muted btn p-0">
                     <div className="me-2">
                       {data.public_metrics.reply_count}
                     </div>
                     <i className="bi rounded-circle hover px-2 py-1 fs-4 bi-arrow-return-left"></i>
                   </div>
                 </div>
-                <div className="flex-grow-1">
+                <div className="col-3">
                   <div
-                    className={`d-flex align-items-center btn p-0 text-${retweeted ? "success" : "muted"
-                      }`}
+                    className={`d-flex w-min align-items-center btn p-0 text-${
+                      retweeted ? "success" : "muted"
+                    }`}
                     onClick={handleRetweet}
                   >
                     <div className="me-2">
@@ -280,21 +283,23 @@ export default function Tweet(props) {
                     <i className="bi rounded-circle hover px-2 py-1 fs-4 bi-arrow-repeat"></i>
                   </div>
                 </div>
-                <div className="flex-grow-1">
+                <div className="col-3">
                   <div
-                    className={`d-flex h-100 align-items-center btn p-0 text-${liked ? "danger" : "muted"
-                      }`}
+                    className={`d-flex w-min h-100 align-items-center btn p-0 text-${
+                      liked ? "danger" : "muted"
+                    }`}
                     onClick={handleLike}
                   >
                     <div className="me-2">{data.public_metrics.like_count}</div>
                     <i
-                      className={`bi rounded-circle hover px-2 py-1 bi-heart${liked ? "-fill" : ""
-                        } `}
+                      className={`bi rounded-circle hover px-2 py-1 bi-heart${
+                        liked ? "-fill" : ""
+                      } `}
                     ></i>
                   </div>
                 </div>
-                <div className="flex-grow-1">
-                  <div className="d-flex h-100 align-items-center text-muted btn p-0">
+                <div className="col-3">
+                  <div className="d-flex w-min h-100 align-items-center text-muted btn p-0">
                     <i className="bi rounded-circle hover px-2 py-1 bi-share"></i>
                   </div>
                 </div>

@@ -85,7 +85,7 @@ export default function AppScreen() {
               <Route path=":account_name">
                 <Route index element={<User />} />
                 <Route path=":profile_type" index element={<User />} />
-                <Route path="status/:status_id" element={<Status />}>
+                <Route path="status/:status_id">
                   <Route index element={<Status />} />
                   <Route path=":reaction_type" element={<Reactions />} />
                 </Route>

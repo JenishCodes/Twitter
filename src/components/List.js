@@ -6,7 +6,7 @@ export default function List(props) {
       className={"list px-3 py-2 " + props.className}
       onClick={props.onClick}
     >
-      <div className="d-flex align-items-center">
+      <div className="d-flex">
         <div className="me-3 image">
           {props.data.image ? (
             props.data.image

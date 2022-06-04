@@ -78,7 +78,11 @@ export default function Editor({
           tweet.current.innerHTML = "";
         })
         .catch((err) => console.log(err))
-        .finally(() => setLoading(false));
+        .finally(() => {
+          setLoading(false);
+          setShow(false);
+          document.body.style.overflowY = "scroll";
+        });
     } else {
       postTweet(text, user._id)
         .then(() => {
@@ -86,7 +90,11 @@ export default function Editor({
           tweet.current.innerHTML = "";
         })
         .catch((err) => console.log(err))
-        .finally(() => setLoading(false));
+        .finally(() => {
+          setLoading(false);
+          setShow(false);
+          document.body.style.overflowY = "scroll";
+        });
     }
   };
 
@@ -94,17 +102,17 @@ export default function Editor({
     <Modal>
       <div className="compose bg-primary p-2">
         <div className="w-100">
-
-        <div
-          className="btn hover rounded-circle px-2 py-0"
-          onClick={() => {
-            setText("");
-            setShow(false);
-          }}
-        >
-          <i className="bi bi-x fs-1"></i>
+          <div
+            className="btn hover rounded-circle px-2 py-0"
+            onClick={() => {
+              setText("");
+              setShow(false);
+              document.body.style.overflowY = "scroll";
+            }}
+          >
+            <i className="bi bi-x fs-1"></i>
+          </div>
         </div>
-            </div>
         {reference_tweet ? (
           <div className="tweet border-0 px-3 pt-2 w-100 text-start">
             <div className="d-flex justify-content-between">
@@ -244,7 +252,7 @@ export default function Editor({
                   >
                     {loading ? (
                       <Loading
-                        show={!loading}
+                        show={true}
                         style={{
                           width: "1rem",
                           height: "1rem",

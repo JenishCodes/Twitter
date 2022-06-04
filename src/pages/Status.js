@@ -312,7 +312,10 @@ export default function Status() {
               <div className="flex-grow-1 text-center">
                 <div
                   className="text-muted btn py-1 px-2 rounded-circle hover"
-                  onClick={() => setShow(!show)}
+                  onClick={() => {
+                    setShow(true)
+                    document.body.style.overflowY = "hidden"
+                  }}
                 >
                   <i className="bi fs-3 bi-arrow-return-left"></i>
                 </div>

@@ -59,12 +59,12 @@ export default function Network() {
         tabs={[
           {
             name: "Following",
-            url: "../network/following",
+            path: "../network/following",
             code: "following",
           },
           {
             name: "Followers",
-            url: "../network/followers",
+            path: "../network/followers",
             code: "followers",
           },
         ]}

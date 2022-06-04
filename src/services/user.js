@@ -187,7 +187,7 @@ export async function editProfile(data) {
   if (data.banner_image_url) {
     const bannerImageRef = ref(
       storage,
-      `/banner_images/${auth.currentUser.uid}`
+      `/banner_images/${auth.currentUser.uid}.jpg`
     );
 
     await uploadBytes(bannerImageRef, data.banner_image_url);

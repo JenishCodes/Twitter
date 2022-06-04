@@ -82,60 +82,58 @@ export default function Chat(props) {
 
   return (
     <div className="chat h-100">
-      <div className="main-content d-flex flex-column">
-        <div className="header">
-          <div className="d-flex px-2 align-items-center">
-            <div
-              className="btn hover rounded-circle me-2 py-0 px-2"
-              onClick={() => navigate(-1)}
+      <div className="header position-absolute">
+        <div className="d-flex px-2 align-items-center">
+          <div
+            className="btn hover rounded-circle me-2 py-0 px-2"
+            onClick={() => navigate(-1)}
+          >
+            <i className="bi bi-arrow-left-short fs-1"></i>
+          </div>
+          <img
+            src={chatUser?.profile_image_url}
+            className="profile-image rounded-circle me-2"
+            alt="profile"
+          />
+          <div className="flex-grow-1">
+            <Link
+              className="fw-bold hover-underline fs-4"
+              to={"/" + chatUser?.account_name}
+              style={{ lineHeight: 1 }}
             >
-              <i className="bi bi-arrow-left-short fs-1"></i>
+              {chatUser?.name}
+            </Link>
+            <div className="text-muted fs-6" style={{ lineHeight: 1 }}>
+              {messages.length} Messages
             </div>
-            <img
-              src={chatUser?.profile_image_url}
-              className="profile-image rounded-circle me-2"
-              alt="profile"
-            />
-            <div className="flex-grow-1">
-              <Link
-                className="fw-bold hover-underline fs-4"
-                to={"/" + chatUser?.account_name}
-                style={{ lineHeight: 1 }}
-              >
-                {chatUser?.name}
-              </Link>
-              <div className="text-muted fs-6" style={{ lineHeight: 1 }}>
-                {messages.length} Messages
-              </div>
-            </div>
-            <div className="btn rounded-pill hover">
-              <i className="bi bi-info-circle"></i>
-            </div>
+          </div>
+          <div className="btn rounded-pill hover">
+            <i className="bi bi-info-circle"></i>
           </div>
         </div>
-        <div className="content flex-grow-1">
-          <div className="messages-container px-3">
-            <Loading
-              show={loading}
-              className="my-5 text-app"
-              style={{ width: "1.5rem", height: "1.5rem" }}
-            />
-            {messages.length > 0
-              ? messages.map((message, index) => (
-                  <Message
-                    key={index}
-                    message={message}
-                    align={message.senderId === user._id ? "end" : "start"}
-                    handleDelete={handleDelete}
-                    nextTime={
-                      index < messages.length - 1
-                        ? messages[index + 1].createdAt
-                        : null
-                    }
-                  />
-                ))
-              : null}
-          </div>
+      </div>
+      <div className="content">
+        <div className="messages-container px-3">
+          <Loading
+            show={loading}
+            className="my-5 text-app"
+            style={{ width: "1.5rem", height: "1.5rem" }}
+          />
+          {messages.length > 0
+            ? messages.map((message, index) => (
+                <Message
+                  key={index}
+                  message={message}
+                  align={message.senderId === user._id ? "end" : "start"}
+                  handleDelete={handleDelete}
+                  nextTime={
+                    index < messages.length - 1
+                      ? messages[index + 1].createdAt
+                      : null
+                  }
+                />
+              ))
+            : null}
         </div>
       </div>
       <div className="text-box w-100 bg-primary d-flex align-items-center px-2 border-top py-2">

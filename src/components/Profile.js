@@ -2,10 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../config/context";
 import { getFriendship, follow, unfollow } from "../services/friendship";
+import Modal from "./Modal";
 
 export default function Profile(props) {
   const { user } = useContext(AuthContext);
+  const [show, setShow] = useState(false);
   const [freindshipStatus, setFriendshipStatus] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [imageType, setImageType] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,18 +45,30 @@ export default function Profile(props) {
       <div className="poster">
         {props.user.banner_image_url ? (
           <img
-            className="w-100 h-100"
+            className="pointer w-100 h-100"
             src={props.user.banner_image_url}
             alt="banner"
+            onClick={() => {
+              document.body.style.overflowY = "hidden";
+              setImageUrl(props.user.banner_image_url);
+              setImageType("banner");
+              setShow(true);
+            }}
           />
         ) : null}
       </div>
       <div className="photo-btn d-flex justify-content-between px-3">
         <div className="photo w-25">
           <img
-            className="w-100 rounded-circle"
+            className="pointer w-100 rounded-circle"
             src={props.user.profile_image_url}
             alt="profile"
+            onClick={() => {
+              document.body.style.overflowY = "hidden";
+              setImageUrl(props.user.profile_image_url);
+              setImageType("profile");
+              setShow(true);
+            }}
           />
         </div>
         <div className="btns pt-2">
@@ -126,6 +142,37 @@ export default function Profile(props) {
           </Link>
         </div>
       </div>
+      {show ? (
+        <Modal style={{ width: "100%", height: "100%" }}>
+          <div className="position-absolute p-3">
+            <div
+              className="btn hover px-2 py-0 rounded-circle"
+              onClick={() => {
+                setShow(false);
+                document.body.style.overflowY = "scroll";
+              }}
+            >
+              <i className="bi bi-x fs-1"></i>
+            </div>
+          </div>
+          <div className="d-flex flex-column align-items-center h-100 justify-content-center">
+            <div
+              className="w-100"
+              style={{
+                maxHeight: "400px",
+                maxWidth: imageType === "profile" ? "400px" : "100%",
+              }}
+            >
+              <img
+                className={`h-100 w-100${
+                  imageType === "profile" ? " rounded-circle" : ""
+                }`}
+                src={imageUrl}
+              />
+            </div>
+          </div>
+        </Modal>
+      ) : null}
     </div>
   );
 }

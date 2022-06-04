@@ -29,17 +29,17 @@ export default function Search() {
       {
         name: "Tweet",
         code: "tweets",
-        url: "../search/tweets?q=" + query,
+        path: "../search/tweets?q=" + query,
       },
       {
         name: "User",
         code: "users",
-        url: "../search/users?q=" + query,
+        path: "../search/users?q=" + query,
       },
       {
         name: "Hashtag",
         code: "hashtags",
-        url: "../search/hashtags?q=" + query,
+        path: "../search/hashtags?q=" + query,
       },
     ]);
   }, [query]);
