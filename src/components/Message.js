@@ -18,6 +18,7 @@ export default function Message(props) {
           <div
             className="message-delete btn hover me-3"
             onClick={() => handleDelete(message._id)}
+            data-title="Delete"
             style={{ height: "fit-content" }}
           >
             <i className="bi bi-trash text-muted"></i>

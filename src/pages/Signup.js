@@ -25,26 +25,33 @@ export default function Signup() {
   };
 
   return (
-    <div className="signup p-3">
+    <div className="signup py-3">
       {loading ? (
-        <Modal bg_color="rgba(0, 0, 0, 0.4)">
+        <Modal style={{
+          left: "50%",
+          position: "absolute",
+          transform: "translateX(50%)",
+          width: "300px",
+        }}>
           <Loading
-            show={loading}
+            show={true}
             className="my-5 text-app"
             style={{ width: "1.5rem", height: "1.5rem" }}
           />
         </Modal>
       ) : null}
       <div
-        className="p-3 pt-0 d-flex align-items-center"
+        className="p-3 pt-0 d-flex justify-content-center"
         style={{ fontSize: "30px" }}
       >
-        <div className="me-4">
-          <i className="bi bi-twitter"></i>
-        </div>
+        <Link to="/">
+          <div className="me-4">
+            <i className="bi bi-twitter"></i>
+          </div>
+        </Link>
         <div className="fw-bold">Create your account</div>
       </div>
-      <div className="m-auto mt-4" style={{ width: "320px" }}>
+      <div className="m-auto mt-4" style={{ width: "300px" }}>
         <div className="mb-5">
           <div
             onClick={handleGoogleSignup}
@@ -113,7 +120,10 @@ export default function Signup() {
             Sign up
           </div>
           <div className="text-muted mt-4">
-            Already have an account? <Link to="../signin">Sign in</Link>
+            Already have an account?{" "}
+            <Link className="hover-underline" to="/signin">
+              Sign in
+            </Link>
           </div>
         </div>
       </div>

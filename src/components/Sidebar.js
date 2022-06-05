@@ -29,18 +29,17 @@ export default function Sidebar() {
           <div className="d-flex flex-sm-column px-xl-3 px-1 justify-content-between h-100">
             <div className="d-flex flex-sm-column flex-grow-1 align-items-center py-sm-0 py-1">
               <div className="w-100 d-none d-sm-block">
-                <Link to="/home">
-                  <div className="px-3 mx-auto mx-xl-0 hover py-2 nav rounded-pill py-2 align-items-center p-3 text-app btn">
-                    <div className="m-0 nav-icon">
-                      <i className="bi bi-twitter"></i>
-                    </div>
+                <div className="px-3 mx-auto mx-xl-0 py-2 nav rounded-pill py-2 align-items-center p-3 text-app">
+                  <div className="m-0 nav-icon" data-title="Twitter">
+                    <i className="bi bi-twitter"></i>
                   </div>
-                </Link>
+                </div>
               </div>
               <div className="w-100">
                 <div
                   className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-2 px-sm-3 fs-3 pe-xl-4 text-primary btn"
                   onClick={() => navigate("/home")}
+                  title="Home"
                 >
                   <div className="nav-icon">
                     <i
@@ -204,7 +203,8 @@ export default function Sidebar() {
                     document.body.style.overflowY = "hidden";
                     setCompose(true);
                   }}
-                  className="nav hover compose-btn rounded-pill mx-auto bg-app py-2 fs-3 text-white btn"
+                  data-title="Tweet"
+                  className="nav filter compose-btn rounded-pill mx-auto bg-app py-2 fs-3 text-white btn"
                 >
                   <div className="nav-icon d-xl-none mx-auto">
                     <i className="bi bi-plus-circle"></i>

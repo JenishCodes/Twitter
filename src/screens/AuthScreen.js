@@ -14,7 +14,7 @@ export default function AuthScreen() {
         </div>
       </div>
 
-      <main className="main col-lg-5 col-12 position-absolute end-0">
+      <main className="col-lg-5 col-12 position-absolute end-lg-0 m-auto">
         <Routes>
           <Route path="/" element={<Main />} />
           <Route path="signin" element={<Signin />} />

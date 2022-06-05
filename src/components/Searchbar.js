@@ -191,7 +191,7 @@ export default function Searchbar() {
             <div className="d-flex px-3 py-2 justify-content-between">
               <div className="fs-3">{query ? "Results" : "Recent"}</div>
               {query ? null : (
-                <div className="fs-6 btn hover" onClick={handleClearAll}>
+                <div className="fs-6 btn hover rounded-pill" onClick={handleClearAll}>
                   Clear All
                 </div>
               )}

@@ -18,7 +18,8 @@ export default function Header(props) {
           <div
             className={`start btn hover rounded-circle px-2 py-0 ${
               props.backArrow === "half" ? "d-sm-none" : ""
-            }`}
+              }`}
+            data-title="Back"
             onClick={() => navigate(-1)}
           >
             <i className="bi bi-arrow-left-short fs-1"></i>

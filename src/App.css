@@ -133,6 +133,10 @@
 .btn:focus {
   box-shadow: none !important;
 }
+.filter:hover {
+  color: currentColor;
+  filter: brightness(0.85);
+}
 .border {
   border: solid 1px var(--border) !important;
 }
@@ -206,4 +210,39 @@ a {
 }
 .w-min {
   width: min-content !important;
+}
+
+@media screen and (min-width: 991px) {
+  .end-lg-0 {
+    right: 0 !important;
+  }
+}
+
+[data-title]:hover:after {
+  opacity: 1;
+  transition: all 0.1s ease 0.75s;
+  visibility: visible;
+}
+[data-title]:after {
+  content: attr(data-title);
+  background-color: rgba(170, 195, 255, 0.25);
+  font-size: 11px;
+  color: var(--text-primary);
+  font-weight: 600;
+  position: absolute;
+  padding: 2px 5px;
+  white-space: nowrap;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  border-radius: 2px;
+  z-index: 101;
+  top: 110%;
+}
+[data-title] {
+  position: relative;
+}
+.dropdown-menu {
+  box-shadow: rgb(255 255 255 / 20%) 0px 0px 15px,
+    rgb(255 255 255 / 15%) 0px 0px 3px 1px;
 }

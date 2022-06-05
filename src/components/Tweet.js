@@ -198,24 +198,25 @@ export default function Tweet(props) {
                   className="btn hover px-1 py-0 rounded-circle"
                   id="menu"
                   data-bs-toggle="dropdown"
+                  data-title="More"
                   aria-expanded="false"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <i className="bi bi-three-dots"></i>
                 </div>
                 <div
-                  className="dropdown-menu dropdown-menu-end bg-muted py-1"
+                  className="dropdown-menu dropdown-menu-end bg-primary py-0"
                   aria-labelledby="menu"
                 >
                   {data.author._id === user._id ? (
                     <div
-                      className="d-flex text-start text-primary dropdown-item py-1 px-3 hover btn fs-6"
+                      className="d-flex text-start text-primary align-items-center dropdown-item py-2 px-3 hover btn"
                       onClick={handlePinTweet}
                     >
                       <i
                         className={`bi bi-pin-angle${
                           user.pinned_tweet_id === data._id ? "-fill" : ""
-                        } me-3`}
+                        } me-3 fs-3`}
                       ></i>
                       <div>
                         {user.pinned_tweet_id === data._id
@@ -225,13 +226,13 @@ export default function Tweet(props) {
                     </div>
                   ) : (
                     <div
-                      className="text-start text-primary d-flex dropdown-item py-1 px-3 hover btn fs-6"
+                      className="text-start text-primary d-flex align-items-center dropdown-item py-2 px-3 hover btn"
                       onClick={handleBookmark}
                     >
                       <i
                         className={`bi bi-bookmark${
                           bookmarked ? "-fill" : ""
-                        } me-3`}
+                        } me-3 fs-3`}
                       ></i>
                       <div>
                         {bookmarked ? "Remove Bookmark" : "Add Bookmark"}
@@ -239,13 +240,13 @@ export default function Tweet(props) {
                     </div>
                   )}
                   {data.author._id === user._id ? (
-                    <div className="text-start text-primary d-flex dropdown-item py-1 px-3 hover btn fs-6">
-                      <i className="bi bi-flag me-3"></i>
+                    <div className="text-start text-primary d-flex align-items-center dropdown-item py-2 px-3 hover btn">
+                      <i className="bi bi-flag me-3 fs-3"></i>
                       <div>Report Tweet</div>
                     </div>
                   ) : (
-                    <div className="d-flex text-start text-danger dropdown-item py-1 px-3 hover btn fs-6">
-                      <i className="bi bi-trash me-3"></i>
+                    <div className="d-flex text-start text-danger align-items-center dropdown-item py-2 px-3 hover btn">
+                      <i className="bi bi-trash me-3 fs-3"></i>
                       <div>Delete</div>
                     </div>
                   )}
@@ -263,7 +264,10 @@ export default function Tweet(props) {
             <div className="mt-3 mb-2">
               <div className="d-flex">
                 <div className="col-3">
-                  <div className="d-flex w-min align-items-center text-muted btn p-0">
+                  <div
+                    className="d-flex w-min align-items-center text-muted btn p-0"
+                    data-title="Reply"
+                  >
                     <div className="me-2">
                       {data.public_metrics.reply_count}
                     </div>
@@ -275,6 +279,7 @@ export default function Tweet(props) {
                     className={`d-flex w-min align-items-center btn p-0 text-${
                       retweeted ? "success" : "muted"
                     }`}
+                    data-title="Retweet"
                     onClick={handleRetweet}
                   >
                     <div className="me-2">
@@ -288,6 +293,7 @@ export default function Tweet(props) {
                     className={`d-flex w-min h-100 align-items-center btn p-0 text-${
                       liked ? "danger" : "muted"
                     }`}
+                    data-title="Like"
                     onClick={handleLike}
                   >
                     <div className="me-2">{data.public_metrics.like_count}</div>
@@ -299,7 +305,10 @@ export default function Tweet(props) {
                   </div>
                 </div>
                 <div className="col-3">
-                  <div className="d-flex w-min h-100 align-items-center text-muted btn p-0">
+                  <div
+                    className="d-flex w-min h-100 align-items-center text-muted btn p-0"
+                    data-title="Share"
+                  >
                     <i className="bi rounded-circle hover px-2 py-1 bi-share"></i>
                   </div>
                 </div>

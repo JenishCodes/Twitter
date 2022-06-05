@@ -72,18 +72,22 @@ export default function Profile(props) {
           />
         </div>
         <div className="btns pt-2">
-          <div className="btn text-primary px-2 py-1 rounded-circle border hover">
+          <div
+            className="btn text-primary px-2 py-1 rounded-circle border hover"
+            data-title="More"
+          >
             <i className="bi bi-three-dots fs-3"></i>
           </div>
-          <div className="btn text-primary rounded-circle hover border px-2 py-1 mx-2">
-            <i
-              className="bi bi-envelope fs-3"
-              onClick={() =>
-                navigate("/messages/" + props.user._id, {
-                  state: { user: props.user },
-                })
-              }
-            ></i>
+          <div
+            className="btn text-primary rounded-circle hover border px-2 py-1 mx-2"
+            data-title={"Message @" + props.user.account_name}
+            onClick={() =>
+              navigate("/messages/" + props.user._id, {
+                state: { user: props.user },
+              })
+            }
+          >
+            <i className="bi bi-envelope fs-3"></i>
           </div>
           <div
             className={`btn border hover fw-bold ${
@@ -123,6 +127,7 @@ export default function Profile(props) {
         </div>
         <div className="statics d-flex mt-3 mb-2">
           <Link
+            className="hover-underline"
             to={`/${props.user.account_name}/network/following`}
             state={props.user}
           >
@@ -132,6 +137,7 @@ export default function Profile(props) {
             </div>
           </Link>
           <Link
+            className="hover-underline"
             to={`/${props.user.account_name}/network/followers`}
             state={props.user}
           >

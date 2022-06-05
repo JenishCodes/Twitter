@@ -58,7 +58,7 @@ export default function EditProfile(props) {
           )}
           <div className="backdrop-banner"></div>
           <div
-            className="camera-plus rounded-circle btn bg-primary hover"
+            className="camera-plus rounded-circle btn bg-primary filter"
             onClick={(e) => {
               e.currentTarget.firstChild.click();
             }}
@@ -83,7 +83,7 @@ export default function EditProfile(props) {
             />
             <div className="backdrop-image"></div>
             <div
-              className="camera-plus rounded-circle btn bg-primary hover"
+              className="camera-plus rounded-circle btn bg-primary filter"
               onClick={(e) => {
                 e.currentTarget.firstChild.click();
               }}
@@ -102,7 +102,7 @@ export default function EditProfile(props) {
           <div className="btns py-2">
             <div
               onClick={handleClick}
-              className={`btn text-white btn-primary fw-bold rounded-pill py-1 px-3${
+              className={`btn text-white bg-app filter fw-bold rounded-pill py-1 px-3${
                 loading ? " disabled" : ""
               }`}
             >

@@ -48,7 +48,7 @@ export default function Display(props) {
       <div className="border-top p-3">
         <div className="fs-3 fw-bolder mb-3">Primary Color</div>
         <div className="d-flex justify-content-around">
-          <label className="color rounded-circle btn blue">
+          <label className="color rounded-circle btn filter blue">
             <input
               onChange={(e) => handleChange(theme, e.currentTarget.value, font)}
               name="color"
@@ -60,7 +60,7 @@ export default function Display(props) {
               <i className="bi fs-1 text-white bi-check"></i>
             ) : null}
           </label>
-          <label className="color rounded-circle btn green">
+          <label className="color rounded-circle btn filter green">
             <input
               onChange={(e) => handleChange(theme, e.currentTarget.value, font)}
               name="color"
@@ -72,7 +72,7 @@ export default function Display(props) {
               <i className="bi fs-1 text-white bi-check"></i>
             ) : null}
           </label>
-          <label className="color rounded-circle btn yellow">
+          <label className="color rounded-circle btn filter yellow">
             <input
               onChange={(e) => handleChange(theme, e.currentTarget.value, font)}
               name="color"
@@ -84,7 +84,7 @@ export default function Display(props) {
               <i className="bi fs-1 text-white bi-check"></i>
             ) : null}
           </label>
-          <label className="color rounded-circle btn purple">
+          <label className="color rounded-circle btn filter purple">
             <input
               onChange={(e) => handleChange(theme, e.currentTarget.value, font)}
               name="color"
@@ -96,7 +96,7 @@ export default function Display(props) {
               <i className="bi fs-1 text-white bi-check"></i>
             ) : null}
           </label>
-          <label className="color rounded-circle btn pink">
+          <label className="color rounded-circle btn filter pink">
             <input
               onChange={(e) => handleChange(theme, e.currentTarget.value, font)}
               name="color"
@@ -108,7 +108,7 @@ export default function Display(props) {
               <i className="bi fs-1 text-white bi-check"></i>
             ) : null}
           </label>
-          <label className="color rounded-circle btn orange">
+          <label className="color rounded-circle btn filter orange">
             <input
               onChange={(e) => handleChange(theme, e.currentTarget.value, font)}
               name="color"

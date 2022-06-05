@@ -31,12 +31,12 @@ export default function Tabbar(props) {
                 <div
                   key={tab.name}
                   onClick={() => navigate(tab.path, { replace: true })}
-                  className="p-0 mx-3 border-0 btn text-muted text-center"
+                  className="py-0 px-3 border-0 btn text-muted text-center hover"
                 >
                   <div
                     className={
                       props.activeTab === tab.code
-                        ? "tab m-auto py-2 active rounded"
+                        ? "tab m-auto py-2 active"
                         : "tab m-auto py-2"
                     }
                   >

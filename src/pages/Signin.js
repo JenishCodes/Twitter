@@ -23,26 +23,35 @@ export default function Signin() {
   };
 
   return (
-    <div className="signin p-3">
+    <div className="signin py-3">
       {loading ? (
-        <Modal bgColor="rgba(0, 0, 0, 0.4)">
+        <Modal
+          style={{
+            left: "50%",
+            position: "absolute",
+            transform: "translateX(50%)",
+            width: "300px",
+          }}
+        >
           <Loading
-            show={loading}
+            show={true}
             className="my-5 text-app"
             style={{ width: "1.5rem", height: "1.5rem" }}
           />
         </Modal>
       ) : null}
       <div
-        className="p-3 pt-0 d-flex align-items-center"
+        className="p-3 pt-0 d-flex justify-content-center"
         style={{ fontSize: "30px" }}
       >
-        <div className="me-4">
-          <i className="bi bi-twitter"></i>
-        </div>
+        <Link to="/">
+          <div className="me-4">
+            <i className="bi bi-twitter"></i>
+          </div>
+        </Link>
         <div className="fw-bold">Sign in to Twitter</div>
       </div>
-      <div className="m-auto mt-5" style={{ width: "320px" }}>
+      <div className="m-auto mt-4" style={{ width: "300px" }}>
         <div className="mb-5">
           <div
             onClick={handleGoogleSignin}
@@ -81,7 +90,9 @@ export default function Signin() {
             <label htmlFor="password-input">Password</label>
           </div>
           <div className="text-end">
-            <Link to="/forgot">Forgot password?</Link>
+            <Link className="hover-underline" to="/forgot">
+              Forgot password?
+            </Link>
           </div>
           <div
             onClick={handleSignin}
@@ -90,7 +101,10 @@ export default function Signin() {
             Sign in
           </div>
           <div className="text-muted mt-4">
-            Don't have an account? <Link to="/signup">Sign up</Link>
+            Don't have an account?{" "}
+            <Link className="hover-underline" to="/signup">
+              Sign up
+            </Link>
           </div>
         </div>
       </div>
