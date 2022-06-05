@@ -52,7 +52,7 @@ export default function Network() {
   return (
     <div>
       <Tabbar
-        backArrow
+        backArrow="full"
         title={user ? user.name : "User"}
         subtitle={"@" + account_name}
         activeTab={friendship_type}

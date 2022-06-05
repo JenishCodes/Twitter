@@ -33,7 +33,7 @@ export default function Home() {
 
   return (
     <div className="h-100">
-      <Header title="Home" arrow={false} />
+      <Header title="Home" />
       <Loading
         show={loading}
         style={{ width: "1.5rem", height: "1.5rem" }}

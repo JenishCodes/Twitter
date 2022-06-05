@@ -49,7 +49,7 @@ export default function EditProfile(props) {
       <Header
         title="Edit Profile"
         subtitle={"@" + user.account_name}
-        backArrow
+        backArrow="full"
       />
       <div className="editprofile pb-5">
         <div className="poster">

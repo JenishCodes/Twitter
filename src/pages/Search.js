@@ -87,7 +87,7 @@ export default function Search() {
 
   return (
     <div>
-      <Tabbar activeTab={search_type} tabs={tabs} title="Search Results">
+      <Tabbar activeTab={search_type} backArrow="full" tabs={tabs} title="Search Results">
         <Loading
           show={loading}
           className="my-5 text-app"

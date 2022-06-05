@@ -10,15 +10,17 @@ export default function Account() {
 
   return (
     <div>
-      <Header title="Your Account" backArrow />
+      <Header title="Your Account" backArrow="full" />
       <div className="border-bottom">
         <List
           data={{
             title: "Username",
             subtitle: "@" + user.account_name,
-            image: <div className="text-primary py-2">
-              <i className="bi bi-person-fill fs-2 mx-2"></i>
-            </div>,
+            image: (
+              <div className="text-primary py-2">
+                <i className="bi bi-person-fill fs-2 mx-2"></i>
+              </div>
+            ),
           }}
           className="hover pointer"
           onClick={() => navigate("account_name")}
@@ -28,9 +30,11 @@ export default function Account() {
           data={{
             title: "Email",
             subtitle: user.email,
-            image: <div className="text-primary py-2">
-              <i className="bi bi-envelope fs-2 mx-2"></i>
-            </div>
+            image: (
+              <div className="text-primary py-2">
+                <i className="bi bi-envelope fs-2 mx-2"></i>
+              </div>
+            ),
           }}
           className="hover pointer"
           onClick={() => navigate("email")}
@@ -40,9 +44,11 @@ export default function Account() {
           data={{
             title: "Phone",
             subtitle: "+91 7096132190",
-            image: <div className="text-primary py-2">
-              <i className="bi bi-phone fs-2 mx-2"></i>
-            </div>
+            image: (
+              <div className="text-primary py-2">
+                <i className="bi bi-phone fs-2 mx-2"></i>
+              </div>
+            ),
           }}
           className="hover pointer"
           onClick={() => navigate("phone")}
@@ -54,9 +60,11 @@ export default function Account() {
           data={{
             title: "Country",
             subtitle: "India",
-            image: <div className="text-primary py-2">
-              <i className="bi bi-globe fs-2 mx-2"></i>
-            </div>
+            image: (
+              <div className="text-primary py-2">
+                <i className="bi bi-globe fs-2 mx-2"></i>
+              </div>
+            ),
           }}
           className="hover pointer"
           onClick={() => navigate("country")}
@@ -66,9 +74,11 @@ export default function Account() {
           data={{
             title: "Gender",
             subtitle: "Male",
-            image: <div className="text-primary py-2">
-              <i className="bi bi-gender-ambiguous fs-3 mx-2"></i>
-            </div>
+            image: (
+              <div className="text-primary py-2">
+                <i className="bi bi-gender-ambiguous fs-3 mx-2"></i>
+              </div>
+            ),
           }}
           className="hover pointer"
           onClick={() => navigate("gender")}
@@ -78,9 +88,11 @@ export default function Account() {
           data={{
             title: "Birth Date",
             subtitle: "May 3, 2002",
-            image: <div className="text-primary py-2">
-              <i className="bi bi-gift fs-3 mx-2"></i>
-            </div>
+            image: (
+              <div className="text-primary py-2">
+                <i className="bi bi-gift fs-3 mx-2"></i>
+              </div>
+            ),
           }}
         ></List>
       </div>
@@ -88,9 +100,11 @@ export default function Account() {
         data={{
           title: "Age",
           subtitle: "19",
-          image: <div className="text-primary py-2">
-            <i className="bi bi-123 fs-2 mx-2"></i>
-          </div>
+          image: (
+            <div className="text-primary py-2">
+              <i className="bi bi-123 fs-2 mx-2"></i>
+            </div>
+          ),
         }}
       ></List>
     </div>

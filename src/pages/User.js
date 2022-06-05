@@ -115,7 +115,7 @@ export default function User() {
     <div>
       <Header
         title={user ? user.name : "Profile"}
-        backArrow
+        backArrow="full"
         subtitle={
           profile_type === "replies"
             ? replies.length + " Replies"

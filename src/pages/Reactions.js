@@ -30,7 +30,7 @@ export default function Reactions() {
     <div>
       <Header
         title={reaction_type === "likes" ? "Liked By" : "Retweeted By"}
-        backArrow
+        backArrow="full"
       />
 
       <Loading

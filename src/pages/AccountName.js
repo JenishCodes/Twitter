@@ -19,7 +19,7 @@ export default function AccountName(props) {
 
   return (
     <div>
-      <Header title="Change Account Name" backArrow />
+      <Header title="Change Account Name" backArrow="full" />
       <div className="px-3">
         <div className="form-floating my-3">
           <input

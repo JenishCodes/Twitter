@@ -22,7 +22,7 @@ export default function Hashtag() {
       <Header
         title={"#" + hashtag}
         subtitle={tweets?.length + " Tweets"}
-        arrow={false}
+        backArrow="full"
       />
 
       <Loading

@@ -6,7 +6,7 @@ export default function Gender(props) {
 
   return (
     <div className="gender">
-      <Header title="Change Gender" backArrow />
+      <Header title="Change Gender" backArrow="full" />
       <div className="px-3">
         <div
           className="px-3 py-2 rounded-3 btn hover d-flex justify-content-between"

@@ -20,15 +20,15 @@
 .chat .text-input:focus {
   border-color: var(--app-color);
 }
-.chat .content{
+.chat .content {
   height: calc(100vh - 55px);
   overflow-y: scroll;
   padding-top: 50px;
 }
-.chat .content::-webkit-scrollbar{
+.chat .content::-webkit-scrollbar {
   width: 5px;
 }
-.chat .content::-webkit-scrollbar-thumb{
+.chat .content::-webkit-scrollbar-thumb {
   background: var(--text-muted);
 }
 
@@ -244,12 +244,17 @@
   width: inherit;
   overflow-y: auto;
 }
-.sidebar .profile-image {
+.sidebar .profile-image,
+.drawer .profile-image {
   width: 40px;
   height: 40px;
 }
 .compose-btn {
   width: 100% !important;
+}
+.drawer {
+  z-index: 10;
+  width: 280px;
 }
 @media screen and (max-width: 1199px) {
   .sidebar > div {
@@ -286,7 +291,6 @@
   .sidebar .nav-icon {
     margin: 0;
   }
-
 }
 .tabbar .active {
   border-bottom: solid 5px;
@@ -343,6 +347,24 @@
 .text-message-container:hover .message-delete {
   display: block;
 }
-.modal .profile{
+.modal .profile {
   height: min(100vw, 75vh);
+}
+.header .profile-image {
+  width: 36px;
+  height: 36px;
+}
+.drawer {
+  box-shadow: rgb(217 217 217 / 20%) 0px 0px 5px,
+    rgb(217 217 217 / 25%) 0px 1px 4px 1px;
+  animation: drawer-trasition 0.3s ease;
+}
+
+@keyframes drawer-trasition {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
 }

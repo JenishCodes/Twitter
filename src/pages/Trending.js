@@ -1,14 +1,11 @@
 import React from "react";
-import Searchbar from "../components/Searchbar";
+import Header from "../components/Header";
 import Trend from "../components/Trend";
 
 export default function Trending() {
   return (
     <div>
-      <div className="position-sticky header p-2">
-        <Searchbar />
-        <div className="mt-2 py-1 fs-3 fw-bold px-2">Trending</div>
-      </div>
+      <Header extraTitle="Trending" />
       <div className="mb-5 pb-5">
         <Trend hashtag="Life" tweets={95} />
         <Trend hashtag="Problem" tweets={87} />

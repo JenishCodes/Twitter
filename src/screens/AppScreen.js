@@ -25,11 +25,13 @@ import Gender from "../pages/Gender";
 import Phone from "../pages/Phone";
 import Trending from "../pages/Trending";
 import Notifications from "../pages/Notifications";
+import Drawer from "../components/Drawer";
 
 export default function AppScreen() {
   return (
     <div className="app-screen d-flex justify-content-center">
       <Sidebar />
+      <Drawer />
       <main className="main">
         <div className="row m-0 content">
           <div className="position-relative p-0 col-lg-7-2 col-sm-12">

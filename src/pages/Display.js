@@ -22,7 +22,7 @@ export default function Display(props) {
 
   return (
     <div className="display">
-      <Header title="Display" backArrow />
+      <Header title="Display" backArrow="full" />
       <div className="px-3 text-muted">
         <p>
           Manage your font size, color, and background. These settings affect

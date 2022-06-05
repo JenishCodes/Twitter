@@ -147,7 +147,7 @@ export default function Status() {
 
   return (
     <div className="h-100">
-      <Header title="Tweet" backArrow />
+      <Header title="Tweet" backArrow="full" />
 
       <Loading
         show={loading}

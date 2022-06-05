@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../config/context";
 import Searchbar from "./Searchbar";
 
 export default function Header(props) {
+  const { user, setShow } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  return props.title ? (
+  return (
     <div
       className={`header px-2 position-sticky ${
         props.backArrow ? "py-1" : "py-2"
@@ -14,24 +16,44 @@ export default function Header(props) {
       <div className="d-flex align-items-center">
         {props.backArrow ? (
           <div
-            className="start btn hover rounded-circle px-2 py-0"
+            className={`start btn hover rounded-circle px-2 py-0 ${
+              props.backArrow === "half" ? "d-sm-none" : ""
+            }`}
             onClick={() => navigate(-1)}
           >
             <i className="bi bi-arrow-left-short fs-1"></i>
           </div>
-        ) : null}
-        <div className="title-container flex-grow-1 ms-2">
-          <div className="title fs-3 fw-bold">{props.title}</div>
-          {props.subtitle ? (
-            <div className="subtitle fs-7 text-muted">{props.subtitle}</div>
-          ) : null}
-        </div>
+        ) : (
+          <div
+            className="d-sm-none p-0 btn"
+            onClick={() => {
+              document.body.style.overflowY = "hidden";
+              setShow(true);
+            }}
+          >
+            <img
+              src={user.profile_image_url}
+              className="profile-image rounded-circle"
+            />
+          </div>
+        )}
+        {props.title ? (
+          <div className="title-container flex-grow-1 ms-2">
+            <div className="title fs-3 fw-bold">{props.title}</div>
+            {props.subtitle ? (
+              <div className="subtitle fs-7 text-muted">{props.subtitle}</div>
+            ) : null}
+          </div>
+        ) : (
+          <div className="flex-grow-1 ms-2">
+            <Searchbar />
+          </div>
+        )}
         <div className="end">{props.endButton}</div>
       </div>
-    </div>
-  ) : (
-    <div className="header p-2 position-sticky">
-      <Searchbar />
+      {props.extraTitle ? (
+        <div className="mt-2 py-1 fs-3 fw-bold px-2">{props.extraTitle}</div>
+      ) : null}
     </div>
   );
 }

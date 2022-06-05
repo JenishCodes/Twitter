@@ -4,7 +4,7 @@ import Header from "../components/Header";
 export default function Privacy(props) {
   return (
     <div>
-      <Header title="Privacy" backArrow />
+      <Header title="Privacy" backArrow="full" />
       <div className="px-3 text-muted">Privacy</div>
     </div>
   );

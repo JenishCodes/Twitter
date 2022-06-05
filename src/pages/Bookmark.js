@@ -21,7 +21,7 @@ export default function Bookmark() {
     <div>
       <Header
         title="Bookmarks"
-        arrow={false}
+        backArrow="half"
         subtitle={tweets.length + " Tweets"}
       />
       <Loading

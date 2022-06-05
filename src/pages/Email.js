@@ -6,7 +6,7 @@ export default function Email(props) {
 
   return (
     <div className="email">
-      <Header title="Change Email" backArrow />
+      <Header title="Change Email" backArrow="full" />
       <div className="px-3">
         <div className="form-floating my-3">
           <input

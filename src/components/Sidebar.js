@@ -30,7 +30,7 @@ export default function Sidebar() {
             <div className="d-flex flex-sm-column flex-grow-1 align-items-center py-sm-0 py-1">
               <div className="w-100 d-none d-sm-block">
                 <Link to="/home">
-                  <div className="px-3 mx-auto mx-xl-0 hover py-2 nav rounded-pill py-2 align-items-center p-3 text-primary btn">
+                  <div className="px-3 mx-auto mx-xl-0 hover py-2 nav rounded-pill py-2 align-items-center p-3 text-app btn">
                     <div className="m-0 nav-icon">
                       <i className="bi bi-twitter"></i>
                     </div>
@@ -220,7 +220,7 @@ export default function Sidebar() {
               className="hover rounded-pill btn my-3 p-2 d-none d-sm-block"
             >
               <div className="d-flex align-items-center">
-                <div className="profile-image mx-auto me-xl-3">
+                <div className="profile-image mx-auto me-xl-2">
                   <img
                     src={user.profile_image_url}
                     className="w-100 rounded-circle"

@@ -19,7 +19,7 @@ export default function List(props) {
           ) : null}
         </div>
         <div className="details">
-          <div className="d-flex align-items-center justify-content-between">
+          <div className="d-flex align-items-center justify-content-between h-100">
             <div className="w-100">
               <div className="fw-bold">{props.data.title}</div>
               {props.data.subtitle ? (

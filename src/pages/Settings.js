@@ -7,7 +7,7 @@ export default function Settings() {
 
   return (
     <div>
-      <Header title="Settings" />
+      <Header title="Settings" backArrow="half" />
       <div className="pointer" onClick={() => naviagte("/settings/account")}>
         <div className="p-3 hover">
           <div className="d-flex justify-content-between">
