@@ -8,8 +8,7 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-size: var(--fs-5);
-  overflow-y: scroll;
-  overflow-x: hidden;
+  overflow-y: scroll !important;
   min-height: 100vh;
 }
 

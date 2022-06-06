@@ -7,10 +7,6 @@
 .h-100vh {
   height: 100vh !important;
 }
-.compose {
-  width: 100vw;
-  height: calc(100vh - 1px);
-}
 .compose .editor {
   border-bottom: solid 1px var(--border);
 }
@@ -98,6 +94,7 @@
 }
 .btn {
   color: var(--text-primary);
+  overflow: hidden;
 }
 .overflow-y-auto {
   overflow-y: auto !important;
@@ -116,12 +113,40 @@
     background-color: var(--hover) !important;
   }
   .compose {
-    width: 500px;
+    width: 500px !important;
     border-radius: 20px;
-    height: auto;
+    height: auto !important;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    position: absolute;
   }
   .compose .editor {
     border-bottom: none;
+  }
+  [data-title]:hover:after {
+    opacity: 1;
+    transition: all 0.1s ease 0.75s;
+    visibility: visible;
+  }
+  [data-title]:after {
+    content: attr(data-title);
+    background-color: rgba(170, 195, 255, 0.25);
+    font-size: 11px;
+    color: var(--text-primary);
+    font-weight: 600;
+    position: absolute;
+    padding: 2px 5px;
+    white-space: nowrap;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    border-radius: 2px;
+    z-index: 101;
+    top: 110%;
+  }
+  [data-title] {
+    position: relative;
   }
 }
 .hover:hover {
@@ -216,31 +241,6 @@ a {
   .end-lg-0 {
     right: 0 !important;
   }
-}
-
-[data-title]:hover:after {
-  opacity: 1;
-  transition: all 0.1s ease 0.75s;
-  visibility: visible;
-}
-[data-title]:after {
-  content: attr(data-title);
-  background-color: rgba(170, 195, 255, 0.25);
-  font-size: 11px;
-  color: var(--text-primary);
-  font-weight: 600;
-  position: absolute;
-  padding: 2px 5px;
-  white-space: nowrap;
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0;
-  border-radius: 2px;
-  z-index: 101;
-  top: 110%;
-}
-[data-title] {
-  position: relative;
 }
 .dropdown-menu {
   box-shadow: rgb(255 255 255 / 20%) 0px 0px 15px,

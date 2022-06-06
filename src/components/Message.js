@@ -3,12 +3,12 @@ import { timeFormatter } from "../utils";
 
 export default function Message(props) {
   const [time, setTime] = useState("");
-  const { message, align, handleDelete, nextTime } = props;
+  const { message, align, handleDelete, shape } = props;
 
   useEffect(() => {
-    setTime(
-      timeFormatter(message.createdAt.seconds * 1000, true, false, nextTime)
-    );
+    if (message.date) {
+      setTime(timeFormatter(message.createdAt.seconds * 1000, "Message"));
+    }
   }, []);
 
   return (
@@ -28,13 +28,26 @@ export default function Message(props) {
           style={{
             width: "fit-content",
             maxWidth: "80%",
-            borderRadius: nextTime
-              ? time
-                ? "16px 16px 0px 16px"
-                : "16px 0px 0px 16px"
-              : "16px 0px 16px 16px",
+            lineHeight: 1,
+            padding: "12px 16px",
+            borderRadius:
+              align === "end"
+                ? shape === "single"
+                  ? "20px"
+                  : shape === "first"
+                  ? "20px 20px 0px 20px"
+                  : shape === "last"
+                  ? "20px 0 20px 20px"
+                  : "20px 0px 0px 20px"
+                : shape === "single"
+                ? "20px"
+                : shape === "first"
+                ? "20px 20px 20px 0px"
+                : shape === "last"
+                ? "0 20px 20px 20px"
+                : "0 20px 20px 0",
           }}
-          className="px-3 py-2 text-white bg-app"
+          className={`text-white bg-${align === "end" ? "app" : "muted"}`}
         >
           {message.text}
         </div>

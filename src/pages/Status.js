@@ -206,11 +206,12 @@ export default function Status() {
                   </div>
                   <div className="text-muted">@{tweet.author.account_name}</div>
                 </div>
-                <div className="actions position-relative">
+                <div className="actions">
                   <div
                     className="btn hover px-2 py-1 rounded-circle"
                     id="menu"
                     data-bs-toggle="dropdown"
+                    data-title="More"
                     aria-expanded="false"
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -283,7 +284,7 @@ export default function Status() {
             ) : null}
             {tweet.createdAt ? (
               <div className="text-muted mt-2 fs-5">
-                {timeFormatter(tweet.createdAt, true, true)}
+                {timeFormatter(tweet.createdAt, "Status")}
               </div>
             ) : null}
             <hr className="mt-3 mb-2" />

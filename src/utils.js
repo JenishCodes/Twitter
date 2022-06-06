@@ -158,58 +158,56 @@ export function extractEntities(tweet) {
   return { hashtags, mentions, urls: [] };
 }
 
-export const timeFormatter = (
-  timestamp,
-  includeTime = false,
-  fullDate = false,
-  lastTime = null
-) => {
+export const timeFormatter = (timestamp, format) => {
   const then = new Date(timestamp);
   const now = new Date();
 
-  if (lastTime) {
-    const prev = new Date(lastTime.seconds * 1000);
-    if (prev.getTime() - then.getTime() < 60000) {
-      return null;
-    }
-  }
+  // if (lastTime) {
+  //   const prev = new Date(lastTime.seconds * 1000);
+  //   if (prev.getTime() - then.getTime() < 60000) {
+  //     return null;
+  //   }
+  // }
 
-  var ans = then.toLocaleDateString("en-US", {
+  var thenDate = then.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
   });
+  var thenTime = then.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
 
-  if (!fullDate) {
+  if (format === "Status") {
+    return thenDate + " · " + thenTime;
+  } else {
     if (now.getFullYear() === then.getFullYear()) {
       if (
         now.getMonth() === then.getMonth() &&
         now.getDate() === then.getDate()
       ) {
-        if (now.getHours() === then.getHours()) {
-          if (now.getMinutes() === then.getMinutes()) {
-            return "now";
+        if (format === "Tweet") {
+          if (now.getHours() === then.getHours()) {
+            if (now.getMinutes() === then.getMinutes()) {
+              return "now";
+            } else {
+              return `${now.getMinutes() - then.getMinutes()}m`;
+            }
           } else {
-            return `${now.getMinutes() - then.getMinutes()}m`;
+            return `${now.getHours() - then.getHours()}h`;
           }
         } else {
-          return `${now.getHours() - then.getHours()}h`;
+          return thenTime;
         }
       } else {
-        ans = ans.slice(0, ans.indexOf(","));
+        return thenDate.slice(0, thenDate.indexOf(",")) + format === "Tweet"
+          ? ""
+          : " " + thenTime;
       }
+    } else {
+      return thenDate + format === "Tweet" ? "" : " " + thenTime;
     }
   }
-
-  if (includeTime) {
-    ans =
-      (ans ? ans + " · " : "") +
-      then.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      });
-  }
-
-  return ans;
 };

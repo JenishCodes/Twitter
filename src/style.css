@@ -183,8 +183,9 @@
   z-index: 10;
   backdrop-filter: contrast(0.75);
 }
-.profile > * > .photo {
-  margin-top: -12.5%;
+.profile .photo {
+  margin-top: min(-12.5%, -48px);
+  min-width: 96px;
 }
 .profile .photo img {
   border: solid 5px var(--bg-primary) !important;

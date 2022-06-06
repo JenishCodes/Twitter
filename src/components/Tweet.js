@@ -189,11 +189,11 @@ export default function Tweet(props) {
                   </div>
                   <div className="text-muted">
                     {" "}
-                    · {timeFormatter(data.createdAt)}
+                    · {timeFormatter(data.createdAt, "Tweet")}
                   </div>
                 </div>
               </div>
-              <div className="actions position-relative">
+              <div className="actions">
                 <div
                   className="btn hover px-1 py-0 rounded-circle"
                   id="menu"
@@ -210,7 +210,7 @@ export default function Tweet(props) {
                 >
                   {data.author._id === user._id ? (
                     <div
-                      className="d-flex text-start text-primary align-items-center dropdown-item py-2 px-3 hover btn"
+                      className="d-flex align-items-center dropdown-item py-2 px-3 hover btn"
                       onClick={handlePinTweet}
                     >
                       <i
@@ -226,7 +226,7 @@ export default function Tweet(props) {
                     </div>
                   ) : (
                     <div
-                      className="text-start text-primary d-flex align-items-center dropdown-item py-2 px-3 hover btn"
+                      className="d-flex align-items-center dropdown-item py-2 px-3 hover btn"
                       onClick={handleBookmark}
                     >
                       <i
@@ -240,12 +240,12 @@ export default function Tweet(props) {
                     </div>
                   )}
                   {data.author._id === user._id ? (
-                    <div className="text-start text-primary d-flex align-items-center dropdown-item py-2 px-3 hover btn">
+                    <div className="d-flex align-items-center dropdown-item py-2 px-3 hover btn">
                       <i className="bi bi-flag me-3 fs-3"></i>
                       <div>Report Tweet</div>
                     </div>
                   ) : (
-                    <div className="d-flex text-start text-danger align-items-center dropdown-item py-2 px-3 hover btn">
+                    <div className="d-flex text-danger align-items-center dropdown-item py-2 px-3 hover btn">
                       <i className="bi bi-trash me-3 fs-3"></i>
                       <div>Delete</div>
                     </div>

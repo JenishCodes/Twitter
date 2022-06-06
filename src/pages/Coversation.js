@@ -27,8 +27,17 @@ export default function Chat(props) {
 
       const unsub = getNewMessage(chatId, (message) => {
         if (message._id !== messages[messages.length - 1]._id) {
-          const newList = [...messages, message];
-          setMessages(newList);
+          const lastMessage = messages[messages.length - 1];
+
+          if (message.createdAt.seconds - lastMessage.createdAt.seconds > 60) {
+            setMessages([
+              ...messages.slice(0, messages.length - 1),
+              { ...lastMessage, date: false },
+              { ...message, date: true },
+            ]);
+          } else {
+            setMessages([...messages, { ...message, date: true }]);
+          }
           window.scrollTo(0, document.body.scrollHeight);
         }
       });
@@ -52,7 +61,28 @@ export default function Chat(props) {
         if (res.user) {
           setChatUser(res.user);
         }
-        setMessages(messages.concat(res.data));
+        var next;
+
+        const updatedMessages = res.data.map((message, index) => {
+          if (index < res.data.length - 1) {
+            next = res.data[index + 1];
+            if (next.createdAt.seconds - message.createdAt.seconds <= 60) {
+              return { ...message, date: false };
+            } else {
+              return { ...message, date: true };
+            }
+          } else {
+            if (
+              messages[0] &&
+              messages[0].createdAt.seconds - message.createdAt.seconds <= 60
+            ) {
+              return { ...message, date: false };
+            } else {
+              return { ...message, date: true };
+            }
+          }
+        });
+        setMessages(updatedMessages.concat(messages));
         setCursor(cursor + 1);
       })
       .catch((err) => console.log(err))
@@ -120,19 +150,25 @@ export default function Chat(props) {
             style={{ width: "1.5rem", height: "1.5rem" }}
           />
           {messages.length > 0
-            ? messages.map((message, index) => (
-                <Message
-                  key={index}
-                  message={message}
-                  align={message.senderId === user._id ? "end" : "start"}
-                  handleDelete={handleDelete}
-                  nextTime={
-                    index < messages.length - 1
-                      ? messages[index + 1].createdAt
-                      : null
-                  }
-                />
-              ))
+            ? messages.map((message, index) =>
+                message ? (
+                  <Message
+                    key={index}
+                    message={message}
+                    align={message.senderId === user._id ? "end" : "start"}
+                    handleDelete={handleDelete}
+                    shape={
+                      index === 0 || messages[index - 1].date
+                        ? message.date
+                          ? "single"
+                          : "first"
+                        : message.date
+                        ? "last"
+                        : "middle"
+                    }
+                  />
+                ) : null
+              )
             : null}
         </div>
       </div>

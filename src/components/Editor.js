@@ -99,8 +99,8 @@ export default function Editor({
   };
 
   return show ? (
-    <Modal>
-      <div className="compose bg-primary p-2">
+    <Modal style={{ width: "100%", height: "100%" }}>
+      <div className="compose bg-primary p-2 w-100 h-100">
         <div className="w-100">
           <div
             className="btn hover rounded-circle px-2 py-0"
@@ -139,16 +139,18 @@ export default function Editor({
                 }
               >
                 <div className="info d-flex align-items-center position-relative">
-                  <div className="d-flex flex-grow-1">
+                  <div className="d-flex flex-grow-1 flex-wrap">
                     <div className="name me-1 fw-bold">
                       {reference_tweet.author.name}
                     </div>
-                    <div className="username text-muted me-1">
-                      @{reference_tweet.author.account_name}
-                    </div>
-                    <div className="text-muted">
-                      {" "}
-                      · {timeFormatter(reference_tweet.createdAt)}
+                    <div className="d-flex">
+                      <div className="username text-muted me-1">
+                        @{reference_tweet.author.account_name}
+                      </div>
+                      <div className="text-muted">
+                        {" "}
+                        · {timeFormatter(reference_tweet.createdAt, "Tweet")}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -160,11 +162,11 @@ export default function Editor({
         {reference_tweet ? (
           <div className="d-flex" style={{ marginLeft: "39px" }}>
             <div
-              style={{ height: "38px", width: "2px" }}
+              style={{ height: "46px", width: "2px" }}
               className="border bg-secondary"
             ></div>
             <div
-              className="text-muted fst-italic mb-3"
+              className="text-muted fst-italic mb-3 mt-2"
               style={{ marginLeft: "40px" }}
             >
               <span>Replying to </span>

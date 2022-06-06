@@ -25,13 +25,13 @@ export default function Tabbar(props) {
             ) : null}
           </div>
         </div>
-        <div className="pages d-flex justify-content-evenly border-bottom overflow-x-auto">
+        <div className="pages d-flex border-bottom overflow-x-auto">
           {props.tabs
             ? props.tabs.map((tab) => (
                 <div
                   key={tab.name}
                   onClick={() => navigate(tab.path, { replace: true })}
-                  className="py-0 px-3 border-0 btn text-muted text-center hover"
+                  className="py-0 px-3 border-0 btn text-muted text-center hover flex-grow-1"
                 >
                   <div
                     className={

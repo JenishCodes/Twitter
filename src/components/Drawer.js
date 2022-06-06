@@ -36,11 +36,11 @@ export default function Drawer() {
             <div className="text-muted mb-3">@{user.account_name}</div>
             <div className="d-flex fs-6">
               <div className="me-3">
-                <span className="fw-bold">14 </span>
+                <span className="fw-bold">{user.following_count} </span>
                 <span className="text-muted">Following</span>
               </div>
               <div>
-                <span className="fw-bold">24 </span>
+                <span className="fw-bold">{user.followers_count} </span>
                 <span className="text-muted">Followers</span>
               </div>
             </div>

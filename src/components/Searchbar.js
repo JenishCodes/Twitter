@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import List from "./List";
 import {
   addSeachHistory,
@@ -17,7 +17,21 @@ export default function Searchbar() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [history, setHistory] = useState([]);
+  const autoSuggestions = useRef();
+  const searchBar = useRef();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.addEventListener("mouseup", function (e) {
+      if (searchBar.current && autoSuggestions.current) {
+        if (!searchBar.current.contains(e.target)) {
+          autoSuggestions.current.style.display = "none";
+        } else {
+          autoSuggestions.current.style.display = "block";
+        }
+      }
+    });
+  }, []);
 
   useEffect(() => {
     getSeachHistory(user._id).then((res) => {
@@ -134,6 +148,7 @@ export default function Searchbar() {
     handleAddHistory(newHistory, newLocation);
 
     setQuery("");
+    autoSuggestions.current.style.display = "none";
   };
 
   const handleSubmit = (e) => {
@@ -155,7 +170,7 @@ export default function Searchbar() {
   };
 
   return (
-    <div id="searchbar" className="searchbar">
+    <div id="searchbar" className="searchbar" ref={searchBar}>
       <div className="rounded-pill bg-muted ps-2 pe-1 d-flex align-items-center">
         <i
           className="bi bi-search mx-2 px-1 fw-light"
@@ -185,13 +200,17 @@ export default function Searchbar() {
       <div
         id="auto-suggestions"
         className="auto-suggestions bg-muted position-relative"
+        ref={autoSuggestions}
       >
         <div className="position-absolute bg-muted rounded-3 my-1 w-100">
           <div className="pb-2" id="search-history" role="listbox">
             <div className="d-flex px-3 py-2 justify-content-between">
               <div className="fs-3">{query ? "Results" : "Recent"}</div>
               {query ? null : (
-                <div className="fs-6 btn hover rounded-pill" onClick={handleClearAll}>
+                <div
+                  className="fs-6 btn hover rounded-pill"
+                  onClick={handleClearAll}
+                >
                   Clear All
                 </div>
               )}
