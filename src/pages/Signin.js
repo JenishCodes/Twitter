@@ -27,10 +27,12 @@ export default function Signin() {
       {loading ? (
         <Modal
           style={{
-            left: "50%",
+            right: 0,
             position: "absolute",
-            transform: "translateX(50%)",
-            width: "300px",
+            width:
+              window.screen.width > 991
+                ? (window.screen.width * 5) / 12
+                : "100%",
           }}
         >
           <Loading

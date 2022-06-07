@@ -174,11 +174,6 @@
 .list .details {
   width: calc(100% - 1rem - 48px);
 }
-.list .oneline {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 .model-overlay {
   z-index: 10;
   backdrop-filter: contrast(0.75);
@@ -304,6 +299,23 @@
 .tabbar .pages::-webkit-scrollbar-thumb {
   background: var(--text-muted);
 }
+.compose::-webkit-scrollbar {
+  width: 7px;
+  border-radius: 20px;
+}
+.compose::-webkit-scrollbar-track{
+  background-clip: padding-box;
+  border-radius: 20px;
+}
+.compose::-webkit-scrollbar-thumb {
+  background-clip: padding-box;
+  border-radius: 20px;
+  background: var(--text-muted);
+}
+.compose .position-sticky{
+  z-index: 20;
+  backdrop-filter: blur(12px);
+}
 .tabbar .tab {
   flex-grow: 1;
   width: min-content;
@@ -326,7 +338,7 @@
 .tweet .details {
   width: calc(100% - 1rem - 48px);
 }
-.tweet .oneline {
+.oneline {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -368,4 +380,7 @@
   100% {
     transform: translateX(0%);
   }
+}
+.sidebar .details{
+  width: calc(100% - 48px);
 }

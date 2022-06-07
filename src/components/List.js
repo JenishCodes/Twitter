@@ -29,7 +29,7 @@ export default function List(props) {
               ) : null}
             </div>
             {props.actionButton ? (
-              <div className="ms-3">{props.actionButton}</div>
+              <div className="ms-3 align-self-start">{props.actionButton}</div>
             ) : null}
           </div>
           {props.data.context ? <div>{props.data.context}</div> : null}

@@ -6,7 +6,6 @@ import {
   getTweetFavoriters,
 } from "../services/favorite";
 import { AuthContext } from "../config/context";
-
 import { deleteTweet, getRetweeters, postTweet } from "../services/tweet";
 import { parseTweet, timeFormatter } from "../utils";
 import {
@@ -196,7 +195,7 @@ export default function Tweet(props) {
               <div className="actions">
                 <div
                   className="btn hover px-1 py-0 rounded-circle"
-                  id="menu"
+                  id="tweet-menu"
                   data-bs-toggle="dropdown"
                   data-title="More"
                   aria-expanded="false"
@@ -206,11 +205,11 @@ export default function Tweet(props) {
                 </div>
                 <div
                   className="dropdown-menu dropdown-menu-end bg-primary py-0"
-                  aria-labelledby="menu"
+                  aria-labelledby="tweet-menu"
                 >
                   {data.author._id === user._id ? (
                     <div
-                      className="d-flex align-items-center dropdown-item py-2 px-3 hover btn"
+                      className="d-flex align-items-center text-primary dropdown-item py-2 px-3 hover btn"
                       onClick={handlePinTweet}
                     >
                       <i
@@ -226,7 +225,7 @@ export default function Tweet(props) {
                     </div>
                   ) : (
                     <div
-                      className="d-flex align-items-center dropdown-item py-2 px-3 hover btn"
+                      className="d-flex align-items-center text-primary dropdown-item py-2 px-3 hover btn"
                       onClick={handleBookmark}
                     >
                       <i
@@ -240,14 +239,14 @@ export default function Tweet(props) {
                     </div>
                   )}
                   {data.author._id === user._id ? (
-                    <div className="d-flex align-items-center dropdown-item py-2 px-3 hover btn">
-                      <i className="bi bi-flag me-3 fs-3"></i>
-                      <div>Report Tweet</div>
-                    </div>
-                  ) : (
                     <div className="d-flex text-danger align-items-center dropdown-item py-2 px-3 hover btn">
                       <i className="bi bi-trash me-3 fs-3"></i>
                       <div>Delete</div>
+                    </div>
+                  ) : (
+                    <div className="d-flex align-items-center text-primary dropdown-item py-2 px-3 hover btn">
+                      <i className="bi bi-flag me-3 fs-3"></i>
+                      <div>Report Tweet</div>
                     </div>
                   )}
                 </div>
@@ -260,7 +259,16 @@ export default function Tweet(props) {
                 __html: data.text ? parseTweet(data.text, true) : null,
               }}
             ></div>
-
+            {data.media ? (
+              <div className="media my-2">
+                <img
+                  className="w-100 h-auto border"
+                  style={{ borderRadius: "16px" }}
+                  src={data.media}
+                  alt=""
+                />
+              </div>
+            ) : null}
             <div className="mt-3 mb-2">
               <div className="d-flex">
                 <div className="col-3">

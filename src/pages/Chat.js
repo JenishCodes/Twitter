@@ -5,6 +5,7 @@ import { AuthContext } from "../config/context";
 import { getChats } from "../services/chat";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
+import { timeFormatter } from "../utils";
 
 export default function Message() {
   const { user } = useContext(AuthContext);
@@ -46,6 +47,13 @@ export default function Message() {
                     : "This Message has been deleted"
                   : "",
               }}
+              actionButton={
+                chat.lastMessage._id && (
+                  <div className="text-muted oneline">
+                    {timeFormatter(chat.lastMessage.createdAt.seconds * 1000, "Ago")}
+                  </div>
+                )
+              }
             />
           ))
         : !loading && (

@@ -28,10 +28,12 @@ export default function Signup() {
     <div className="signup py-3">
       {loading ? (
         <Modal style={{
-          left: "50%",
-          position: "absolute",
-          transform: "translateX(50%)",
-          width: "300px",
+          right: 0,
+            position: "absolute",
+            width:
+              window.screen.width > 991
+                ? (window.screen.width * 5) / 12
+                : "100%",
         }}>
           <Loading
             show={true}

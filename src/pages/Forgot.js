@@ -1,11 +1,33 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Loading from "../components/Loading";
+import Modal from "../components/Modal";
 
 export default function Forgot() {
   const [email, setEmail] = useState();
+  const [loading, setLoading] = useState(false);
   const handleSubmit = () => {};
+
   return (
     <div className="signup py-3">
+      {loading ? (
+        <Modal
+          style={{
+            right: 0,
+            position: "absolute",
+            width:
+              window.screen.width > 991
+                ? (window.screen.width * 5) / 12
+                : "100%",
+          }}
+        >
+          <Loading
+            show={true}
+            className="my-5 text-app"
+            style={{ width: "1.5rem", height: "1.5rem" }}
+          />
+        </Modal>
+      ) : null}
       <div
         className="p-3 pt-0 d-flex justify-content-center"
         style={{ fontSize: "30px" }}

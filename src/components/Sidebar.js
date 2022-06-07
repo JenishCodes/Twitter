@@ -217,22 +217,22 @@ export default function Sidebar() {
             </div>
             <div
               onClick={() => navigate("/logout")}
-              className="hover rounded-pill btn my-3 p-2 d-none d-sm-block"
+              className="hover rounded-pill flex-shrink-0 btn my-3 p-2 d-none d-sm-block"
             >
               <div className="d-flex align-items-center">
-                <div className="profile-image mx-auto me-xl-2">
+                <div className="profile-image mx-auto flex-shrink-0 me-xl-2">
                   <img
                     src={user.profile_image_url}
                     className="w-100 rounded-circle"
                     alt="profile"
                   />
                 </div>
-                <div className="d-xl-flex d-none flex-grow-1 align-items-center">
-                  <div className="flex-grow-1 text-start">
-                    <div className="fw-bold">{user.name}</div>
-                    <div className="text-muted">@{user.account_name}</div>
+                <div className="d-xl-flex d-none align-items-center justify-content-between details">
+                  <div className="text-start overflow-hidden">
+                    <div className="fw-bold oneline">{user.name}</div>
+                    <div className="text-muted oneline">@{user.account_name}</div>
                   </div>
-                  <div className="p-1">
+                  <div className="py-1 ps-2">
                     <i className="bi bi-three-dots fs-3"></i>
                   </div>
                 </div>

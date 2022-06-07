@@ -195,7 +195,10 @@ export default function Chat(props) {
           className="bg-secondary"
           style={{ width: "1px", height: "100%" }}
         ></div>
-        <div className="btn hover rounded-circle" onClick={handleSubmit}>
+        <div
+          className={`btn hover rounded-circle${text ? "" : " disabled"}`}
+          onClick={handleSubmit}
+        >
           <i className="bi bi-send"></i>
         </div>
       </div>

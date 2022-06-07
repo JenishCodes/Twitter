@@ -113,13 +113,15 @@
     background-color: var(--hover) !important;
   }
   .compose {
-    width: 500px !important;
+    width: 90% !important;
     border-radius: 20px;
     height: auto !important;
-    transform: translate(-50%, -50%);
-    top: 50%;
+    transform: translateX(-50%);
+    top: 10%;
     left: 50%;
     position: absolute;
+    max-height: 500px;
+    max-width: 550px;
   }
   .compose .editor {
     border-bottom: none;

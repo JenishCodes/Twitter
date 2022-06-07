@@ -162,13 +162,6 @@ export const timeFormatter = (timestamp, format) => {
   const then = new Date(timestamp);
   const now = new Date();
 
-  // if (lastTime) {
-  //   const prev = new Date(lastTime.seconds * 1000);
-  //   if (prev.getTime() - then.getTime() < 60000) {
-  //     return null;
-  //   }
-  // }
-
   var thenDate = then.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -182,32 +175,55 @@ export const timeFormatter = (timestamp, format) => {
 
   if (format === "Status") {
     return thenDate + " · " + thenTime;
-  } else {
-    if (now.getFullYear() === then.getFullYear()) {
-      if (
-        now.getMonth() === then.getMonth() &&
-        now.getDate() === then.getDate()
-      ) {
-        if (format === "Tweet") {
-          if (now.getHours() === then.getHours()) {
-            if (now.getMinutes() === then.getMinutes()) {
-              return "now";
-            } else {
-              return `${now.getMinutes() - then.getMinutes()}m`;
-            }
-          } else {
-            return `${now.getHours() - then.getHours()}h`;
-          }
-        } else {
-          return thenTime;
-        }
-      } else {
-        return thenDate.slice(0, thenDate.indexOf(",")) + format === "Tweet"
-          ? ""
-          : " " + thenTime;
-      }
-    } else {
-      return thenDate + format === "Tweet" ? "" : " " + thenTime;
-    }
   }
+
+  if (format === "Ago") {
+    var seconds = Math.floor((now - then) / 1000);
+    var interval = seconds / 31536000;
+
+    if (interval > 1) {
+      return Math.floor(interval) + "y";
+    }
+    interval = seconds / 604800;
+    if (interval > 1) {
+      return Math.floor(interval) + "w";
+    }
+    interval = seconds / 86400;
+    if (interval > 1) {
+      return Math.floor(interval) + "d";
+    }
+    interval = seconds / 3600;
+    if (interval > 1) {
+      return Math.floor(interval) + "h";
+    }
+    interval = seconds / 60;
+    if (interval > 1) {
+      return Math.floor(interval) + "m";
+    }
+    return Math.floor(seconds) + "s";
+  }
+
+  if (now.getFullYear() === then.getFullYear()) {
+    if (
+      now.getMonth() === then.getMonth() &&
+      now.getDate() === then.getDate()
+    ) {
+      if (format === "Tweet") {
+        if (now.getHours() === then.getHours()) {
+          if (now.getMinutes() === then.getMinutes()) {
+            return "now";
+          }
+          return `${now.getMinutes() - then.getMinutes()}m`;
+        }
+        return `${now.getHours() - then.getHours()}h`;
+      }
+      return thenTime;
+    }
+    return (
+      thenDate.slice(0, thenDate.indexOf(",")) +
+      (format === "Tweet" ? "" : " " + thenTime)
+    );
+  }
+
+  return thenDate + (format === "Tweet" ? "" : " " + thenTime);
 };

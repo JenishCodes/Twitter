@@ -20,6 +20,8 @@ export default function Editor({
   const [searchData, setSearchData] = useState([]);
   const [searchDataType, setSearchDataType] = useState("");
   const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState();
+  const [imageUrl, setImageUrl] = useState();
   const tweet = useRef();
 
   const setTweetInnerHTML = (newText) => {
@@ -100,8 +102,8 @@ export default function Editor({
 
   return show ? (
     <Modal style={{ width: "100%", height: "100%" }}>
-      <div className="compose bg-primary p-2 w-100 h-100">
-        <div className="w-100">
+      <div className="compose bg-primary w-100 h-100 overflow-y-auto">
+        <div className="w-100 position-sticky top-0 px-2 py-1">
           <div
             className="btn hover rounded-circle px-2 py-0"
             onClick={() => {
@@ -116,28 +118,20 @@ export default function Editor({
         {reference_tweet ? (
           <div className="tweet border-0 px-3 pt-2 w-100 text-start">
             <div className="d-flex justify-content-between">
-              {reference_tweet.author.profile_image_url ? (
-                <div className="d-flex flex-column align-items-center">
-                  <div className="profile-image">
-                    <img
-                      className="w-100 h-auto rounded-circle"
-                      src={reference_tweet.author.profile_image_url}
-                      alt=""
-                    />
-                  </div>
-                  <div
-                    style={{ marginTop: "6px" }}
-                    className="flex-grow-1 border bg-secondary"
-                  ></div>
+              <div className="d-flex flex-column align-items-center">
+                <div className="profile-image">
+                  <img
+                    className="w-100 h-auto rounded-circle"
+                    src={reference_tweet.author.profile_image_url}
+                    alt=""
+                  />
                 </div>
-              ) : null}
-              <div
-                className={
-                  reference_tweet.author.profile_image_url
-                    ? "details"
-                    : "details w-100"
-                }
-              >
+                <div
+                  style={{ marginTop: "6px" }}
+                  className="flex-grow-1 border bg-secondary"
+                ></div>
+              </div>
+              <div className="details">
                 <div className="info d-flex align-items-center position-relative">
                   <div className="d-flex flex-grow-1 flex-wrap">
                     <div className="name me-1 fw-bold">
@@ -155,30 +149,30 @@ export default function Editor({
                   </div>
                 </div>
                 <div className="tweet-text">{reference_tweet.text}</div>
+                {reference_tweet.media ? (
+                  <div className="media my-2">
+                    <img
+                      className="w-100 h-auto border"
+                      style={{ borderRadius: "16px" }}
+                      src={reference_tweet.media}
+                      alt=""
+                    />
+                  </div>
+                ) : null}
+                <div className="text-muted fst-italic mb-3 mt-4">
+                  <span>Replying to </span>
+                  <Link
+                    className="hover-underline"
+                    to={"/" + reference_tweet.author.account_name}
+                  >
+                    @{reference_tweet.author.account_name}
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
         ) : null}
-        {reference_tweet ? (
-          <div className="d-flex" style={{ marginLeft: "39px" }}>
-            <div
-              style={{ height: "46px", width: "2px" }}
-              className="border bg-secondary"
-            ></div>
-            <div
-              className="text-muted fst-italic mb-3 mt-2"
-              style={{ marginLeft: "40px" }}
-            >
-              <span>Replying to </span>
-              <Link
-                className="hover-underline"
-                to={"/" + reference_tweet.author.account_name}
-              >
-                @{reference_tweet.author.account_name}
-              </Link>
-            </div>
-          </div>
-        ) : null}
+
         <div className="editor" style={{ marginTop: "6px" }}>
           <div className="px-3 pb-3 d-flex">
             <div className="me-3 profile-image">
@@ -240,10 +234,48 @@ export default function Editor({
                   </div>
                 ) : null}
               </div>
+              {image ? (
+                <div className="media position-relative my-2">
+                  <div
+                    className="btn position-absolute m-2 bg-muted rounded-circle px-1 py-0"
+                    onClick={() => {
+                      setImageUrl("");
+                      setImage(null);
+                    }}
+                  >
+                    <i className="bi bi-x fs-2"></i>
+                  </div>
+                  <img
+                    className="w-100 h-auto border"
+                    style={{ borderRadius: "16px" }}
+                    src={imageUrl}
+                    alt=""
+                  />
+                </div>
+              ) : null}
               <div className="d-flex justify-content-between align-items-center">
-                <div className="fs-3">
-                  <i className="bi text-primary bi-image me-3"></i>
-                  <i className="bi text-primary bi-emoji-smile"></i>
+                <div className="d-flex">
+                  <div
+                    className="btn hover rounded-circle me-1"
+                    onClick={(e) => {
+                      e.currentTarget.firstChild.click();
+                    }}
+                  >
+                    <input
+                      type="file"
+                      className="d-none"
+                      onChange={(e) => {
+                        setImage(e.currentTarget.files[0]);
+                        setImageUrl(
+                          URL.createObjectURL(e.currentTarget.files[0])
+                        );
+                      }}
+                    />
+                    <i className="bi text-primary bi-image fs-3"></i>
+                  </div>
+                  <div className="btn hover rounded-circle">
+                    <i className="bi text-primary bi-emoji-smile fs-3"></i>
+                  </div>
                 </div>
                 <div>
                   <div

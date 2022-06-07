@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import List from "./List";
 import {
   addSeachHistory,
@@ -17,21 +17,7 @@ export default function Searchbar() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [history, setHistory] = useState([]);
-  const autoSuggestions = useRef();
-  const searchBar = useRef();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    document.addEventListener("mouseup", function (e) {
-      if (searchBar.current && autoSuggestions.current) {
-        if (!searchBar.current.contains(e.target)) {
-          autoSuggestions.current.style.display = "none";
-        } else {
-          autoSuggestions.current.style.display = "block";
-        }
-      }
-    });
-  }, []);
 
   useEffect(() => {
     getSeachHistory(user._id).then((res) => {
@@ -148,7 +134,6 @@ export default function Searchbar() {
     handleAddHistory(newHistory, newLocation);
 
     setQuery("");
-    autoSuggestions.current.style.display = "none";
   };
 
   const handleSubmit = (e) => {
@@ -170,8 +155,14 @@ export default function Searchbar() {
   };
 
   return (
-    <div id="searchbar" className="searchbar" ref={searchBar}>
-      <div className="rounded-pill bg-muted ps-2 pe-1 d-flex align-items-center">
+    <div id="searchbar" className="searchbar dropdown">
+      <div
+        className="rounded-pill bg-muted ps-2 pe-1 d-flex align-items-center"
+        id="menu"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+        data-bs-offset="0,5"
+      >
         <i
           className="bi bi-search mx-2 px-1 fw-light"
           placeholder="Search Twitter"
@@ -198,89 +189,84 @@ export default function Searchbar() {
         ) : null}
       </div>
       <div
-        id="auto-suggestions"
-        className="auto-suggestions bg-muted position-relative"
-        ref={autoSuggestions}
+        className="dropdown-menu dropdown-menu-end bg-muted pb-2 pt-0 rounded-3 w-100 text-primary"
+        aria-labelledby="menu"
       >
-        <div className="position-absolute bg-muted rounded-3 my-1 w-100">
-          <div className="pb-2" id="search-history" role="listbox">
-            <div className="d-flex px-3 py-2 justify-content-between">
-              <div className="fs-3">{query ? "Results" : "Recent"}</div>
-              {query ? null : (
-                <div
-                  className="fs-6 btn hover rounded-pill"
-                  onClick={handleClearAll}
-                >
-                  Clear All
-                </div>
-              )}
+        <div className="d-flex px-3 py-2 justify-content-between">
+          <div className="fs-3">{query ? "Results" : "Recent"}</div>
+          {query ? null : (
+            <div
+              className="fs-6 btn hover rounded-pill"
+              onClick={handleClearAll}
+            >
+              Clear All
             </div>
-            {results.length > 0
-              ? results.map((result, index) => (
-                  <List
-                    className="hover pointer"
-                    key={index}
-                    data={
-                      result.type === "user"
-                        ? {
-                            image_url: result.profile_image_url,
-                            title: result.name,
-                            subtitle: result.account_name,
-                          }
-                        : result.type === "hashtag"
-                        ? {
-                            image: (
-                              <div className="text-primary rounded-circle border px-2">
-                                <i className="bi bi-hash fs-1"></i>
-                              </div>
-                            ),
-                            title: result.tag,
-                            subtitle: result.tweet_count + " Tweets",
-                          }
-                        : {
-                            ...result,
-                            image: !result.image_url ? (
-                              result.subtitle ? (
-                                <div className="text-primary rounded-circle border px-2">
-                                  <i className="bi bi-hash fs-1"></i>
-                                </div>
-                              ) : (
-                                <div className="text-primary rounded-circle border p-2">
-                                  <i className="bi bi-search fs-3 mx-1"></i>
-                                </div>
-                              )
-                            ) : null,
-                          }
-                    }
-                    onClick={() => handleClick(result)}
-                    actionButton={
-                      result.type === "history" ? (
-                        <div
-                          className="btn hover py-0 px-1 rounded-circle"
-                          onClick={(e) => handleDeleteHistory(e, result._id)}
-                        >
-                          <i className="bi bi-x fs-3 text-muted"></i>
-                        </div>
-                      ) : (
-                        <div className="py-0 px-1 rounded-circle">
-                          <i className="bi bi-arrow-up-left-circle fs-3 text-muted"></i>
-                        </div>
-                      )
-                    }
-                  />
-                ))
-              : !loading && (
-                  <div className="text-center text-muted fw-bold mb-4 mt-2">
-                    {query ? "No Search Results" : "No Search History"}
-                  </div>
-                )}
-          </div>
-          <Loading
+          )}
+        </div>
+        {results.length > 0
+          ? results.map((result, index) => (
+              <List
+                className="hover pointer"
+                key={index}
+                data={
+                  result.type === "user"
+                    ? {
+                        image_url: result.profile_image_url,
+                        title: result.name,
+                        subtitle: result.account_name,
+                      }
+                    : result.type === "hashtag"
+                    ? {
+                        image: (
+                          <div className="text-primary rounded-circle border px-2">
+                            <i className="bi bi-hash fs-1"></i>
+                          </div>
+                        ),
+                        title: result.tag,
+                        subtitle: result.tweet_count + " Tweets",
+                      }
+                    : {
+                        ...result,
+                        image: !result.image_url ? (
+                          result.subtitle ? (
+                            <div className="text-primary rounded-circle border px-2">
+                              <i className="bi bi-hash fs-1"></i>
+                            </div>
+                          ) : (
+                            <div className="text-primary rounded-circle border p-2">
+                              <i className="bi bi-search fs-3 mx-1"></i>
+                            </div>
+                          )
+                        ) : null,
+                      }
+                }
+                onClick={() => handleClick(result)}
+                actionButton={
+                  result.type === "history" ? (
+                    <div
+                      className="btn hover py-0 px-1 rounded-circle"
+                      onClick={(e) => handleDeleteHistory(e, result._id)}
+                    >
+                      <i className="bi bi-x fs-3 text-muted"></i>
+                    </div>
+                  ) : (
+                    <div className="py-0 px-1 rounded-circle">
+                      <i className="bi bi-arrow-up-left-circle fs-3 text-muted"></i>
+                    </div>
+                  )
+                }
+              />
+            ))
+          : !loading && (
+              <div className="text-center text-muted fw-bold mb-4 mt-2">
+                {query ? "No Search Results" : "No Search History"}
+              </div>
+          )}
+        <Loading
             show={loading}
             className="my-4 text-app"
             style={{ width: "1.5rem", height: "1.5rem" }}
           />
-        </div>
       </div>
     </div>
   );

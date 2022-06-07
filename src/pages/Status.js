@@ -41,6 +41,9 @@ export default function Status() {
 
   useEffect(() => {
     setLoading(true);
+    setTweet(null);
+    setReferences(null);
+    setReplies(null);
     getTweetTimeline(status_id)
       .then((res) => {
         setTweet(res.data);
@@ -209,17 +212,16 @@ export default function Status() {
                 <div className="actions">
                   <div
                     className="btn hover px-2 py-1 rounded-circle"
-                    id="menu"
+                    id="status-menu"
                     data-bs-toggle="dropdown"
                     data-title="More"
                     aria-expanded="false"
-                    onClick={(e) => e.stopPropagation()}
                   >
                     <i className="bi bi-three-dots fs-3"></i>
                   </div>
                   <div
                     className="dropdown-menu dropdown-menu-end bg-primary py-0"
-                    aria-labelledby="menu"
+                    aria-labelledby="status-menu"
                   >
                     {account_name === user.account_name ? (
                       <div>
@@ -281,6 +283,18 @@ export default function Status() {
                   __html: parseTweet(tweet.text, true),
                 }}
               ></div>
+            ) : null}
+            {tweet.media ? (
+              <div className="media my-2">
+                <div className="media-body">
+                  <img
+                    className="w-100 h-auto border"
+                    style={{ borderRadius: "16px" }}
+                    src={tweet.media}
+                    alt=""
+                  />
+                </div>
+              </div>
             ) : null}
             {tweet.createdAt ? (
               <div className="text-muted mt-2 fs-5">
