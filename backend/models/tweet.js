@@ -21,6 +21,10 @@ const Tweet = mongoose.model(
         enum: ["everyone", "followers"],
         default: "everyone",
       },
+      media: {
+        type: String,
+        default: "",
+      },
       entities: {
         hashtags: [
           {
@@ -56,17 +60,19 @@ const Tweet = mongoose.model(
         url_link_click: { type: Number, default: 0 },
         user_profile_click: { type: Number, default: 0 },
       },
-      referenced_tweet: [{
-        type: {
-          type: String,
-          enum: ["replied_to", "retweet_of", "quoated_from"],
+      referenced_tweet: [
+        {
+          type: {
+            type: String,
+            enum: ["replied_to", "retweet_of", "quoated_from"],
+          },
+          id: {
+            type: ObjectId,
+            ref: "Tweet",
+          },
+          _id: false,
         },
-        id: {
-          type: ObjectId,
-          ref: "Tweet",
-        },
-        _id: false,
-      }],
+      ],
     },
     { timestamps: true }
   )

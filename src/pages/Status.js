@@ -23,12 +23,15 @@ import {
   unpinTweet,
 } from "../services/user";
 import Loading from "../components/Loading";
+import Modal from "../components/Modal";
 
 export default function Status() {
   const { user } = useContext(AuthContext);
   const { account_name, status_id } = useParams();
   const [tweet, setTweet] = useState();
   const [show, setShow] = useState(false);
+  const [modalShow, setModalShow] = useState(false);
+  const [imageUrl, setImageUrl] = useState(null);
   const [references, setReferences] = useState();
   const [replies, setReplies] = useState();
   const [liked, setLiked] = useState(false);
@@ -122,12 +125,16 @@ export default function Status() {
           retweet_count: tweet.public_metrics.retweet_count + 1,
         },
       });
-      postTweet(tweet.text, user._id, "retweet_of", [
-        {
-          id: tweet._id,
-          type: "retweet_of",
-        },
-      ]);
+      postTweet({
+        text: tweet.text,
+        author_id: user._id,
+        referenced_tweet: [
+          {
+            id: tweet._id,
+            type: "retweet_of",
+          },
+        ],
+      });
     }
   };
 
@@ -157,7 +164,32 @@ export default function Status() {
         className="my-5 text-app"
         style={{ width: "1.5rem", height: "1.5rem" }}
       />
-
+      {modalShow ? (
+        <Modal style={{ width: "100%", height: "100%" }}>
+          <div className="position-absolute p-3">
+            <div
+              className="btn hover px-2 py-0 rounded-circle"
+              onClick={() => {
+                setModalShow(false);
+                document.body.style.overflowY = "scroll";
+              }}
+            >
+              <i className="bi bi-x fs-1"></i>
+            </div>
+          </div>
+          <div className="d-flex flex-column align-items-center h-100 justify-content-center">
+            <div
+              className="w-100"
+              style={{
+                maxHeight: "400px",
+                maxWidth: "90%",
+              }}
+            >
+              <img className="h-100 w-100" src={tweet.media} />
+            </div>
+          </div>
+        </Modal>
+      ) : null}
       <div className="reference-list" ref={tweetRef}>
         {references
           ? references.map((reference, index) =>
@@ -288,9 +320,13 @@ export default function Status() {
               <div className="media my-2">
                 <div className="media-body">
                   <img
-                    className="w-100 h-auto border"
+                    className="w-100 h-auto border pointer"
                     style={{ borderRadius: "16px" }}
                     src={tweet.media}
+                    onClick={() => {
+                      document.body.style.overflowY = "hidden";
+                      setModalShow(true);
+                    }}
                     alt=""
                   />
                 </div>

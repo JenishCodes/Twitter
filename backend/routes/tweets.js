@@ -2,7 +2,7 @@ const express = require("express");
 const { Tweet } = require("../models/tweet");
 const { User } = require("../models/user");
 const { getTweets, getTweet } = require("../utils");
-const { Types, isValidObjectId } = require("mongoose");
+const { Types } = require("mongoose");
 const { Favorite } = require("../models/favorite");
 const { Hashtag } = require("../models/hashtag");
 
@@ -72,6 +72,11 @@ router.delete("/destroy", async function (req, res) {
       }
     }
 
+    await Tweet.deleteMany({
+      "referenced_tweet.type": "retweet_of",
+      "referenced_tweet.id": tweet._id,
+    });
+
     await Favorite.deleteMany({ tweet_id: tweet._id });
 
     await Promise.all(
@@ -131,6 +136,19 @@ router.post("/create", async function (req, res) {
       $inc: { tweets_count: 1 },
     });
 
+    res.status(200);
+    res.send({ id: tweet._id });
+  } catch (err) {
+    console.log(err);
+    res.status(400);
+    res.send(err);
+  }
+});
+
+router.put("/update", async function (req, res) {
+  try {
+    await Tweet.findByIdAndUpdate(req.query.id, req.body);
+
     res.sendStatus(200);
   } catch (err) {
     console.log(err);
@@ -144,17 +162,19 @@ router.get("/replies", async function (req, res) {
     const replies = await Tweet.find({
       "referenced_tweet.type": "replied_to",
       "referenced_tweet.id": req.query.id,
-    }).populate("author_id", {
-      name: 1,
-      account_name: 1,
-      auth_id: 1,
-      profile_image_url: 1,
-    }).transform(function (docs) {
-      return docs.map((doc) => {
-        const { author_id, ...resDoc } = doc._doc;
-        return { ...resDoc, author: author_id };
+    })
+      .populate("author_id", {
+        name: 1,
+        account_name: 1,
+        auth_id: 1,
+        profile_image_url: 1,
+      })
+      .transform(function (docs) {
+        return docs.map((doc) => {
+          const { author_id, ...resDoc } = doc._doc;
+          return { ...resDoc, author: author_id };
+        });
       });
-    });
 
     res.send({ data: replies });
   } catch (err) {
@@ -174,15 +194,15 @@ router.get("/references", async function (req, res) {
         const newRefTweets = referenced_tweet.map((ref) => {
           return { type: ref.type, ...ref.id._doc };
         });
-        return newRefTweets
+        return newRefTweets;
       });
 
     const result = await Promise.all(
       referenced_tweets.map(async (reference) => {
         if (reference.author_id) {
-          const ref_tweet_author = await User.findById(reference.author_id).select(
-            "name account_name auth_id profile_image_url"
-          );
+          const ref_tweet_author = await User.findById(
+            reference.author_id
+          ).select("name account_name auth_id profile_image_url");
           return { ...reference, author: ref_tweet_author };
         } else {
           return null;
@@ -233,223 +253,5 @@ router.get("/retweeters", async function (req, res) {
     res.send(err.message);
   }
 });
-
-// router.get("/tweet_timeline", async function (req, res) {
-//   try {
-//     var tweet = await Tweet.aggregate([
-//       { $match: { _id: ObjectId(req.query.id) } },
-//       {
-//         $lookup: {
-//           from: "users",
-//           localField: "author_id",
-//           foreignField: "_id",
-//           as: "author",
-//         },
-//       },
-//     ]);
-
-//     const replies = await Tweet.aggregate([
-//       { $match: { _id: ObjectId(req.query.id) } },
-//       {
-//         $graphLookup: {
-//           from: "tweets",
-//           startWith: "$_id",
-//           connectFromField: "_id",
-//           connectToField: "referenced_tweet.id",
-//           as: "children",
-//         },
-//       },
-//       {
-//         $lookup: {
-//           from: "users",
-//           localField: "children.author_id",
-//           foreignField: "_id",
-//           as: "children_author_list",
-//         },
-//       },
-//       {
-//         $project: {
-//           children: 1,
-//           children_author_list: 1,
-//           _id: 0,
-//         },
-//       },
-//     ]);
-
-//     const replieds = await Tweet.aggregate([
-//       { $match: { _id: ObjectId(req.query.id) } },
-//       {
-//         $graphLookup: {
-//           from: "tweets",
-//           startWith: "$referenced_tweet.id",
-//           connectFromField: "referenced_tweet.id",
-//           connectToField: "_id",
-//           as: "parents",
-//         },
-//       },
-//       {
-//         $lookup: {
-//           from: "users",
-//           localField: "parents.author_id",
-//           foreignField: "_id",
-//           as: "parents_author_list",
-//         },
-//       },
-//       {
-//         $project: {
-//           parents: 1,
-//           parents_author_list: 1,
-//           _id: 0,
-//         },
-//       },
-//     ]);
-
-//     const childrens = replies[0].children.map((reply) => ({
-//       ...reply,
-//       author: replies[0].children_author_list.find(
-//         (author) => author._id.toString() === reply.author_id.toString()
-//       ),
-//     }));
-
-//     const parents = replieds[0].parents.map((replied) => {
-//       return {
-//         ...replied,
-//         author: replieds[0].parents_author_list.find(
-//           (author) => author._id.toString() === replied.author_id.toString()
-//         ),
-//       };
-//     });
-
-//     tweet = { ...tweet[0], author: tweet[0].author[0] };
-
-//     res.send({
-//       tweet,
-//       replies: childrens,
-//       referenced_tweets: parents,
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(400);
-//     res.send(err.message);
-//   }
-// });
-
-// router.get("/user_timeline", async function (req, res) {
-//   try {
-//     var data;
-//     var user = await User.findOne({ account_name: req.query.author });
-
-//     if (req.query.request_type) {
-//       if (req.query.request_type === "likes") {
-//         data = await Favorite.aggregate([
-//           { $match: { author_id: user._id } },
-//           {
-//             $lookup: {
-//               from: "tweets",
-//               localField: "tweet_id",
-//               foreignField: "_id",
-//               as: "tweet",
-//             },
-//           },
-//           {
-//             $lookup: {
-//               from: "users",
-//               localField: "tweet.author_id",
-//               foreignField: "_id",
-//               as: "author",
-//             },
-//           },
-//           {
-//             $project: {
-//               tweet: 1,
-//               author: 1,
-//               _id: 0,
-//             },
-//           },
-//         ]);
-
-//         data = data.map((d) => {
-//           return { ...d.tweet[0], author: d.author[0] };
-//         });
-//       } else {
-//         data = await Tweet.aggregate([
-//           {
-//             $match: {
-//               author_id: user._id,
-//               "referenced_tweet.type": req.query.request_type,
-//             },
-//           },
-//           {
-//             $lookup: {
-//               from: "users",
-//               localField: "author_id",
-//               foreignField: "_id",
-//               as: "author",
-//             },
-//           },
-//         ]);
-
-//         data = data.map((d) => {
-//           return { ...d, author: d.author[0] };
-//         });
-//       }
-//     } else {
-//       data = await Tweet.aggregate([
-//         { $match: { author_id: user._id, referenced_tweet: [] } },
-//         {
-//           $lookup: {
-//             from: "users",
-//             localField: "author_id",
-//             foreignField: "_id",
-//             as: "author",
-//           },
-//         },
-//       ]);
-
-//       data = data.map((d) => {
-//         return { ...d, author: d.author[0] };
-//       });
-//     }
-
-//     res.send({ tweets: data, user });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(400);
-//     res.send(err.message);
-//   }
-// });
-
-// router.get("/mention_timeline", async function (req, res) {
-//   try {
-//     if (req.query.trim_user) {
-//       const tweets = await Tweet.find({
-//         "entities.mentions.user_id": req.query.id,
-//       });
-
-//       res.send(tweets);
-//     } else {
-//       const tweets = await Tweet.aggregate([
-//         {
-//           $lookup: {
-//             from: "User",
-//             localField: "author_id",
-//             as: "author",
-//             foreignField: "_id",
-//           },
-//         },
-//       ]).find({
-//         entities: {
-//           " mentions.tag": req.query.user,
-//         },
-//       });
-
-//       res.send(tweets);
-//     }
-//   } catch (err) {
-//     console.log(err.messsage);
-//     res.status(400);
-//     res.send(err.message);
-//   }
-// });
 
 module.exports = router;

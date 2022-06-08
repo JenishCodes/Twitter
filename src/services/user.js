@@ -229,14 +229,9 @@ export async function signup(name, email, password, account_name, uid = null) {
   }
 }
 
-export async function signin(email, password, username) {
+export async function signin(email, password) {
   try {
-    if (email) {
-      await signInWithEmailAndPassword(auth, email, password);
-    } else {
-      const user = await api.get("/user/show?" + username);
-      await signInWithEmailAndPassword(user.data[0].email, password);
-    }
+    await signInWithEmailAndPassword(auth, email, password);
   } catch (err) {
     throw err;
   }

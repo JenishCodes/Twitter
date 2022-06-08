@@ -95,12 +95,16 @@ export default function Tweet(props) {
           retweet_count: data.public_metrics.retweet_count + 1,
         },
       });
-      postTweet(data.text, user._id, "retweet_of", [
-        {
-          type: "retweet_of",
-          id: data._id,
-        },
-      ]);
+      postTweet({
+        text: data.text,
+        author_id: user._id,
+        referenced_tweet: [
+          {
+            type: "retweet_of",
+            id: data._id,
+          },
+        ],
+      });
     }
   };
 
@@ -239,7 +243,14 @@ export default function Tweet(props) {
                     </div>
                   )}
                   {data.author._id === user._id ? (
-                    <div className="d-flex text-danger align-items-center dropdown-item py-2 px-3 hover btn">
+                    <div
+                      className="d-flex text-danger align-items-center dropdown-item py-2 px-3 hover btn"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        deleteTweet(data._id);
+                        setData(null);
+                      }}
+                    >
                       <i className="bi bi-trash me-3 fs-3"></i>
                       <div>Delete</div>
                     </div>
@@ -260,7 +271,7 @@ export default function Tweet(props) {
               }}
             ></div>
             {data.media ? (
-              <div className="media my-2">
+              <div className="media my-2" >
                 <img
                   className="w-100 h-auto border"
                   style={{ borderRadius: "16px" }}

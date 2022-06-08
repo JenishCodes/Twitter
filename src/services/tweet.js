@@ -1,34 +1,26 @@
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { storage } from "../config/firebase";
 import { extractEntities } from "../utils";
 import api from "./api";
 
-export async function postTweet(
-  text,
-  user_id,
-  reference_type = null,
-  referenced_tweet = null,
-) {
+export async function postTweet(tweet) {
   try {
-    const entities = extractEntities(text);
+    const entities = extractEntities(tweet.text);
 
-    if (reference_type === "replied_to") {
-      await api.post("/tweet/create", {
-        author_id: user_id,
-        text,
-        referenced_tweet,
-        entities,
-      });
-    } else if (reference_type === "retweet_of") {
-      await api.post("/tweet/create", {
-        author_id: user_id,
-        text,
-        referenced_tweet,
-        entities,
-      });
-    } else {
-      await api.post("/tweet/create", {
-        author_id: user_id,
-        text,
-        entities,
+    const res = await api.post("/tweet/create", {
+      ...tweet,
+      entities,
+      media: "",
+    });
+
+    if (tweet.media) {
+      const mediaRef = ref(storage, `/tweet_images/${res.data.id}`);
+
+      await uploadBytes(mediaRef, tweet.media);
+      const media = await getDownloadURL(mediaRef);
+
+      await api.put(`/tweet/update?id=${res.data.id}`, {
+        media,
       });
     }
   } catch (err) {

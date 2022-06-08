@@ -1,7 +1,7 @@
 import api from "./api";
 import {
   addDoc,
-  // deleteDoc,
+  deleteDoc,
   getDocs,
   orderBy,
   query,
@@ -10,9 +10,9 @@ import {
   where,
   doc,
   collection,
-  // limit,
+  limit,
   serverTimestamp,
-  // updateDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { store } from "../config/firebase";
 
@@ -73,21 +73,21 @@ export async function sendMessage(message) {
 
 export async function deleteMessage(messageId) {
   try {
-    // const res = await deleteDoc(doc(store, "messages", messageId));
-    // const lastMessage = await getDocs(
-    //   query(
-    //     collection(store, "messages"),
-    //     where("chatId", "==", res.chatId),
-    //     orderBy("createdAt", "desc"),
-    //     limit(1)
-    //   )
-    // );
+    const res = await deleteDoc(doc(store, "messages", messageId));
+    const lastMessage = await getDocs(
+      query(
+        collection(store, "messages"),
+        where("chatId", "==", res.chatId),
+        orderBy("createdAt", "desc"),
+        limit(1)
+      )
+    );
 
-    // await updateDoc(doc(store, "chats", res.chatId), {
-    //   lastMessageId: lastMessage.docs[0].id,
-    // });
+    await updateDoc(doc(store, "chats", res.chatId), {
+      lastMessageId: lastMessage.docs[0].id,
+    });
 
-    // return res;
+    return res;
   } catch (err) {
     throw err;
   }

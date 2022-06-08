@@ -15,8 +15,8 @@ export default function Editor({
   referenced_tweets,
   setShow,
 }) {
-  const [text, setText] = useState();
   const { user } = useContext(AuthContext);
+  const [text, setText] = useState();
   const [searchData, setSearchData] = useState([]);
   const [searchDataType, setSearchDataType] = useState("");
   const [loading, setLoading] = useState(false);
@@ -71,10 +71,15 @@ export default function Editor({
   const handlePost = () => {
     setLoading(true);
     if (reference_tweet) {
-      const references = referenced_tweets;
-      references.push({ type: "replied_to", id: reference_tweet._id });
-
-      postTweet(text, user._id, "replied_to", references)
+      postTweet({
+        text,
+        authr_id: user._id,
+        media: image,
+        referenced_tweets: [
+          ...referenced_tweets,
+          { type: "replied_to", id: reference_tweet._id },
+        ],
+      })
         .then(() => {
           setText("");
           tweet.current.innerHTML = "";
@@ -86,7 +91,7 @@ export default function Editor({
           document.body.style.overflowY = "scroll";
         });
     } else {
-      postTweet(text, user._id)
+      postTweet({ text, media: image, author_id: user._id })
         .then(() => {
           setText("");
           tweet.current.innerHTML = "";
