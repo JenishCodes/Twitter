@@ -1,6 +1,6 @@
 import { onAuthStateChanged } from "firebase/auth";
 import React, { useEffect, useState } from "react";
-import { getUser } from "../services/user";
+import { getUser, getUserSettings } from "../services/user";
 import { auth } from "./firebase";
 
 export const AuthContext = React.createContext();
@@ -14,7 +14,14 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, async (res) => {
       if (res) {
         const user_res = await getUser(res.displayName);
-        setUser({ ...user_res.data, email: res.email });
+
+        const userSettings = await getUserSettings(user_res.data._id);
+
+        setUser({
+          ...user_res.data,
+          email: res.email,
+          settings: userSettings.data,
+        });
       } else {
         setUser(null);
       }

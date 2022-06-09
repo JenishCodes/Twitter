@@ -15,7 +15,7 @@ import Hashtag from "../pages/Hashtag";
 import Bookmark from "../pages/Bookmark";
 import Chat from "../pages/Chat";
 import Account from "../pages/Account";
-import Security from "../pages/Security";
+import NotificationSettings from "../pages/NotificationSettings";
 import Privacy from "../pages/Privacy";
 import Display from "../pages/Display";
 import AccountName from "../pages/AccountName";
@@ -79,7 +79,7 @@ export default function AppScreen() {
                   <Route path="gender" element={<Gender />} />
                   <Route path="phone" element={<Phone />} />
                 </Route>
-                <Route path="security" element={<Security />} />
+                <Route path="notifications" element={<NotificationSettings />} />
                 <Route path="privacy" element={<Privacy />} />
                 <Route path="display" element={<Display />} />
               </Route>

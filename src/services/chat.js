@@ -6,6 +6,7 @@ import {
   doc,
   getDoc,
   onSnapshot,
+  deleteDoc,
 } from "firebase/firestore";
 import { store } from "../config/firebase";
 import api from "./api";
@@ -49,12 +50,22 @@ export async function getChats(userId) {
   }
 }
 
+export async function deleteChat(chatId) {
+  try {
+    await deleteDoc(doc(store, "chats", chatId));
+  } catch (err) {
+    throw err;
+  }
+}
+
 export function getNewMessage(chatId, callback) {
   return onSnapshot(doc(store, "chats", chatId), (snapshot) => {
-    const lastMessage = snapshot.data().lastMessageId;
+    if (snapshot.exists()) {
+      const lastMessage = snapshot.data().lastMessageId;
 
-    getDoc(doc(store, "messages", lastMessage)).then((res) =>
-      callback({ ...res.data(), _id: lastMessage })
-    ).catch((err) => console.log(err));
+      getDoc(doc(store, "messages", lastMessage))
+        .then((res) => callback({ ...res.data(), _id: lastMessage }))
+        .catch((err) => console.log(err));
+    }
   });
 }

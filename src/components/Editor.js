@@ -75,6 +75,7 @@ export default function Editor({
         text,
         authr_id: user._id,
         media: image,
+        replyTo: reference_tweet.author.account_name,
         referenced_tweets: [
           ...referenced_tweets,
           { type: "replied_to", id: reference_tweet._id },

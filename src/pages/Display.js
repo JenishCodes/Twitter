@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import { setCSSVariables } from "../utils";
 
-export default function Display(props) {
+export default function Display() {
   const [color, setColor] = useState();
   const [theme, setTheme] = useState();
-  const [font, setFont] = useState();
+  const [font, setFont] = useState(0);
 
   useEffect(() => {
     setColor(window.localStorage.getItem("color"));

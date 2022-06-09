@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import Message from "../components/Message";
 import {
@@ -26,10 +26,16 @@ export default function Chat(props) {
       const chatId = [user._id, user_id].sort().join("~");
 
       const unsub = getNewMessage(chatId, (message) => {
-        if (message._id !== messages[messages.length - 1]._id) {
+        if (!message.text) {
+          return;
+        }
+
+        if (messages.length === 0) {
+          setMessages([{ ...message, date: true }]);
+        } else if (message._id !== messages[messages.length - 1]._id) {
           const lastMessage = messages[messages.length - 1];
 
-          if (message.createdAt.seconds - lastMessage.createdAt.seconds > 60) {
+          if (message.createdAt.seconds - lastMessage.createdAt.seconds <= 60) {
             setMessages([
               ...messages.slice(0, messages.length - 1),
               { ...lastMessage, date: false },
@@ -82,6 +88,7 @@ export default function Chat(props) {
             }
           }
         });
+
         setMessages(updatedMessages.concat(messages));
         setCursor(cursor + 1);
       })
@@ -90,8 +97,8 @@ export default function Chat(props) {
   }, []);
 
   const handleDelete = (messageId) => {
-    deleteMessage(messageId);
     setMessages(messages.filter((message) => message._id !== messageId));
+    deleteMessage(messageId, [user._id, user_id].sort().join("~"));
   };
 
   const handleSubmit = (e) => {
@@ -191,13 +198,11 @@ export default function Chat(props) {
             className="w-100 text-input text-primary flex-grow-1 py-1"
           />
         </div>
-        <div
-          className="bg-secondary"
-          style={{ width: "1px", height: "100%" }}
-        ></div>
+        <div className="border h-100"></div>
         <div
           className={`btn hover rounded-circle${text ? "" : " disabled"}`}
           onClick={handleSubmit}
+          onMouseDown={(e) => e.preventDefault()}
         >
           <i className="bi bi-send"></i>
         </div>

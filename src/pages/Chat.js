@@ -50,7 +50,10 @@ export default function Message() {
               actionButton={
                 chat.lastMessage._id && (
                   <div className="text-muted oneline">
-                    {timeFormatter(chat.lastMessage.createdAt.seconds * 1000, "Ago")}
+                    {timeFormatter(
+                      chat.lastMessage.createdAt.seconds * 1000,
+                      "Ago"
+                    )}
                   </div>
                 )
               }

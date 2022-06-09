@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../config/context";
+import { getUnseenNotififcationCount } from "../services/notification";
 import Editor from "./Editor";
 
 export default function Sidebar() {
@@ -8,7 +9,14 @@ export default function Sidebar() {
   const { pathname } = useLocation();
   const [show, setShow] = useState(true);
   const [compose, setCompose] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getUnseenNotififcationCount(user._id)
+      .then((res) => setNotificationCount(res.data))
+      .catch((err) => console.log(err));
+  }, []);
 
   useEffect(() => {
     setShow(
@@ -88,8 +96,11 @@ export default function Sidebar() {
               </div>
               <div className="w-100">
                 <div
-                  onClick={() => navigate("/notifications")}
-                  className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-sm-3 fs-3 pe-xl-4 px-2 text-primary btn"
+                  onClick={() => {
+                    setNotificationCount(0);
+                    navigate("/notifications");
+                  }}
+                  className="nav hover rounded-pill mx-auto mx-xl-0 overflow-visible py-sm-2 py-0 align-items-center px-sm-3 fs-3 pe-xl-4 px-2 text-primary btn"
                 >
                   <div className="nav-icon">
                     <i
@@ -97,6 +108,15 @@ export default function Sidebar() {
                         pathname === "/notifications" ? "-fill" : ""
                       }`}
                     ></i>
+                    {notificationCount > 0 ? (
+                      <span
+                        style={{ top: "-10%" }}
+                        className="position-absolute px-2 fs-7 py-1 start-50 badge rounded-pill bg-app"
+                      >
+                        {notificationCount > 9 ? "9+" : notificationCount}
+                        <span className="visually-hidden">unread messages</span>
+                      </span>
+                    ) : null}
                   </div>
                   <span
                     className={`nav-title d-xl-block d-none ${
@@ -230,7 +250,9 @@ export default function Sidebar() {
                 <div className="d-xl-flex d-none align-items-center justify-content-between details">
                   <div className="text-start overflow-hidden">
                     <div className="fw-bold oneline">{user.name}</div>
-                    <div className="text-muted oneline">@{user.account_name}</div>
+                    <div className="text-muted oneline">
+                      @{user.account_name}
+                    </div>
                   </div>
                   <div className="py-1 ps-2">
                     <i className="bi bi-three-dots fs-3"></i>

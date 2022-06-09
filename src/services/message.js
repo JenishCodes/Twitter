@@ -15,6 +15,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { store } from "../config/firebase";
+import { deleteChat } from "./chat";
 
 export async function getChatMessages(chatId, page, userId = null) {
   try {
@@ -71,23 +72,26 @@ export async function sendMessage(message) {
   }
 }
 
-export async function deleteMessage(messageId) {
+export async function deleteMessage(messageId, chatId) {
   try {
-    const res = await deleteDoc(doc(store, "messages", messageId));
+    await deleteDoc(doc(store, "messages", messageId));
+
     const lastMessage = await getDocs(
       query(
         collection(store, "messages"),
-        where("chatId", "==", res.chatId),
+        where("chatId", "==", chatId),
         orderBy("createdAt", "desc"),
         limit(1)
       )
     );
 
-    await updateDoc(doc(store, "chats", res.chatId), {
-      lastMessageId: lastMessage.docs[0].id,
-    });
-
-    return res;
+    if (lastMessage.docs.length > 0) {
+      updateDoc(doc(store, "chats", chatId), {
+        lastMessageId: lastMessage.docs[0].id,
+      });
+    } else {
+      deleteChat(chatId);
+    }
   } catch (err) {
     throw err;
   }

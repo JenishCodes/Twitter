@@ -6,6 +6,7 @@ const tweets = require("./routes/tweets");
 const hashtags = require("./routes/hashtags");
 const favorites = require("./routes/favorites");
 const friendships = require("./routes/friendships");
+const notifications = require("./routes/notifications");
 const app = express();
 require("dotenv").config();
 
@@ -29,5 +30,6 @@ app.use("/tweet", tweets);
 app.use("/hashtag", hashtags);
 app.use("/favorite", favorites);
 app.use("/friendship", friendships);
+app.use("/notification", notifications);
 
 app.listen(process.env.PORT || 3001, () => console.log("Server running on port 3001..."));

@@ -6,6 +6,7 @@ const { Friendship } = require("../models/friendship");
 const { getUser, getUsers, getTweets } = require("../utils");
 const { Types } = require("mongoose");
 const { Favorite } = require("../models/favorite");
+const { Setting } = require("../models/settings");
 
 const router = express.Router();
 
@@ -38,6 +39,32 @@ router.get("/search", async function (req, res) {
     }
 
     res.send({ data: results });
+  } catch (err) {
+    console.log(err);
+    res.status(400);
+    res.send(err.message);
+  }
+});
+
+router.get("/settings", async (req, res) => {
+  try {
+    const settings = await Setting.findOne({ userId: req.query.id });
+
+    res.send({ data: settings });
+  } catch (err) {
+    console.log(err);
+    res.status(400);
+    res.send(err.message);
+  }
+});
+router.put("/settings", async (req, res) => {
+  try {
+    const settings = await Setting.findOneAndUpdate(
+      { userId: req.query.id },
+      { $set: req.body }
+    );
+
+    res.send({ data: settings });
   } catch (err) {
     console.log(err);
     res.status(400);
@@ -158,28 +185,31 @@ router.get("/tweets/replies", async function (req, res) {
 
 router.get("/tweets/retweets", async function (req, res) {
   try {
-    const user = await User.findOne({ account_name: req.query.account_name }).select("_id");
+    const user = await User.findOne({
+      account_name: req.query.account_name,
+    }).select("_id");
 
     const retweets = await Tweet.find({
       author_id: user._id,
       "referenced_tweet.type": "retweet_of",
-    }).sort({ createdAt: -1 })
+    })
+      .sort({ createdAt: -1 })
       .select("referenced_tweet -_id")
       .populate("referenced_tweet.id")
       .transform(function (docs) {
         return docs.map((doc) => {
           const { referenced_tweet } = doc._doc;
-          const ref = referenced_tweet[referenced_tweet.length - 1]
-          return { type: ref.type, ...ref.id._doc }
+          const ref = referenced_tweet[referenced_tweet.length - 1];
+          return { type: ref.type, ...ref.id._doc };
         });
       });
 
     const result = await Promise.all(
       retweets.map(async (reference) => {
         if (reference.author_id) {
-          const ref_tweet_author = await User.findById(reference.author_id).select(
-            "name account_name auth_id profile_image_url"
-          );
+          const ref_tweet_author = await User.findById(
+            reference.author_id
+          ).select("name account_name auth_id profile_image_url");
           return { ...reference, author: ref_tweet_author };
         } else {
           return null;
@@ -444,7 +474,9 @@ router.post("/tweet/unbookmark", async function (req, res) {
 
 router.post("/", async function (req, res) {
   try {
-    await User.create(req.body);
+    const user = await User.create(req.body);
+
+    await Setting.create({ userId: user._id, userName: user.account_name });
 
     res.sendStatus(200);
   } catch (err) {

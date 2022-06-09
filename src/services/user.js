@@ -109,6 +109,24 @@ export async function getUser(account_name) {
   }
 }
 
+export async function getUserSettings(user_id) {
+  try {
+    const res = await api.get("/user/settings?id=" + user_id);
+
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export async function updateUserSettings(user_id, settings) {
+  try {
+    await api.put("/user/settings?id=" + user_id, settings);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 export async function getUserTweets(account_name, cursor, request_type = "") {
   try {
     var res;

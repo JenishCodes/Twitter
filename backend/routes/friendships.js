@@ -1,10 +1,10 @@
 const express = require("express");
 const { Friendship } = require("../models/friendship");
+const { Setting } = require("../models/settings");
 const { User } = require("../models/user");
 const { getUser } = require("../utils");
 
 const router = express.Router();
-
 
 router.get("/followers", async function (req, res) {
   const user = await getUser(req.query.account_name, "account_name");
@@ -27,7 +27,7 @@ router.get("/followers", async function (req, res) {
   const followers = users.map((user) => user.user);
 
   res.send({ data: followers });
-})
+});
 
 router.get("/following", async function (req, res) {
   const user = await getUser(req.query.account_name, "account_name");
@@ -72,6 +72,19 @@ router.post("/", async function (req, res) {
     await User.findOneAndUpdate(req.body.following, {
       $inc: { followers_count: 1 },
     });
+
+    const target = await Setting.findOne({ userId: req.body.following });
+
+    if (target.followNotification) {
+      const actor = await User.findById(req.body.followed_by);
+
+      Notification.create({
+        message: `${actor.account_name} is now following you`,
+        user: req.body.following,
+        read: false,
+        action: "/" + actor.account_name,
+      });
+    }
 
     res.sendStatus(200);
   } catch (err) {

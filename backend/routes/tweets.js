@@ -5,6 +5,8 @@ const { getTweets, getTweet } = require("../utils");
 const { Types } = require("mongoose");
 const { Favorite } = require("../models/favorite");
 const { Hashtag } = require("../models/hashtag");
+const { Setting } = require("../models/settings");
+const { Notification } = require("../models/notification");
 
 const router = express.Router();
 
@@ -102,6 +104,46 @@ router.delete("/destroy", async function (req, res) {
 
 router.post("/create", async function (req, res) {
   try {
+    const { replyTo, ...data } = req.body;
+
+    const tweet = await Tweet.create(data);
+
+    if (tweet.entities.hashtags.length > 0) {
+      await Promise.all(
+        tweet.entities.hashtags.map(async (hashtag) => {
+          await Hashtag.updateOne(
+            { tag: hashtag.tag },
+            {
+              tag: hashtag.tag,
+              $push: { tweets: tweet._id },
+            },
+            { upsert: true }
+          );
+        })
+      );
+    }
+
+    const author = await User.findById(data.author_id);
+
+    if (tweet.entities.mentions.length > 0) {
+      await Promise.all(
+        tweet.entities.mentions.map(async (mention) => {
+          const user = await Setting.findOne({
+            userName: mention.account_name,
+          });
+
+          if (user && user.mentionNotification) {
+            Notification.create({
+              message: `${author.account_name} mentioned you in a tweet`,
+              user: user.userId,
+              read: false,
+              action: "/" + author.account_name + "/status/" + tweet._id,
+            });
+          }
+        })
+      );
+    }
+
     if (req.body.referenced_tweet) {
       const referenced_tweet =
         req.body.referenced_tweet[req.body.referenced_tweet.length - 1];
@@ -110,27 +152,23 @@ router.post("/create", async function (req, res) {
         await Tweet.findByIdAndUpdate(referenced_tweet.id, {
           $inc: { "public_metrics.reply_count": 1 },
         });
+
+        const user = await Setting.findOne({ userName: replyTo });
+
+        if (user && user.replyNotification) {
+          Notification.create({
+            message: `${author.account_name} replied to your tweet`,
+            user: user.userId,
+            read: false,
+            action: "/" + author.account_name + "/status/" + tweet._id,
+          });
+        }
       } else {
         await Tweet.findByIdAndUpdate(referenced_tweet.id, {
           $inc: { "public_metrics.retweet_count": 1 },
         });
       }
     }
-
-    const tweet = await Tweet.create(req.body);
-
-    await Promise.all(
-      tweet.entities.hashtags.map(async (hashtag) => {
-        await Hashtag.updateOne(
-          { tag: hashtag.tag },
-          {
-            tag: hashtag.tag,
-            $push: { tweets: tweet._id },
-          },
-          { upsert: true }
-        );
-      })
-    );
 
     await User.findByIdAndUpdate(req.body.author_id, {
       $inc: { tweets_count: 1 },

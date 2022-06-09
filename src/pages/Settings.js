@@ -18,10 +18,10 @@ export default function Settings() {
           </div>
         </div>
       </div>
-      <div className="pointer" onClick={() => naviagte("/settings/security")}>
+      <div className="pointer" onClick={() => naviagte("/settings/notifications")}>
         <div className="p-3 hover">
           <div className="d-flex justify-content-between">
-            <div>Security</div>
+            <div>Notifications</div>
             <div>
               <i className="bi bi-chevron-right text-muted"></i>
             </div>

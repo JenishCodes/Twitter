@@ -143,7 +143,7 @@
 .editor .text-field:empty:before {
   content: attr(placeholder);
 }
-.editor .auto-compelete {
+.auto-compelete {
   position: absolute;
   left: 0;
   width: 300px;
@@ -223,6 +223,7 @@
 }
 .sidebar .nav-icon {
   margin-right: 20px;
+  position: relative;
   font-size: 27px;
 }
 .sidebar .nav-icon i {

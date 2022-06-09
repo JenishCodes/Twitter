@@ -52,7 +52,7 @@ export default function Message(props) {
           {message.text}
         </div>
       </div>
-      {time ? (
+      {message.date && time ? (
         <div className={`message-time text-muted text-${align} fs-7 mb-3 mt-1`}>
           {time}
         </div>

@@ -21,15 +21,15 @@ export default function List(props) {
         <div className="details">
           <div className="d-flex align-items-center justify-content-between h-100">
             <div className="w-100">
-              <div className="fw-bold">{props.data.title}</div>
+              {props.data.title ? (
+                <div className="fw-bold">{props.data.title}</div>
+              ) : null}
               {props.data.subtitle ? (
-                <div className="text-muted oneline">
-                  {props.data.subtitle}
-                </div>
+                <div className="text-muted oneline">{props.data.subtitle}</div>
               ) : null}
             </div>
             {props.actionButton ? (
-              <div className="ms-3 align-self-start">{props.actionButton}</div>
+              <div className="ms-3">{props.actionButton}</div>
             ) : null}
           </div>
           {props.data.context ? <div>{props.data.context}</div> : null}

@@ -58,7 +58,7 @@ router.post("/", async function (req, res) {
   try {
     await Hashtag.create(req.body);
 
-    res.send(200);
+    res.sendStatus(200);
   } catch (err) {
     console.log(err.messsage);
     res.status(400);
