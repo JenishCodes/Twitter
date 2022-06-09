@@ -6,26 +6,17 @@ import Tweet from "../components/Tweet";
 import Loading from "../components/Loading";
 
 export default function Home() {
-  const [lastLikedTweet, setLastLikedTweet] = useState(0);
-  const [lastMentionedTweet, setLastMentionedTweet] = useState(0);
-  const [lastTweet, setLastTweet] = useState(0);
+  const [cursor, setCursor] = useState(0);
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(false);
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
     setLoading(true);
-    getUserFeed(
-      user.account_name,
-      lastTweet,
-      lastLikedTweet,
-      lastMentionedTweet
-    )
+    getUserFeed(user.account_name, cursor)
       .then((res) => {
         setFeed(res.data);
-        setLastTweet(res.lastTweet);
-        setLastMentionedTweet(res.lastMentionedTweet);
-        setLastLikedTweet(res.lastLikedTweet);
+        setCursor(cursor + 1);
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
@@ -40,16 +31,19 @@ export default function Home() {
         className="mt-5 text-app"
       />
       {feed.length > 0
-        ? feed.map((tweet, index) =>
-            tweet.referenced_tweet.length > 0 ? (
-              <div key={index}>
-                <Tweet lowerlink tweet={tweet.referenced_tweet[0]} />
-                <Tweet upperlink tweet={tweet} />
-              </div>
-            ) : (
-              <Tweet key={index} tweet={tweet} />
-            )
-          )
+        ? feed.map((tweet, index) => (
+            <div key={index}>
+              {tweet.referenced_tweet?.map((referencedTweet, i) => (
+                <Tweet
+                  key={index + "." + i}
+                  tweet={referencedTweet}
+                  upperlink={i !== 0}
+                  lowerlink
+                />
+              ))}
+              <Tweet upperlink={tweet.referenced_tweet} tweet={tweet} />
+            </div>
+          ))
         : !loading && (
             <div className="text-center text-muted mt-5">No tweets yet</div>
           )}

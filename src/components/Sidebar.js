@@ -65,19 +65,24 @@ export default function Sidebar() {
                   </span>
                 </div>
               </div>
-
-              <div className="w-100 d-lg-none">
+              <div className="w-100">
                 <div
-                  onClick={() => navigate("/trending")}
-                  className="nav hover rounded-pill mx-auto py-sm-1 py-0 align-items-center px-2 text-primary btn"
+                  className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-2 px-sm-3 fs-3 pe-xl-4 text-primary btn"
+                  onClick={() => navigate("/explore")}
+                  title="Explore"
                 >
-                  <div className="nav-icon mx-sm-1">
+                  <div className="nav-icon">
                     <i
-                      className={`fs-1 bi bi-hash ${
-                        pathname === "/trending" ? "fw-blod" : ""
-                      }`}
+                      className="bi bi-hash"
                     ></i>
                   </div>
+                  <span
+                    className={`nav-title d-xl-block d-none ${
+                      pathname === "/explore" ? "fw-bold" : ""
+                    }`}
+                  >
+                    Explore
+                  </span>
                 </div>
               </div>
 
@@ -100,7 +105,7 @@ export default function Sidebar() {
                     setNotificationCount(0);
                     navigate("/notifications");
                   }}
-                  className="nav hover rounded-pill mx-auto mx-xl-0 overflow-visible py-sm-2 py-0 align-items-center px-sm-3 fs-3 pe-xl-4 px-2 text-primary btn"
+                  className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-sm-3 fs-3 pe-xl-4 px-2 text-primary btn"
                 >
                   <div className="nav-icon">
                     <i

@@ -4,7 +4,6 @@ const { Tweet } = require("../models/tweet");
 const { User } = require("../models/user");
 const { Friendship } = require("../models/friendship");
 const { getUser, getUsers, getTweets } = require("../utils");
-const { Types } = require("mongoose");
 const { Favorite } = require("../models/favorite");
 const { Setting } = require("../models/settings");
 
@@ -304,95 +303,228 @@ router.get("/feed", async function (req, res) {
   try {
     const user = await User.findOne({ account_name: req.query.account_name });
 
-    const ids = await Friendship.find({
-      follower_id: user._id,
+    const followings = await Friendship.find({
+      followed_by: user._id,
     })
       .select({ following: 1, _id: 0 })
-      .transform(function (docs) {
-        return docs.map((doc) => doc.following);
-      });
-
-    ids.push(user._id);
-
-    const tweets = await Tweet.find({
-      author_id: { $in: ids },
-    })
-      .sort({ createdAt: -1 })
-      .select({ createdAt: 1 })
-      .skip(req.query.lastTweet || 0)
-      .limit(20)
+      .populate("following")
       .transform(function (docs) {
         return docs.map((doc) => {
-          return { ...doc._doc, type: "tweet" };
+          return {
+            _id: doc.following._id,
+            account_name: doc.following.account_name,
+          };
+        });
+      });
+
+    const accountNames = [
+      user.account_name,
+      ...followings.map((following) => following.account_name),
+    ];
+    const following_ids = [
+      user._id,
+      ...followings.map((following) => following._id),
+    ];
+
+    const tweets = await Tweet.find({
+      author_id: { $in: following_ids },
+      referenced_tweet: [],
+    })
+      .select({ createdAt: 1 })
+      .transform(function (docs) {
+        return docs.map((doc) => {
+          return { ...doc._doc, message: "" };
+        });
+      });
+    const retweets = await Tweet.find({
+      author_id: { $in: following_ids },
+      "referenced_tweet.type": "retweet_of",
+    })
+      .select({ createdAt: 1, referenced_tweet: 1, author_id: 1 })
+      .transform(function (docs) {
+        return docs.map((doc) => {
+          const { referenced_tweet, author_id, ...restDoc } = doc._doc;
+          const ref = referenced_tweet[referenced_tweet.length - 1];
+          return {
+            _id: ref.id,
+            ...restDoc,
+            message:
+              author_id === user._id
+                ? ""
+                : accountNames[
+                    following_ids.findIndex(
+                      (id) => id.toString() === author_id.toString()
+                    )
+                  ] + " Retweeted",
+          };
+        });
+      });
+
+    const replies = await Tweet.find({
+      author_id: { $in: following_ids },
+      "referenced_tweet.type": "replied_to",
+    })
+      .select({ createdAt: 1, referenced_tweet: 1, author_id: 1 })
+      .transform(function (docs) {
+        return docs.map((doc) => {
+          const { referenced_tweet, ...restDoc } = doc._doc;
+          const refIds = referenced_tweet.map((ref) => ref.id);
+          return {
+            _id: restDoc._id,
+            ref_tweet_ids: refIds,
+            createdAt: restDoc.createdAt,
+            message: "",
+          };
         });
       });
 
     const liked_tweets = await Favorite.find({
-      author_id: { $in: ids },
+      author_id: { $in: following_ids },
     })
-      .sort({ createdAt: -1 })
-      .select({ tweet_id: 1, createdAt: 1, _id: 0 })
-      .skip(req.query.lastLikedTweet || 0)
-      .limit(20)
+      .select({ tweet_id: 1, createdAt: 1, _id: 0, author_id: 1 })
       .transform(function (docs) {
         return docs.map((doc) => {
-          return { _id: doc.tweet_id, createdAt: doc.createdAt, type: "liked" };
+          const { tweet_id, author_id, ...restDoc } = doc._doc;
+          return {
+            _id: tweet_id,
+            ...restDoc,
+            message:
+              author_id === user._id
+                ? ""
+                : accountNames[
+                    following_ids.findIndex(
+                      (id) => id.toString() === author_id.toString()
+                    )
+                  ] + " Liked",
+          };
         });
       });
 
     const mentioned_tweets = await Tweet.find({
-      "entities.mentions.account_name": { $in: user.following },
+      "entities.mentions.account_name": { $in: accountNames },
     })
-      .sort({ createdAt: -1 })
-      .select({ createdAt: 1 })
-      .skip(req.query.lastMentionedTweet || 0)
-      .limit(20)
+      .select({ createdAt: 1, entities: 1 })
       .transform(function (docs) {
         return docs.map((doc) => {
-          return { ...doc._doc, type: "mentioned" };
+          const { entities, ...restDoc } = doc._doc;
+          return {
+            ...restDoc,
+            message: entities.mentions.find(
+              (mention) => mention.account_name === user.account_name
+            )
+              ? "You are mentioned"
+              : entities.mentions[0].account_name + " is mentioned",
+          };
         });
       });
 
-    var lastLikedTweet = 0,
-      lastMentionedTweet = 0,
-      lastTweet = 0;
-
-    const all_tweets = [...tweets, ...liked_tweets, ...mentioned_tweets];
+    const all_tweets = [
+      ...tweets,
+      ...retweets,
+      ...replies,
+      ...liked_tweets,
+      ...mentioned_tweets,
+    ];
 
     all_tweets.sort((a, b) => {
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
 
-    const all_tweet_ids = [];
+    const unique_tweets = [];
 
-    all_tweets.forEach((tweet) => {
-      if (all_tweet_ids.length < 20) {
-        if (tweet.type === "liked") {
-          lastLikedTweet++;
-        } else if (tweet.type === "mentioned") {
-          lastMentionedTweet++;
-        } else {
-          lastTweet++;
+    all_tweets.forEach((tweet, index, self) => {
+      var ind = true;
+      for (var i = 0; i < self.length; i++) {
+        if (i !== index) {
+          if (self[i]._id.toString() === tweet._id.toString()) {
+            if (self[i].ref_tweet_ids) {
+              ind = false;
+              break;
+            } else if (tweet.ref_tweet_ids) {
+              continue;
+            } else if (index > i) {
+              continue;
+            } else {
+              ind = false;
+              break;
+            }
+          } else if (self[i].ref_tweet_ids) {
+            if (
+              self[i].ref_tweet_ids.find(
+                (ref_tweet_id) =>
+                  ref_tweet_id.toString() === tweet._id.toString()
+              )
+            ) {
+              ind = false;
+              break;
+            }
+          }
         }
-        if (all_tweet_ids.indexOf(String(tweet._id)) === -1) {
-          all_tweet_ids.push(String(tweet._id));
-        }
+      }
+
+      if (ind) {
+        unique_tweets.push(tweet);
       }
     });
 
-    all_tweet_ids.forEach((tweet_id) => Types.ObjectId(tweet_id));
+    const pagedTweets = unique_tweets.slice(
+      parseInt(req.query.cursor) * 20,
+      parseInt(req.query.cursor) * 20 + 20
+    );
 
-    const ans = await getTweets(all_tweet_ids);
+    const ids = pagedTweets.map((tweet) => tweet._id);
+    const ref_ids = [];
 
-    const response = {
-      data: ans.data,
-      lastLikedTweet: lastLikedTweet + parseInt(req.query.lastLikedTweet),
-      lastMentionedTweet:
-        lastMentionedTweet + parseInt(req.query.lastMentionedTweet),
-      lastTweet: lastTweet + parseInt(req.query.lastTweet),
-    };
+    pagedTweets.forEach((obj) => {
+      if (obj.ref_tweet_ids) ref_ids.push(...obj.ref_tweet_ids);
+    });
 
-    res.send(response);
+    var ref_tweets = await Tweet.find({ _id: { $in: ref_ids } })
+      .populate("author_id", {
+        name: 1,
+        account_name: 1,
+        auth_id: 1,
+        profile_image_url: 1,
+      })
+      .transform(function (docs) {
+        return docs.map((doc) => {
+          const { author_id, ...restDoc } = doc._doc;
+          return {
+            ...restDoc,
+            author: author_id,
+          };
+        });
+      });
+
+    var final_tweets = await Tweet.find({ _id: { $in: ids } })
+      .populate("author_id", {
+        name: 1,
+        account_name: 1,
+        auth_id: 1,
+        profile_image_url: 1,
+      })
+      .transform(function (docs) {
+        return docs.map((doc) => {
+          const { author_id, ...restDoc } = doc._doc;
+          return {
+            ...restDoc,
+            author: author_id,
+          };
+        });
+      });
+
+    var response = pagedTweets.map((obj) => {
+      var tweet = final_tweets.find(
+        (t) => t._id.toString() === obj._id.toString()
+      );
+      var ref_tweet = obj.ref_tweet_ids?.map((id) =>
+        ref_tweets.find((t) => t._id.toString() === id.toString())
+      );
+
+      return { ...tweet, referenced_tweet: ref_tweet, message: obj.message };
+    });
+
+    res.send({ data: response });
   } catch (err) {
     console.log(err);
     res.status(400);

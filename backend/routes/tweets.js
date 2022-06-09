@@ -201,6 +201,7 @@ router.get("/replies", async function (req, res) {
       "referenced_tweet.type": "replied_to",
       "referenced_tweet.id": req.query.id,
     })
+      .sort({ createdAt: -1 })
       .populate("author_id", {
         name: 1,
         account_name: 1,
@@ -214,7 +215,18 @@ router.get("/replies", async function (req, res) {
         });
       });
 
-    res.send({ data: replies });
+    const rearrangedReplies = [];
+    var pointer = 0;
+    replies.forEach((reply) => {
+      if (reply.author_id === req.query.author_id) {
+        rearrangedReplies.slice(pointer, 0, reply);
+        pointer++;
+      } else {
+        rearrangedReplies.push(reply);
+      }
+    });
+
+    res.send({ data: rearrangedReplies });
   } catch (err) {
     console.log(err);
     res.status(400);

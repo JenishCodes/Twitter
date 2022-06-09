@@ -94,7 +94,6 @@
 }
 .btn {
   color: var(--text-primary);
-  overflow: hidden;
 }
 .overflow-y-auto {
   overflow-y: auto !important;

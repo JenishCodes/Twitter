@@ -2,7 +2,7 @@ import React from "react";
 import Header from "../components/Header";
 import Trend from "../components/Trend";
 
-export default function Trending() {
+export default function Explore() {
   return (
     <div>
       <Header extraTitle="Trending" />

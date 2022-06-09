@@ -338,8 +338,9 @@ export default function Status() {
               </div>
             ) : null}
             <hr className="mt-3 mb-2" />
+
             {tweet.public_metrics ? (
-              <div className="d-flex">
+              <div className="d-flex p-1">
                 <div className="me-3 text-muted">
                   <span className="text-primary fw-bold">
                     {tweet.public_metrics.reply_count + " "}
@@ -408,6 +409,16 @@ export default function Status() {
                   <i className="bi fs-3 bi-share"></i>
                 </div>
               </div>
+              {account_name === user.account_name ? (
+                <div className="flex-grow-1 text-center">
+                  <div
+                    className="text-muted btn py-1 px-2 hover rounded-circle"
+                    data-title="Analytics"
+                  >
+                    <i className="bi fs-3 bi-clipboard2-data"></i>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
           <hr className="mb-0 mt-1" />

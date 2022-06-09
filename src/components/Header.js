@@ -26,7 +26,7 @@ export default function Header(props) {
           </div>
         ) : (
           <div
-            className="d-sm-none p-0 btn"
+            className="d-sm-none p-0 btn me-2"
             onClick={() => {
               document.body.style.overflowY = "hidden";
               setShow(true);
@@ -46,7 +46,7 @@ export default function Header(props) {
             ) : null}
           </div>
         ) : (
-          <div className="flex-grow-1 ms-2">
+          <div className="flex-grow-1">
             <Searchbar />
           </div>
         )}

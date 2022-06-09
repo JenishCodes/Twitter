@@ -57,8 +57,8 @@ const Tweet = mongoose.model(
         reply_count: { type: Number, default: 0 },
       },
       private_metrics: {
-        url_link_click: { type: Number, default: 0 },
-        user_profile_click: { type: Number, default: 0 },
+        detail_expands: { type: Number, default: 0 },
+        profile_visits: { type: Number, default: 0 },
       },
       referenced_tweet: [
         {

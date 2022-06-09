@@ -23,9 +23,9 @@ import Email from "../pages/Email";
 import Country from "../pages/Country";
 import Gender from "../pages/Gender";
 import Phone from "../pages/Phone";
-import Trending from "../pages/Trending";
 import Notifications from "../pages/Notifications";
 import Drawer from "../components/Drawer";
+import Explore from "../pages/Explore";
 
 export default function AppScreen() {
   return (
@@ -45,16 +45,7 @@ export default function AppScreen() {
 
               <Route path="home" element={<Home />} />
 
-              <Route
-                path="trending"
-                element={
-                  window.screen.width > 991 ? (
-                    <Navigate to="/notifications" replace />
-                  ) : (
-                    <Trending />
-                  )
-                }
-              />
+              <Route path="explore" element={<Explore />} />
 
               <Route path="notifications" element={<Notifications />} />
 
@@ -79,7 +70,10 @@ export default function AppScreen() {
                   <Route path="gender" element={<Gender />} />
                   <Route path="phone" element={<Phone />} />
                 </Route>
-                <Route path="notifications" element={<NotificationSettings />} />
+                <Route
+                  path="notifications"
+                  element={<NotificationSettings />}
+                />
                 <Route path="privacy" element={<Privacy />} />
                 <Route path="display" element={<Display />} />
               </Route>
@@ -97,7 +91,10 @@ export default function AppScreen() {
             </Routes>
           </div>
           <div className="suggestion p-0 d-none d-lg-block col-lg-4-8 border-start h-100-vh top-0 position-sticky overflow-y-auto">
-            <Trending />
+            <Routes>
+              <Route path="/explore" element={<div />} />
+              <Route path="*" element={<Explore />} />
+            </Routes>
           </div>
         </div>
       </main>

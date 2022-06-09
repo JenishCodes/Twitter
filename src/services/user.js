@@ -75,22 +75,10 @@ export async function getBookmarkedTweets(user_id) {
   }
 }
 
-export async function getUserFeed(
-  account_name,
-  lastTweet,
-  lastLikedTweet,
-  lastMentionedTweet
-) {
+export async function getUserFeed(account_name, cursor) {
   try {
     const res = await api.get(
-      "/user/feed?account_name=" +
-        account_name +
-        "&lastTweet=" +
-        lastTweet +
-        "&lastLikedTweet=" +
-        lastLikedTweet +
-        "&lastMentionedTweet=" +
-        lastMentionedTweet
+      "/user/feed?account_name=" + account_name + "&cursor=" + cursor
     );
 
     return res.data;

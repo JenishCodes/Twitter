@@ -174,7 +174,7 @@ export const timeFormatter = (timestamp, format) => {
   });
 
   if (format === "Status") {
-    return thenDate + " · " + thenTime;
+    return thenTime + " · " + thenDate;
   }
 
   if (format === "Ago") {

@@ -53,17 +53,19 @@ export async function deleteTweet(tweet_id, author_id = null) {
   }
 }
 
-export async function getTweetTimeline(tweet_id) {
+export async function getTweetTimeline(tweet_id, author_id) {
   try {
     const tweet = await api.get("/tweet/show?id=" + tweet_id);
     var references = { data: {} };
     var replies = { data: {} };
 
+    
+
     if (tweet.data.data.referenced_tweet.length > 0) {
       references = await api.get("/tweet/references?id=" + tweet_id);
     }
     if (tweet.data.data.public_metrics.reply_count > 0) {
-      replies = await api.get("/tweet/replies?id=" + tweet_id);
+      replies = await api.get("/tweet/replies?id=" + tweet_id + "&author_id=" + author_id);
     }
 
     return {
