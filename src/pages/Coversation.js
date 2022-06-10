@@ -9,6 +9,7 @@ import {
 import { AuthContext } from "../config/context";
 import { getNewMessage } from "../services/chat";
 import Loading from "../components/Loading";
+import { Helmet } from "react-helmet";
 
 export default function Chat(props) {
   const navigate = useNavigate();
@@ -119,6 +120,8 @@ export default function Chat(props) {
 
   return (
     <div className="chat h-100">
+      <Helmet><title>{chatUser?chatUser.name + " / Twitter":"Coversation / Twitter"}</title></Helmet>
+      
       <div className="header position-absolute">
         <div className="d-flex px-2 align-items-center">
           <div

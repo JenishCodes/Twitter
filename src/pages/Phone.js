@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Helmet } from "react-helmet";
 import Header from "../components/Header";
 
 export default function Phone(props) {
@@ -6,7 +7,9 @@ export default function Phone(props) {
 
   return (
     <div>
-      <Header title="Change Phone" backArrow="full" />
+      <Helmet><title>Change phone / Twitter</title></Helmet>
+
+      <Header title="Change phone" backArrow="full" />
       <div className="px-3">
         <div className="form-floating my-3">
           <input

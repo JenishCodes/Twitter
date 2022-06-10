@@ -6,6 +6,7 @@ import { getChats } from "../services/chat";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import { timeFormatter } from "../utils";
+import { Helmet } from "react-helmet";
 
 export default function Message() {
   const { user } = useContext(AuthContext);
@@ -22,6 +23,8 @@ export default function Message() {
 
   return (
     <div className="chats">
+      <Helmet><title>Messages / Twitter</title></Helmet>
+      
       <Header title="Messages" subtitle={chats.length + " Conversations"} />
       <Loading
         show={loading}

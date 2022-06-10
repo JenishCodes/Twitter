@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import List from "../components/List";
@@ -28,8 +29,13 @@ export default function Reactions() {
 
   return (
     <div>
+      <Helmet>
+        <title>
+        {reaction_type === "likes" ? "Liked by" : "Retweeted by"} / Twitter
+        </title>
+      </Helmet>
       <Header
-        title={reaction_type === "likes" ? "Liked By" : "Retweeted By"}
+        title={reaction_type === "likes" ? "Liked by" : "Retweeted by"}
         backArrow="full"
       />
 

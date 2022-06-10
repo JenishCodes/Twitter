@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import List from "../components/List";
@@ -24,6 +25,7 @@ export default function Notifications() {
 
   return (
     <div className="notifications">
+      <Helmet><title>Notifications / Twitter</title></Helmet>
       <Header title="Notifications" />
 
       <Loading

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
@@ -19,6 +20,9 @@ export default function Hashtag() {
 
   return (
     <div>
+      <Helmet>
+        <title>Tweets on {hashtag} / Twitter</title>
+      </Helmet>
       <Header
         title={"#" + hashtag}
         subtitle={tweets?.length + " Tweets"}

@@ -43,7 +43,7 @@ export default function AppScreen() {
 
               <Route path="logout" element={<Logout />} />
 
-              <Route path="home" element={<Home />} />
+              <Route path="home" element={<Home />} title="Home" />
 
               <Route path="explore" element={<Explore />} />
 

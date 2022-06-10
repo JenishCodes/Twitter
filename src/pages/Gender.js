@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Helmet } from "react-helmet";
 import Header from "../components/Header";
 
 export default function Gender(props) {
@@ -6,7 +7,10 @@ export default function Gender(props) {
 
   return (
     <div className="gender">
-      <Header title="Change Gender" backArrow="full" />
+      <Helmet>
+        <title>Gender / Twitter</title>
+      </Helmet>
+      <Header title="Gender" backArrow="full" />
       <div className="px-3">
         <div
           className="px-3 py-2 rounded-3 btn hover d-flex justify-content-between"

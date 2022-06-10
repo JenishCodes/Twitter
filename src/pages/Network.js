@@ -5,6 +5,7 @@ import { getFollowers, getFollowing } from "../services/friendship";
 import List from "../components/List";
 import { getUser } from "../services/user";
 import Loading from "../components/Loading";
+import { Helmet } from "react-helmet";
 
 export default function Network() {
   const { friendship_type, account_name } = useParams();
@@ -51,6 +52,16 @@ export default function Network() {
 
   return (
     <div>
+      <Helmet>
+        <title>
+          People
+          {(friendship_type === "following" ? " following " : " followed by ") +
+            user?.name +
+            "(@" +
+            account_name}
+          ) / Twitter
+        </title>
+      </Helmet>
       <Tabbar
         backArrow="full"
         title={user ? user.name : "User"}

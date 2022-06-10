@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
@@ -26,6 +27,9 @@ export default function Signup() {
 
   return (
     <div className="signup py-3">
+      <Helmet>
+        <title>Signup for Twitter / Twitter</title>
+      </Helmet>
       {loading ? (
         <Modal style={{
           right: 0,

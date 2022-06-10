@@ -6,6 +6,7 @@ import {
   getRetweeters,
   getTweetTimeline,
   postTweet,
+  updatePrivateMetrics,
 } from "../services/tweet";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Tweet from "../components/Tweet";
@@ -24,14 +25,15 @@ import {
 } from "../services/user";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
+import { Helmet } from "react-helmet";
 
 export default function Status() {
   const { user } = useContext(AuthContext);
   const { account_name, status_id } = useParams();
   const [tweet, setTweet] = useState();
   const [show, setShow] = useState(false);
-  const [modalShow, setModalShow] = useState(false);
-  const [imageUrl, setImageUrl] = useState(null);
+  const [mediaModalShow, setMediaModalShow] = useState(false);
+  const [analyticsModalShow, setAnalyticsModalShow] = useState(null);
   const [references, setReferences] = useState();
   const [replies, setReplies] = useState();
   const [liked, setLiked] = useState(false);
@@ -49,6 +51,9 @@ export default function Status() {
     setReplies(null);
     getTweetTimeline(status_id)
       .then((res) => {
+        if (res.data.author.account_name !== account_name) {
+          updatePrivateMetrics("detail_expands", status_id);
+        }
         setTweet(res.data);
         setReferences(res.includes.references);
         setReplies(res.includes.replies);
@@ -157,6 +162,22 @@ export default function Status() {
 
   return (
     <div className="h-100">
+      <Helmet>
+        <title>
+          {tweet
+            ? tweet.author.account_name +
+              " on Twitter: " +
+              '"' +
+              (references
+                ? "@" +
+                  references[references.length - 1].author.account_name +
+                  " "
+                : "") +
+              tweet.text +
+              '" / Twitter'
+            : "Status / Twitter"}
+        </title>
+      </Helmet>
       <Header title="Tweet" backArrow="full" />
 
       <Loading
@@ -164,13 +185,13 @@ export default function Status() {
         className="my-5 text-app"
         style={{ width: "1.5rem", height: "1.5rem" }}
       />
-      {modalShow ? (
+      {mediaModalShow ? (
         <Modal style={{ width: "100%", height: "100%" }}>
           <div className="position-absolute p-3">
             <div
               className="btn hover px-2 py-0 rounded-circle"
               onClick={() => {
-                setModalShow(false);
+                setMediaModalShow(false);
                 document.body.style.overflowY = "scroll";
               }}
             >
@@ -186,6 +207,83 @@ export default function Status() {
               }}
             >
               <img className="h-100 w-100" src={tweet.media} />
+            </div>
+          </div>
+        </Modal>
+      ) : null}
+
+      {analyticsModalShow ? (
+        <Modal style={{ width: "100%", height: "100%" }}>
+          <div className="compose bg-primary w-100 h-100 overflow-y-auto">
+            <div className="w-100 position-sticky top-0 p-2">
+              <div className="d-flex align-items-center">
+                <div
+                  className="btn hover rounded-circle px-2 py-0"
+                  onClick={() => {
+                    setAnalyticsModalShow(false);
+                    document.body.style.overflowY = "scroll";
+                  }}
+                >
+                  <i className="bi bi-x fs-1"></i>
+                </div>
+                <div className="fs-3 fw-bold ms-3">Tweet Analytics</div>
+              </div>
+            </div>
+            <div className="px-3 py-2">
+              <div className="border p-2" style={{ borderRadius: "16px" }}>
+                <div className="d-flex mx-1 mt-1">
+                  <img
+                    className="rounded-circle small-profile-image"
+                    src={user.profile_image_url}
+                  />
+                  <div className="fw-bold mx-1">{user.name}</div>
+                  <div className="text-muted">{user.account_name + " · "}</div>
+                  <div className="text-muted">
+                    {timeFormatter(tweet.createdAt, "Tweet")}
+                  </div>
+                </div>
+                <div className="mx-1 mb-1">{tweet.text}</div>
+              </div>
+            </div>
+            <div className="px-3 py-2">
+              <div className="border p-3" style={{ borderRadius: "16px" }}>
+                <div className="d-flex justify-content-around">
+                  <div className="text-center">
+                    <i className="bi bi-heart fs-3 text-muted"></i>
+                    <div className="fw-bold">
+                      {tweet.public_metrics.like_count}
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <i className="bi bi-arrow-repeat fs-3 text-muted"></i>
+                    <div className="fw-bold">
+                      {tweet.public_metrics.retweet_count}
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <i className="bi bi-arrow-return-left fs-3 text-muted"></i>
+                    <div className="fw-bold">
+                      {tweet.public_metrics.reply_count}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="px-3 py-2">
+              <div className="d-flex justify-content-around">
+                <div className="text-center">
+                  <div className="text-muted">Profile Visits</div>
+                  <div className="fw-bold fs-1">
+                    {tweet.private_metrics.profile_visits}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-muted">Detail Expands</div>
+                  <div className="fw-bold fs-1">
+                    {tweet.private_metrics.detail_expands}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </Modal>
@@ -235,7 +333,12 @@ export default function Status() {
                 <div className="flex-grow-1">
                   <div
                     className="hover-underline fw-bold pointer d-inline-block"
-                    onClick={() => navigate("/" + tweet.author.account_name)}
+                    onClick={() => {
+                      if (tweet.author.account_name !== user.account_name) {
+                        updatePrivateMetrics("profile_visits", tweet._id);
+                      }
+                      navigate("/" + tweet.author.account_name);
+                    }}
                   >
                     {tweet.author.name}
                   </div>
@@ -306,7 +409,19 @@ export default function Status() {
               </div>
             </div>
           </div>
-
+          {references ? (
+            <div className="px-3 pt-2 my-1 text-muted">
+              Replying to{" "}
+              <Link
+                className="hover-underline text-app"
+                to={"/" + references[references.length - 1].author.account_name}
+              >
+                @{references[references.length - 1].author.account_name}
+              </Link>
+            </div>
+          ) : (
+            ""
+          )}
           <div className="px-3">
             {tweet.text ? (
               <div
@@ -325,7 +440,7 @@ export default function Status() {
                     src={tweet.media}
                     onClick={() => {
                       document.body.style.overflowY = "hidden";
-                      setModalShow(true);
+                      setMediaModalShow(true);
                     }}
                     alt=""
                   />
@@ -412,6 +527,10 @@ export default function Status() {
               {account_name === user.account_name ? (
                 <div className="flex-grow-1 text-center">
                   <div
+                    onClick={() => {
+                      setAnalyticsModalShow(true);
+                      document.body.style.overflowY = "hidden";
+                    }}
                     className="text-muted btn py-1 px-2 hover rounded-circle"
                     data-title="Analytics"
                   >

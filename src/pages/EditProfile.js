@@ -4,6 +4,7 @@ import { AuthContext } from "../config/context";
 import { editProfile } from "../services/user";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
+import { Helmet } from "react-helmet";
 
 export default function EditProfile(props) {
   const navigate = useNavigate();
@@ -46,6 +47,9 @@ export default function EditProfile(props) {
 
   return (
     <div className="edit-profile">
+      <Helmet>
+        <title>Edit profile / Twitter</title>
+      </Helmet>
       <Header
         title="Edit Profile"
         subtitle={"@" + user.account_name}

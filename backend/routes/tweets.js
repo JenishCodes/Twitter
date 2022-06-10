@@ -36,6 +36,32 @@ router.get("/search", async function (req, res) {
   }
 });
 
+router.put("/metrics/:field", async function (req, res) {
+  try {
+    await Tweet.findByIdAndUpdate(req.query.id, {
+      $inc: { [req.params.field]: 1 },
+    })
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    res.status(400);
+    res.send(err.message);
+  }
+});
+
+router.put("/metrics/profile_visits", async function (req, res) {
+  try {
+    await Tweet.findByIdAndUpdate(req.query.id, {
+      $inc: { "private_metrics.profile_visits": 1 },
+    });
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    res.status(400);
+    res.send(err.message);
+  }
+});
+
 router.get("/show", async function (req, res) {
   try {
     const ans = await getTweet(req.query.id, req.query.include);

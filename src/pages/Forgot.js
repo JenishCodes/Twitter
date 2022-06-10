@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
@@ -10,6 +11,9 @@ export default function Forgot() {
 
   return (
     <div className="signup py-3">
+      <Helmet>
+        <title>Reset Password / Twitter</title>
+      </Helmet>
       {loading ? (
         <Modal
           style={{

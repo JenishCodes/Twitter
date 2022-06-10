@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Helmet } from "react-helmet";
 import Header from "../components/Header";
 
 export default function Country(props) {
@@ -6,7 +7,8 @@ export default function Country(props) {
 
   return (
     <div>
-      <Header title="Change Country" backArrow="full" />
+      <Helmet><title>Change country / Twitter</title></Helmet>
+      <Header title="Change country" backArrow="full" />
       <div className="px-3">
         <div className="form-floating my-3">
           <select

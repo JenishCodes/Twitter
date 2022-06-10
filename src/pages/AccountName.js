@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import { AuthContext } from "../config/context";
 import { editProfile } from "../services/user";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 export default function AccountName(props) {
   const { user } = useContext(AuthContext);
@@ -19,7 +20,8 @@ export default function AccountName(props) {
 
   return (
     <div>
-      <Header title="Change Account Name" backArrow="full" />
+      <Helmet><title>Change account name / Twitter</title></Helmet>
+      <Header title="Change account name" backArrow="full" />
       <div className="px-3">
         <div className="form-floating my-3">
           <input

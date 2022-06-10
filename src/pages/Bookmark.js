@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import Tweet from "../components/Tweet";
@@ -19,6 +20,7 @@ export default function Bookmark() {
 
   return (
     <div>
+      <Helmet><title>Bookmarks / Twitter</title></Helmet>
       <Header
         title="Bookmarks"
         backArrow="half"

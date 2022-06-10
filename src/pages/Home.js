@@ -4,6 +4,7 @@ import { AuthContext } from "../config/context";
 import { getUserFeed } from "../services/user";
 import Tweet from "../components/Tweet";
 import Loading from "../components/Loading";
+import { Helmet } from "react-helmet";
 
 export default function Home() {
   const [cursor, setCursor] = useState(0);
@@ -24,6 +25,7 @@ export default function Home() {
 
   return (
     <div className="h-100">
+      <Helmet><title>Home / Twitter</title></Helmet>
       <Header title="Home" />
       <Loading
         show={loading}

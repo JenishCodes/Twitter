@@ -6,7 +6,12 @@ import {
   getTweetFavoriters,
 } from "../services/favorite";
 import { AuthContext } from "../config/context";
-import { deleteTweet, getRetweeters, postTweet } from "../services/tweet";
+import {
+  deleteTweet,
+  getRetweeters,
+  postTweet,
+  updatePrivateMetrics,
+} from "../services/tweet";
 import { parseTweet, timeFormatter } from "../utils";
 import {
   bookmarkTweet,
@@ -181,7 +186,10 @@ export default function Tweet(props) {
                   className="name me-1 fw-bold hover-underline oneline"
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate("/" + data.author.account_name);
+                    if (data.author.account_name !== user.account_name) {
+                      updatePrivateMetrics("profile_visits", data._id);
+                    }
+                    navigate(`/${data.author.account_name}`);
                   }}
                 >
                   {data.author.name}
@@ -246,7 +254,7 @@ export default function Tweet(props) {
                     <div
                       className="d-flex text-danger align-items-center dropdown-item py-2 px-3 hover btn"
                       onClick={(e) => {
-                        e.stopPropagation()
+                        e.stopPropagation();
                         deleteTweet(data._id);
                         setData(null);
                       }}
@@ -271,7 +279,7 @@ export default function Tweet(props) {
               }}
             ></div>
             {data.media ? (
-              <div className="media my-2" >
+              <div className="media my-2">
                 <img
                   className="w-100 h-auto border"
                   style={{ borderRadius: "16px" }}

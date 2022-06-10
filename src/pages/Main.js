@@ -1,9 +1,13 @@
 import React from "react";
+import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 
 export default function Main() {
   return (
     <div className="main-page py-3 text-primary">
+      <Helmet>
+        <title>Twitter. what's happening / Twitter</title>
+      </Helmet>
       <div
         className="p-3 pt-0 d-flex justify-content-center flex-wrap"
         style={{ fontSize: "50px" }}

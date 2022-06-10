@@ -385,3 +385,7 @@
 .sidebar .details{
   width: calc(100% - 48px);
 }
+.small-profile-image{
+  height: 24px;
+  width: 24px;
+}

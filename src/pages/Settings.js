@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 
@@ -7,6 +8,7 @@ export default function Settings() {
 
   return (
     <div>
+      <Helmet><title>Settings / Twitter</title></Helmet>
       <Header title="Settings" backArrow="half" />
       <div className="pointer" onClick={() => naviagte("/settings/account")}>
         <div className="p-3 hover">

@@ -1,10 +1,18 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import Header from "../components/Header";
 import Trend from "../components/Trend";
 
 export default function Explore() {
+  const location = useLocation();
   return (
     <div>
+      {location.pathname === "/explore" ? (
+        <Helmet>
+          <title>Explore / Twitter</title>
+        </Helmet>
+      ) : null}
       <Header extraTitle="Trending" />
       <div className="mb-5 pb-5">
         <Trend hashtag="Life" tweets={95} />

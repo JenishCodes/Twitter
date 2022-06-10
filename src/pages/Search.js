@@ -8,6 +8,7 @@ import { searchHashtags } from "../services/hashtag";
 import { searchTweets } from "../services/tweet";
 import { searchUser } from "../services/user";
 import Loading from "../components/Loading";
+import { Helmet } from "react-helmet";
 
 export default function Search() {
   const [hashtags, setHashtags] = useState([]);
@@ -87,7 +88,15 @@ export default function Search() {
 
   return (
     <div>
-      <Tabbar activeTab={search_type} backArrow="full" tabs={tabs} title="Search Results">
+      <Helmet>
+        <title>{query} - Search / Twitter</title>
+      </Helmet>
+      <Tabbar
+        activeTab={search_type}
+        backArrow="full"
+        tabs={tabs}
+        title="Search Results"
+      >
         <Loading
           show={loading}
           className="my-5 text-app"
