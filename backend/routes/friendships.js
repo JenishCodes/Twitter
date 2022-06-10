@@ -56,7 +56,6 @@ router.get("/", async function (req, res) {
   const relationship = await Friendship.findOne({
     friendship_id: req.query.friendship_id,
   });
-  console.log(relationship);
 
   res.send({ data: relationship });
 });
@@ -88,7 +87,7 @@ router.post("/", async function (req, res) {
 
     res.sendStatus(200);
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
     res.status(400);
     res.send(err.message);
   }
@@ -111,7 +110,7 @@ router.delete("/", async function (req, res) {
 
     res.sendStatus(200);
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
     res.status(400);
     res.send(err.message);
   }

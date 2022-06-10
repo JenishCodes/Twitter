@@ -7,12 +7,14 @@ import Modal from "./Modal";
 export default function Profile(props) {
   const { user } = useContext(AuthContext);
   const [show, setShow] = useState(false);
-  const [freindshipStatus, setFriendshipStatus] = useState(null);
+  const [freindshipStatus, setFriendshipStatus] = useState("Follow");
   const [imageUrl, setImageUrl] = useState(null);
   const [imageType, setImageType] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (user.isAnonymous) return;
+
     if (user._id !== props.user._id) {
       getFriendship(user._id, props.user._id).then((friendship) => {
         if (friendship.data) {
@@ -27,6 +29,11 @@ export default function Profile(props) {
   }, [user, props.user]);
 
   const handleClick = () => {
+    if (user.isAnonymous) {
+      navigate("/login");
+      return;
+    }
+    
     if (freindshipStatus === "Following") {
       unfollow(user._id, props.user._id)
         .then(() => setFriendshipStatus("Follow"))
@@ -174,6 +181,7 @@ export default function Profile(props) {
                   imageType === "profile" ? " rounded-circle" : ""
                 }`}
                 src={imageUrl}
+                alt="profile"
               />
             </div>
           </div>

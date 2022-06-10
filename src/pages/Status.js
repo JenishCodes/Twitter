@@ -25,7 +25,7 @@ import {
 } from "../services/user";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 export default function Status() {
   const { user } = useContext(AuthContext);
@@ -62,6 +62,8 @@ export default function Status() {
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
 
+    if (user.isAnonymous) return;
+
     getTweetFavoriters(status_id, true)
       .then((res) => setLiked(res.data.includes(user._id)))
       .catch((err) => console.log(err));
@@ -75,6 +77,11 @@ export default function Status() {
 
   const handleLike = (e) => {
     e.stopPropagation();
+    if (user.isAnonymous) {
+      navigate("/login");
+      return;
+    }
+
     if (liked) {
       setLiked(false);
       setTweet({
@@ -100,6 +107,10 @@ export default function Status() {
 
   const handlePinTweet = (e) => {
     e.stopPropagation();
+    if (user.isAnonymous) {
+      navigate("/login");
+      return;
+    }
     if (user.pinned_tweet_id === tweet._id) {
       unpinTweet(user._id).catch((err) => console.log(err));
     } else {
@@ -110,6 +121,10 @@ export default function Status() {
 
   const handleRetweet = (e) => {
     e.stopPropagation();
+    if (user.isAnonymous) {
+      navigate("/login");
+      return;
+    }
     if (retweeted) {
       setRetweeted(false);
       setRetweeted({
@@ -145,6 +160,10 @@ export default function Status() {
 
   const handleBookmark = (e) => {
     e.stopPropagation();
+    if (user.isAnonymous) {
+      navigate("/login");
+      return;
+    }
     if (bookmarked) {
       unbookmarkTweet(user._id, status_id).catch((err) => console.log(err));
       setBookmarked(false);
@@ -180,11 +199,6 @@ export default function Status() {
       </Helmet>
       <Header title="Tweet" backArrow="full" />
 
-      <Loading
-        show={loading}
-        className="my-5 text-app"
-        style={{ width: "1.5rem", height: "1.5rem" }}
-      />
       {mediaModalShow ? (
         <Modal style={{ width: "100%", height: "100%" }}>
           <div className="position-absolute p-3">
@@ -206,7 +220,7 @@ export default function Status() {
                 maxWidth: "90%",
               }}
             >
-              <img className="h-100 w-100" src={tweet.media} />
+              <img className="h-100 w-100" src={tweet.media} alt="Tweet media" />
             </div>
           </div>
         </Modal>
@@ -235,6 +249,7 @@ export default function Status() {
                   <img
                     className="rounded-circle small-profile-image"
                     src={user.profile_image_url}
+                    alt="Profile"
                   />
                   <div className="fw-bold mx-1">{user.name}</div>
                   <div className="text-muted">{user.account_name + " · "}</div>
@@ -288,6 +303,7 @@ export default function Status() {
           </div>
         </Modal>
       ) : null}
+
       <div className="reference-list" ref={tweetRef}>
         {references
           ? references.map((reference, index) =>
@@ -334,7 +350,10 @@ export default function Status() {
                   <div
                     className="hover-underline fw-bold pointer d-inline-block"
                     onClick={() => {
-                      if (tweet.author.account_name !== user.account_name) {
+                      if (
+                        !user.isAnonymous &&
+                        tweet.author.account_name !== user.account_name
+                      ) {
                         updatePrivateMetrics("profile_visits", tweet._id);
                       }
                       navigate("/" + tweet.author.account_name);
@@ -358,7 +377,7 @@ export default function Status() {
                     className="dropdown-menu dropdown-menu-end bg-primary py-0"
                     aria-labelledby="status-menu"
                   >
-                    {account_name === user.account_name ? (
+                    {!user.isAnonymous && account_name === user.account_name ? (
                       <div>
                         <div
                           className="d-flex align-items-center text-start text-primary py-2 px-3 hover btn"
@@ -486,6 +505,10 @@ export default function Status() {
                 <div
                   className="text-muted btn py-1 px-2 rounded-circle hover"
                   onClick={() => {
+                    if (user.isAnonymous) {
+                      navigate("/login");
+                      return;
+                    }
                     setShow(true);
                     document.body.style.overflowY = "hidden";
                   }}
@@ -524,7 +547,7 @@ export default function Status() {
                   <i className="bi fs-3 bi-share"></i>
                 </div>
               </div>
-              {account_name === user.account_name ? (
+              {user.isAnonymous && account_name === user.account_name ? (
                 <div className="flex-grow-1 text-center">
                   <div
                     onClick={() => {
@@ -549,6 +572,12 @@ export default function Status() {
         setShow={setShow}
         referenced_tweets={tweet ? tweet.referenced_tweet : []}
         reference_tweet={tweet}
+      />
+
+      <Loading
+        show={loading}
+        className="my-5 text-app"
+        style={{ width: "1.5rem", height: "1.5rem" }}
       />
 
       {replies

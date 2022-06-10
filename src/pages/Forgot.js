@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
@@ -7,7 +7,13 @@ import Modal from "../components/Modal";
 export default function Forgot() {
   const [email, setEmail] = useState();
   const [loading, setLoading] = useState(false);
-  const handleSubmit = () => {};
+
+  const handleSubmit = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  };
 
   return (
     <div className="signup py-3">

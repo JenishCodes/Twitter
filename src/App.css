@@ -107,10 +107,10 @@
 .hover-underline:hover {
   text-decoration: underline;
 }
+.hover:hover {
+  background-color: var(--hover) !important;
+}
 @media screen and (min-width: 576px) {
-  .hover:hover {
-    background-color: var(--hover) !important;
-  }
   .compose {
     width: 90% !important;
     border-radius: 20px;

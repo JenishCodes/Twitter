@@ -1,6 +1,7 @@
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
+  signInAnonymously,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -268,4 +269,13 @@ export async function signUpWithGoogle(operation_type = "signup") {
 
 export async function logout() {
   await signOut(auth);
+}
+
+
+export async function signinAnonymously() {
+  try {
+    await signInAnonymously(auth);
+  } catch (err) {
+    throw err;
+  }
 }

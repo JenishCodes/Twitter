@@ -6,7 +6,7 @@ import { getChats } from "../services/chat";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import { timeFormatter } from "../utils";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 export default function Message() {
   const { user } = useContext(AuthContext);
@@ -23,14 +23,12 @@ export default function Message() {
 
   return (
     <div className="chats">
-      <Helmet><title>Messages / Twitter</title></Helmet>
-      
+      <Helmet>
+        <title>Messages / Twitter</title>
+      </Helmet>
+
       <Header title="Messages" subtitle={chats.length + " Conversations"} />
-      <Loading
-        show={loading}
-        className="my-5 text-app"
-        style={{ width: "1.5rem", height: "1.5rem" }}
-      />
+
       {chats.length > 0
         ? chats.map((chat, index) => (
             <List
@@ -65,7 +63,11 @@ export default function Message() {
         : !loading && (
             <div className="text-center text-muted mt-5">No messages yet</div>
           )}
-
+      <Loading
+        show={loading}
+        className="my-5 text-app"
+        style={{ width: "1.5rem", height: "1.5rem" }}
+      />
       {chats.length > 0 ? <div className="h-50-vh"></div> : null}
     </div>
   );

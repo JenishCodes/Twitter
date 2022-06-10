@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import Header from "../components/Header";
 
 export default function Country(props) {
-  const [country, setCountry] = useState(props.account_name);
+  const [country, setCountry] = useState("India");
 
   return (
     <div>
-      <Helmet><title>Change country / Twitter</title></Helmet>
+      <Helmet>
+        <title>Change country / Twitter</title>
+      </Helmet>
       <Header title="Change country" backArrow="full" />
       <div className="px-3">
         <div className="form-floating my-3">
@@ -15,6 +17,7 @@ export default function Country(props) {
             type="text"
             className="form-select rounded-5 text-primary"
             id="country-input"
+            defaultValue={country}
             style={{ backgroundColor: "transparent" }}
             onChange={(e) => setCountry(e.currentTarget.value)}
           >

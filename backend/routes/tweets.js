@@ -68,7 +68,7 @@ router.get("/show", async function (req, res) {
 
     res.send(ans);
   } catch (err) {
-    console.log(err.messsage);
+    console.log(err);
     res.status(400);
     res.send(err.message);
   }
@@ -288,7 +288,7 @@ router.get("/references", async function (req, res) {
 
     res.send({ data: result });
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
     res.status(400);
     res.send(err.message);
   }

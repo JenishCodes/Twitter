@@ -31,6 +31,7 @@ export default function Tweet(props) {
 
   useEffect(() => {
     setData(props.tweet);
+    if (user.isAnonymous) return;
     getTweetFavoriters(props.tweet._id, true).then((res) =>
       setLiked(res.data.includes(user._id))
     );
@@ -43,6 +44,12 @@ export default function Tweet(props) {
 
   const handlePinTweet = (e) => {
     e.stopPropagation();
+
+    if (user.isAnonymous) {
+      navigate("/login")
+      return;
+    }
+    
     if (user.pinned_tweet_id === data._id) {
       unpinTweet(user._id).catch((err) => console.log(err));
       setUser({ ...user, pinned_tweet_id: "" });
@@ -55,6 +62,10 @@ export default function Tweet(props) {
 
   const handleLike = (e) => {
     e.stopPropagation();
+    if (user.isAnonymous) {
+      navigate("/login")
+      return;
+    }
     if (liked) {
       setLiked(false);
       setData({
@@ -80,6 +91,10 @@ export default function Tweet(props) {
 
   const handleRetweet = (e) => {
     e.stopPropagation();
+    if (user.isAnonymous) {
+      navigate("/login")
+      return;
+    }
     if (retweeted) {
       setRetweeted(false);
       setData({
@@ -115,6 +130,10 @@ export default function Tweet(props) {
 
   const handleBookmark = (e) => {
     e.stopPropagation();
+    if (user.isAnonymous) {
+      navigate("/login")
+      return;
+    }
     if (bookmarked) {
       unbookmarkTweet(data._id, user._id).catch((err) => console.log(err));
       setBookmarked(false);

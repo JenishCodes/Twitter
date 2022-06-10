@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import List from "../components/List";
@@ -25,14 +25,10 @@ export default function Notifications() {
 
   return (
     <div className="notifications">
-      <Helmet><title>Notifications / Twitter</title></Helmet>
+      <Helmet>
+        <title>Notifications / Twitter</title>
+      </Helmet>
       <Header title="Notifications" />
-
-      <Loading
-        show={loading}
-        className="my-5 text-app"
-        style={{ width: "1.5rem", height: "1.5rem" }}
-      />
 
       {notifications.length > 0
         ? notifications.map((notification, index) => (
@@ -64,6 +60,12 @@ export default function Notifications() {
         : !loading && (
             <div className="text-center text-muted mt-5">No Notifications</div>
           )}
+
+      <Loading
+        show={loading}
+        className="my-5 text-app"
+        style={{ width: "1.5rem", height: "1.5rem" }}
+      />
 
       {notifications.length > 0 ? <div className="h-50-vh"></div> : null}
     </div>

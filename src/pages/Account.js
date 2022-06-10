@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { AuthContext } from "../config/context";
 import Header from "../components/Header";
 import List from "../components/List";
@@ -11,7 +11,9 @@ export default function Account() {
 
   return (
     <div>
-      <Helmet><title>Your Account / Twitter</title></Helmet>
+      <Helmet>
+        <title>Your Account / Twitter</title>
+      </Helmet>
       <Header title="Your Account" backArrow="full" />
       <div className="border-bottom">
         <List

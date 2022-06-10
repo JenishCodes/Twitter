@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import List from "../components/List";
@@ -31,18 +31,12 @@ export default function Reactions() {
     <div>
       <Helmet>
         <title>
-        {reaction_type === "likes" ? "Liked by" : "Retweeted by"} / Twitter
+          {reaction_type === "likes" ? "Liked by" : "Retweeted by"} / Twitter
         </title>
       </Helmet>
       <Header
         title={reaction_type === "likes" ? "Liked by" : "Retweeted by"}
         backArrow="full"
-      />
-
-      <Loading
-        show={loading}
-        className="my-5 text-app"
-        style={{ width: "1.5rem", height: "1.5rem" }}
       />
 
       {data.length > 0
@@ -64,6 +58,12 @@ export default function Reactions() {
               No {reaction_type} yet
             </div>
           )}
+
+      <Loading
+        show={loading}
+        className="my-5 text-app"
+        style={{ width: "1.5rem", height: "1.5rem" }}
+      />
 
       {data.length > 0 ? <div className="h-50-vh"></div> : null}
     </div>

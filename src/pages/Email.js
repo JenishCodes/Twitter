@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import Header from "../components/Header";
 
 export default function Email(props) {
@@ -7,7 +7,9 @@ export default function Email(props) {
 
   return (
     <div className="email">
-      <Helmet><title>Change email / Twitter</title></Helmet>
+      <Helmet>
+        <title>Change email / Twitter</title>
+      </Helmet>
       <Header title="Change email" backArrow="full" />
       <div className="px-3">
         <div className="form-floating my-3">

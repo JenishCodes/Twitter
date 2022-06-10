@@ -18,7 +18,7 @@ export default function Header(props) {
           <div
             className={`start btn hover rounded-circle px-2 py-0 ${
               props.backArrow === "half" ? "d-sm-none" : ""
-              }`}
+            }`}
             data-title="Back"
             onClick={() => navigate(-1)}
           >
@@ -32,10 +32,15 @@ export default function Header(props) {
               setShow(true);
             }}
           >
-            <img
-              src={user.profile_image_url}
-              className="profile-image rounded-circle"
-            />
+            {user.isAnonymous ? (
+              <i className="bi bi-twitter fs-2 px-2 py-1 text-app"></i>
+            ) : (
+              <img
+                src={user.profile_image_url}
+                    className="profile-image rounded-circle"
+                    alt="profile"
+              />
+            )}
           </div>
         )}
         {props.title ? (

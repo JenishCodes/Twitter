@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Helmet} from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
@@ -115,7 +115,11 @@ export default function User() {
   return (
     <div>
       <Helmet>
-        <title>{user?user.name + " (@" + user.account_name + ") / Twitter" :"Profile / Twitter"}</title>
+        <title>
+          {user
+            ? user.name + " (@" + user.account_name + ") / Twitter"
+            : "Profile / Twitter"}
+        </title>
       </Helmet>
       <Header
         title={user ? user.name : "Profile"}

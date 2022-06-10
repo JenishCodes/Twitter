@@ -60,7 +60,7 @@ router.post("/", async function (req, res) {
 
     res.sendStatus(200);
   } catch (err) {
-    console.log(err.messsage);
+    console.log(err);
     res.status(400);
     res.send(err.message);
   }
@@ -74,7 +74,7 @@ router.put("/", async function (req, res) {
     );
     res.sendStatus(200);
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
     res.status(400);
     res.send(err.message);
   }

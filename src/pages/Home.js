@@ -4,7 +4,7 @@ import { AuthContext } from "../config/context";
 import { getUserFeed } from "../services/user";
 import Tweet from "../components/Tweet";
 import Loading from "../components/Loading";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 export default function Home() {
   const [cursor, setCursor] = useState(0);
@@ -25,13 +25,10 @@ export default function Home() {
 
   return (
     <div className="h-100">
-      <Helmet><title>Home / Twitter</title></Helmet>
+      <Helmet>
+        <title>Home / Twitter</title>
+      </Helmet>
       <Header title="Home" />
-      <Loading
-        show={loading}
-        style={{ width: "1.5rem", height: "1.5rem" }}
-        className="mt-5 text-app"
-      />
       {feed.length > 0
         ? feed.map((tweet, index) => (
             <div key={index}>
@@ -50,6 +47,11 @@ export default function Home() {
             <div className="text-center text-muted mt-5">No tweets yet</div>
           )}
 
+      <Loading
+        show={loading}
+        style={{ width: "1.5rem", height: "1.5rem" }}
+        className="mt-5 text-app"
+      />
       {feed.length ? <div className="h-50-vh"></div> : null}
     </div>
   );

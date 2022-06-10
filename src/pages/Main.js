@@ -1,8 +1,11 @@
-import React from "react";
-import { Helmet } from "react-helmet";
+import React, { useContext } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../config/context";
+import { signinAnonymously } from "../services/user";
 
 export default function Main() {
+  const { setLoading } = useContext(AuthContext);
   return (
     <div className="main-page py-3 text-primary">
       <Helmet>
@@ -29,7 +32,13 @@ export default function Main() {
           <span className="mx-2 text-muted fs-6">OR</span>
           <hr className="w-50" />
         </div>
-        <div className="btn hover d-flex px-5 my-2 py-2 justify-content-center align-items-center rounded-pill border">
+        <div
+          onClick={() => {
+            setLoading(true);
+            signinAnonymously().then(() => setLoading(false));
+          }}
+          className="btn hover d-flex px-5 my-2 py-2 justify-content-center align-items-center rounded-pill border"
+        >
           Anonymously surf Twitter
         </div>
         <div className="text-muted mt-5">

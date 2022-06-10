@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import Message from "../components/Message";
 import {
@@ -9,9 +9,9 @@ import {
 import { AuthContext } from "../config/context";
 import { getNewMessage } from "../services/chat";
 import Loading from "../components/Loading";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
-export default function Chat(props) {
+export default function Chat() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const { state } = useLocation();
@@ -120,8 +120,12 @@ export default function Chat(props) {
 
   return (
     <div className="chat h-100">
-      <Helmet><title>{chatUser?chatUser.name + " / Twitter":"Coversation / Twitter"}</title></Helmet>
-      
+      <Helmet>
+        <title>
+          {chatUser ? chatUser.name + " / Twitter" : "Coversation / Twitter"}
+        </title>
+      </Helmet>
+
       <div className="header position-absolute">
         <div className="d-flex px-2 align-items-center">
           <div

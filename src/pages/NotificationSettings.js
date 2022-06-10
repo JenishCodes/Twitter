@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import Header from "../components/Header";
 import List from "../components/List";
 import { AuthContext } from "../config/context";
@@ -20,7 +20,9 @@ export default function NotificationSettings() {
 
   return (
     <div>
-      <Helmet><title>Notifications / Twitter</title></Helmet>
+      <Helmet>
+        <title>Notifications / Twitter</title>
+      </Helmet>
 
       <Header title="Notifications" backArrow="full" />
       <List

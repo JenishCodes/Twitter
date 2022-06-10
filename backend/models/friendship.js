@@ -26,4 +26,4 @@ const Friendship = mongoose.model(
   })
 );
 
-exports.Friendship = Friendship;
+exports.Friendship = Friendship

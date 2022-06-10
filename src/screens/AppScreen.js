@@ -26,6 +26,7 @@ import Phone from "../pages/Phone";
 import Notifications from "../pages/Notifications";
 import Drawer from "../components/Drawer";
 import Explore from "../pages/Explore";
+import { Followbox } from "../components/Followbox";
 
 export default function AppScreen() {
   return (
@@ -43,7 +44,7 @@ export default function AppScreen() {
 
               <Route path="logout" element={<Logout />} />
 
-              <Route path="home" element={<Home />} title="Home" />
+              <Route path="home" element={<Home />} />
 
               <Route path="explore" element={<Explore />} />
 
@@ -92,7 +93,7 @@ export default function AppScreen() {
           </div>
           <div className="suggestion p-0 d-none d-lg-block col-lg-4-8 border-start h-100-vh top-0 position-sticky overflow-y-auto">
             <Routes>
-              <Route path="/explore" element={<div />} />
+              <Route path="/explore" element={<Followbox />} />
               <Route path="*" element={<Explore />} />
             </Routes>
           </div>

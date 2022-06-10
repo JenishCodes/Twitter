@@ -1,11 +1,55 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import Header from "../components/Header";
-import Trend from "../components/Trend";
+import List from "../components/List";
 
 export default function Explore() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [trends] = useState([
+    {
+      name: "LifeIsBetterThanTwitter",
+      tweets: "1.5M",
+    },
+    {
+      name: "StayHome",
+      tweets: "1.2M",
+    },
+    {
+      name: "MovieNight",
+      tweets: "1.1M",
+    },
+    {
+      name: "StaySafe",
+      tweets: "1.0M",
+    },
+    {
+      name: "Music",
+      tweets: "900K",
+    },
+    {
+      name: "Sports",
+      tweets: "800K",
+    },
+    {
+      name: "Entertainment",
+      tweets: "700K",
+    },
+    {
+      name: "Gaming",
+      tweets: "600K",
+    },
+    {
+      name: "News",
+      tweets: "500K",
+    },
+    {
+      name: "Politics",
+      tweets: "400K",
+    },
+  ]);
+
   return (
     <div>
       {location.pathname === "/explore" ? (
@@ -13,18 +57,28 @@ export default function Explore() {
           <title>Explore / Twitter</title>
         </Helmet>
       ) : null}
+
       <Header extraTitle="Trending" />
+
       <div className="mb-5 pb-5">
-        <Trend hashtag="Life" tweets={95} />
-        <Trend hashtag="Problem" tweets={87} />
-        <Trend hashtag="Happiness" tweets={85} />
-        <Trend hashtag="Football" tweets={64} />
-        <Trend hashtag="Cricket" tweets={62} />
-        <Trend hashtag="Hostages" tweets={60} />
-        <Trend hashtag="RRR" tweets={50} />
-        <Trend hashtag="Movies" tweets={42} />
-        <Trend hashtag="Music" tweets={40} />
+        {trends.map((tag) => (
+          <List
+            key={tag.name}
+            className="hover pointer"
+            data={{
+              title: tag.name,
+              subtitle: tag.tweets + " Tweets",
+              image: (
+                <div className="rounded-circle border">
+                  <i className="bi bi-hash fs-1 p-2"></i>
+                </div>
+              ),
+            }}
+            onClick={() => navigate(`/hashtag/${tag.name}`)}
+          />
+        ))}
       </div>
+
       <div className="h-50-vh"></div>
     </div>
   );

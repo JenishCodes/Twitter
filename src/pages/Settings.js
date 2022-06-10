@@ -1,5 +1,5 @@
 import React from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 
@@ -8,7 +8,9 @@ export default function Settings() {
 
   return (
     <div>
-      <Helmet><title>Settings / Twitter</title></Helmet>
+      <Helmet>
+        <title>Settings / Twitter</title>
+      </Helmet>
       <Header title="Settings" backArrow="half" />
       <div className="pointer" onClick={() => naviagte("/settings/account")}>
         <div className="p-3 hover">
@@ -20,7 +22,10 @@ export default function Settings() {
           </div>
         </div>
       </div>
-      <div className="pointer" onClick={() => naviagte("/settings/notifications")}>
+      <div
+        className="pointer"
+        onClick={() => naviagte("/settings/notifications")}
+      >
         <div className="p-3 hover">
           <div className="d-flex justify-content-between">
             <div>Notifications</div>

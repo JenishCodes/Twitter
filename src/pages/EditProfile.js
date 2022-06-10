@@ -4,19 +4,19 @@ import { AuthContext } from "../config/context";
 import { editProfile } from "../services/user";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
-export default function EditProfile(props) {
+export default function EditProfile() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-  const [name, setName] = useState();
-  const [location, setLocation] = useState();
-  const [website, setWebsite] = useState();
-  const [description, setDescription] = useState();
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
+  const [website, setWebsite] = useState("");
+  const [description, setDescription] = useState("");
   const [image, setImage] = useState();
   const [banner, setBanner] = useState();
-  const [imageUrl, setImageUrl] = useState();
-  const [bannerUrl, setBannerUrl] = useState();
+  const [imageUrl, setImageUrl] = useState("");
+  const [bannerUrl, setBannerUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -124,7 +124,6 @@ export default function EditProfile(props) {
                 "Save"
               )}
             </div>
-            
           </div>
         </div>
         <div className="form-floating mx-4 my-4">

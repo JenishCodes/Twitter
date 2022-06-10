@@ -215,7 +215,6 @@ router.get("/tweets/retweets", async function (req, res) {
         }
       })
     );
-    console.log(result);
 
     res.send({ data: result });
   } catch (err) {
@@ -622,7 +621,7 @@ router.put("/:id", async function (req, res) {
   try {
     await User.findOneAndUpdate({ auth_id: req.params.id }, req.body);
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
     res.status(400);
     res.send(err.message);
   }

@@ -5,7 +5,7 @@ import { getFollowers, getFollowing } from "../services/friendship";
 import List from "../components/List";
 import { getUser } from "../services/user";
 import Loading from "../components/Loading";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 export default function Network() {
   const { friendship_type, account_name } = useParams();
@@ -80,11 +80,6 @@ export default function Network() {
           },
         ]}
       >
-        <Loading
-          show={loading}
-          style={{ width: "1.5rem", height: "1.5rem" }}
-          className="mt-5 text-app"
-        />
         {friendship_type === "following"
           ? following.length > 0
             ? following.map((friend) => (
@@ -122,7 +117,11 @@ export default function Network() {
                 <div className="text-center text-muted mt-5">No followers</div>
               )
           : null}
-
+        <Loading
+          show={loading}
+          style={{ width: "1.5rem", height: "1.5rem" }}
+          className="mt-5 text-app"
+        />
         {(friendship_type === "following" && following.length > 0) ||
         (friendship_type === "followers" && followers.length > 0) ? (
           <div className="h-50-vh"></div>

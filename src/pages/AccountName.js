@@ -3,9 +3,9 @@ import Header from "../components/Header";
 import { AuthContext } from "../config/context";
 import { editProfile } from "../services/user";
 import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
-export default function AccountName(props) {
+export default function AccountName() {
   const { user } = useContext(AuthContext);
   const [accountName, setAccountName] = useState("");
   const navigate = useNavigate();

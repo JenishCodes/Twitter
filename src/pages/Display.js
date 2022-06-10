@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import Header from "../components/Header";
 import { setCSSVariables } from "../utils";
 
@@ -23,7 +23,9 @@ export default function Display() {
 
   return (
     <div className="display">
-      <Helmet><title>Display / Twitter</title></Helmet>
+      <Helmet>
+        <title>Display / Twitter</title>
+      </Helmet>
       <Header title="Display" backArrow="full" />
       <div className="px-3 text-muted">
         <p>

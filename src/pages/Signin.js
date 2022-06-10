@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
@@ -26,9 +26,7 @@ export default function Signin() {
   return (
     <div className="signin py-3">
       <Helmet>
-        <title>
-          Signin to Twitter / Twitter
-        </title>
+        <title>Signin to Twitter / Twitter</title>
       </Helmet>
       {loading ? (
         <Modal

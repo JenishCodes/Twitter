@@ -20,6 +20,8 @@ export default function Searchbar() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (user.isAnonymous) return;
+
     getSeachHistory(user._id).then((res) => {
       const upadtedHistory = res.data.map((item) => ({
         ...item,
@@ -31,6 +33,11 @@ export default function Searchbar() {
   }, [user._id]);
 
   const handleAddHistory = (item, location) => {
+    if (user.isAnonymous) {
+      navigate(location);
+      return;
+    }
+
     addSeachHistory(user._id, ...item)
       .then((res) => {
         const newList = history.filter((item) => item._id !== res.data._id);
@@ -46,6 +53,8 @@ export default function Searchbar() {
 
   const handleDeleteHistory = (e, id) => {
     e.stopPropagation();
+    if (user.isAnonymous) return;
+
     deleteSearchHistory(id);
     const newList = history.filter((elem) => elem._id !== id);
     setResults(newList);
@@ -53,6 +62,8 @@ export default function Searchbar() {
   };
 
   const handleClearAll = () => {
+    if (user.isAnonymous) return;
+
     deleteSearchHistory(user._id, true);
     setHistory([]);
     setResults([]);
@@ -70,10 +81,9 @@ export default function Searchbar() {
       setLoading(true);
       if (searchQuery[0] === "#") {
         searchHashtags(searchQuery, 0, 6)
-          .then((res) => {
-            console.log(res.data);
-            setResults(res.data.map((item) => ({ ...item, type: "hashtag" })));
-          })
+          .then((res) =>
+            setResults(res.data.map((item) => ({ ...item, type: "hashtag" })))
+          )
           .catch((err) => console.log(err))
           .finally(() => setLoading(false));
       } else if (searchQuery[0] === "@") {
@@ -84,11 +94,11 @@ export default function Searchbar() {
           .catch((err) => console.log(err))
           .finally(() => setLoading(false));
       } else {
-        searchUser(searchQuery, 0, 3)
+        searchUser(searchQuery, false, 0, 3)
           .then((res) => {
             const users = res.data.map((item) => ({ ...item, type: "user" }));
 
-            searchHashtags(searchQuery, false, 0, 3)
+            searchHashtags(searchQuery, 0, 3)
               .then((res) =>
                 setResults([
                   ...users,
@@ -261,12 +271,12 @@ export default function Searchbar() {
               <div className="text-center text-muted fw-bold mb-4 mt-2">
                 {query ? "No Search Results" : "No Search History"}
               </div>
-          )}
+            )}
         <Loading
-            show={loading}
-            className="my-4 text-app"
-            style={{ width: "1.5rem", height: "1.5rem" }}
-          />
+          show={loading}
+          className="my-4 text-app"
+          style={{ width: "1.5rem", height: "1.5rem" }}
+        />
       </div>
     </div>
   );

@@ -3,12 +3,11 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Tweet from "../components/Tweet";
 import List from "../components/List";
 import Tabbar from "../components/Tabbar";
-import Trend from "../components/Trend";
 import { searchHashtags } from "../services/hashtag";
 import { searchTweets } from "../services/tweet";
 import { searchUser } from "../services/user";
 import Loading from "../components/Loading";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 export default function Search() {
   const [hashtags, setHashtags] = useState([]);
@@ -46,7 +45,6 @@ export default function Search() {
   }, [query]);
 
   useEffect(() => {
-    setLoading(true);
     const q = search.replace("?q=", "").split("&")[0];
 
     if (q !== query) {
@@ -60,6 +58,7 @@ export default function Search() {
     }
 
     if (search_type === "hashtags" && (q !== query || hashCursor === 0)) {
+      setLoading(true);
       searchHashtags(q, 0, 10)
         .then((res) => {
           setHashCursor(1);
@@ -68,6 +67,7 @@ export default function Search() {
         .catch((err) => console.log(err))
         .finally(() => setLoading(false));
     } else if (search_type === "users" && (q !== query || userCursor === 0)) {
+      setLoading(true);
       searchUser(q, true, 0, 10)
         .then((res) => {
           setUserCursor(1);
@@ -76,6 +76,7 @@ export default function Search() {
         .catch((err) => console.log(err))
         .finally(() => setLoading(false));
     } else if (search_type === "tweets" && (q !== query || tweetCursor === 0)) {
+      setLoading(true);
       searchTweets(q, 0, 10)
         .then((res) => {
           setTweetCursor(1);
@@ -89,7 +90,7 @@ export default function Search() {
   return (
     <div>
       <Helmet>
-        <title>{query} - Search / Twitter</title>
+        <title>{query} - Search {search_type} / Twitter</title>
       </Helmet>
       <Tabbar
         activeTab={search_type}
@@ -97,11 +98,6 @@ export default function Search() {
         tabs={tabs}
         title="Search Results"
       >
-        <Loading
-          show={loading}
-          className="my-5 text-app"
-          style={{ width: "1.5rem", height: "1.5rem" }}
-        />
         {search_type === "tweets"
           ? tweets.length > 0
             ? tweets.map((tweet) => <Tweet key={tweet._id} tweet={tweet} />)
@@ -115,7 +111,7 @@ export default function Search() {
             ? users.map((user) => (
                 <List
                   key={user.auth_id}
-                  className="hover"
+                  className="hover pointer"
                   data={{
                     title: user.name,
                     subtitle: user.account_name,
@@ -133,10 +129,19 @@ export default function Search() {
           : search_type === "hashtags"
           ? hashtags.length > 0
             ? hashtags.map((hashtag) => (
-                <Trend
+                <List
                   key={hashtag.tag}
-                  hashtag={hashtag.tag}
-                  tweets={hashtag.tweet_count}
+                  className="hover pointer"
+                  data={{
+                    title: hashtag.tag,
+                    subtitle: hashtag.tweet_count + " Tweets",
+                    image: (
+                      <div className="rounded-circle border">
+                        <i className="bi bi-hash fs-1 p-2"></i>
+                      </div>
+                    ),
+                  }}
+                  onClick={() => navigate("/hashtag/" + hashtag.tag)}
                 />
               ))
             : !loading && (
@@ -145,6 +150,12 @@ export default function Search() {
                 </div>
               )
           : null}
+
+        <Loading
+          show={loading}
+          className="my-5 text-app"
+          style={{ width: "1.5rem", height: "1.5rem" }}
+        />
 
         {(search_type === "tweets" && tweets.length > 0) ||
         (search_type === "users" && users.length > 0) ||

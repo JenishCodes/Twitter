@@ -3,6 +3,7 @@ import { AuthContext } from "../config/context";
 import AppScreen from "./AppScreen";
 import AuthScreen from "./AuthScreen";
 import "../style.css";
+import AnonymousScreen from "./AnonymousScreen";
 
 export default function Navigator() {
   const { user, loading } = useContext(AuthContext);
@@ -12,7 +13,11 @@ export default function Navigator() {
       <i className="bi bi-twitter fs-0 text-app"></i>
     </div>
   ) : user ? (
-    <AppScreen />
+    user.isAnonymous ? (
+      <AnonymousScreen />
+    ) : (
+      <AppScreen />
+    )
   ) : (
     <AuthScreen />
   );

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
@@ -31,14 +31,16 @@ export default function Signup() {
         <title>Signup for Twitter / Twitter</title>
       </Helmet>
       {loading ? (
-        <Modal style={{
-          right: 0,
+        <Modal
+          style={{
+            right: 0,
             position: "absolute",
             width:
               window.screen.width > 991
                 ? (window.screen.width * 5) / 12
                 : "100%",
-        }}>
+          }}
+        >
           <Loading
             show={true}
             className="my-5 text-app"

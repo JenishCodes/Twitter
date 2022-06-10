@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import Header from "../components/Header";
 import List from "../components/List";
 import { AuthContext } from "../config/context";
@@ -15,7 +15,9 @@ export default function Privacy() {
 
   return (
     <div>
-      <Helmet><title>Privacy and safety / Twitter</title></Helmet>
+      <Helmet>
+        <title>Privacy and safety / Twitter</title>
+      </Helmet>
 
       <Header title="Privacy and safety" backArrow="full" />
       <List

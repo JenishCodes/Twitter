@@ -13,15 +13,20 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (res) => {
       if (res) {
-        const user_res = await getUser(res.displayName);
+        if (res.isAnonymous) {
+          setUser(res);
+        } else {
+          const user_res = await getUser(res.displayName);
 
-        const userSettings = await getUserSettings(user_res.data._id);
+          const userSettings = await getUserSettings(user_res.data._id);
 
-        setUser({
-          ...user_res.data,
-          email: res.email,
-          settings: userSettings.data,
-        });
+          setUser({
+            ...user_res.data,
+            email: res.email,
+            settings: userSettings.data,
+            isAnonymous: false,
+          });
+        }
       } else {
         setUser(null);
       }
@@ -32,7 +37,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, show, setShow }}>
+    <AuthContext.Provider value={{ user, setUser, loading, show, setShow, setLoading }}>
       {children}
     </AuthContext.Provider>
   );
