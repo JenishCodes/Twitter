@@ -37,7 +37,7 @@ export default function Display() {
             <div className="d-flex flex-column align-items-center">
               <div className="profile-image blue px-2 py-1 rounded-circle">
                 <i
-                  className="bi bi-twitter px-1"
+                  className="bi bi-twitter px-1 text-white"
                   style={{
                     fontSize: "1.75rem",
                   }}

@@ -11,7 +11,7 @@ router.get("/followers", async function (req, res) {
 
   const users = await Friendship.aggregate([
     { $match: { following: user.data._id } },
-    { $skip: req.query.cursor * 10 },
+    { $skip: parseInt(req.query.page) },
     { $limit: 10 },
     {
       $lookup: {
@@ -26,7 +26,7 @@ router.get("/followers", async function (req, res) {
 
   const followers = users.map((user) => user.user);
 
-  res.send({ data: followers });
+  res.send({ data: followers, hasMore: followers.length === 10 });
 });
 
 router.get("/following", async function (req, res) {
@@ -34,7 +34,7 @@ router.get("/following", async function (req, res) {
 
   const users = await Friendship.aggregate([
     { $match: { followed_by: user.data._id } },
-    { $skip: req.query.cursor * 10 },
+    { $skip: parseInt(req.query.page) },
     { $limit: 10 },
     {
       $lookup: {
@@ -49,7 +49,7 @@ router.get("/following", async function (req, res) {
 
   const following = users.map((user) => user.user);
 
-  res.send({ data: following });
+  res.send({ data: following, hasMore: following.length === 10 });
 });
 
 router.get("/", async function (req, res) {

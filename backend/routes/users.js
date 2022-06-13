@@ -11,11 +11,11 @@ const router = express.Router();
 
 router.get("/search", async function (req, res) {
   try {
-    var results;
+    var data;
     const query = req.query.name_query.replace("@", "");
 
     if (req.query.deep_search === "true") {
-      results = await User.find({
+      data = await User.find({
         $or: [
           { account_name: { $regex: new RegExp("^" + query + ".*") } },
           { name: { $regex: new RegExp(query, "i") } },
@@ -23,21 +23,21 @@ router.get("/search", async function (req, res) {
         ],
       })
         .select("name auth_id account_name profile_image_url description")
-        .skip(parseInt(req.query.limit) * parseInt(req.query.cursor))
-        .limit(parseInt(req.query.limit));
+        .skip(parseInt(req.query.page))
+        .limit(10);
     } else {
-      results = await User.find({
+      data = await User.find({
         $or: [
           { account_name: { $regex: new RegExp("^" + query + ".*") } },
           { name: { $regex: new RegExp(query, "i") } },
         ],
       })
         .select("name auth_id account_name profile_image_url description")
-        .skip(parseInt(req.query.limit) * parseInt(req.query.cursor))
-        .limit(parseInt(req.query.limit));
+        .skip(parseInt(req.query.page))
+        .limit(10);
     }
 
-    res.send({ data: results });
+    res.send({ data, hasMore: data.length === 10 });
   } catch (err) {
     console.log(err);
     res.status(400);
@@ -129,9 +129,10 @@ router.get("/show", async function (req, res) {
         req.query.include
       );
       res.send(ans);
-    } else if (req.query.user_id) {
-      const ans = await getUser(req.query.user_id, "id", req.query.include);
-      res.send(ans);
+    } else if (req.query.id) {
+      const data = await User.findById(req.query.id);
+
+      res.send({ data });
     }
   } catch (err) {
     console.log(err);
@@ -159,7 +160,10 @@ router.get("/tweets/replies", async function (req, res) {
     var tweets = await Tweet.find({
       author_id: user._id,
       "referenced_tweet.type": "replied_to",
-    }).sort({ createdAt: -1 });
+    })
+      .sort({ createdAt: -1 })
+      .skip(parseInt(req.query.page))
+      .limit(10);
 
     tweets = tweets.map((tweet) => {
       return {
@@ -174,7 +178,7 @@ router.get("/tweets/replies", async function (req, res) {
       };
     });
 
-    res.send({ data: tweets });
+    res.send({ data: tweets, hasMore: tweets.length === 10 });
   } catch (err) {
     console.log(err);
     res.status(400);
@@ -193,6 +197,8 @@ router.get("/tweets/retweets", async function (req, res) {
       "referenced_tweet.type": "retweet_of",
     })
       .sort({ createdAt: -1 })
+      .skip(parseInt(req.query.page))
+      .limit(10)
       .select("referenced_tweet -_id")
       .populate("referenced_tweet.id")
       .transform(function (docs) {
@@ -216,7 +222,7 @@ router.get("/tweets/retweets", async function (req, res) {
       })
     );
 
-    res.send({ data: result });
+    res.send({ data: result, hasMore: result.length === 10 });
   } catch (err) {
     console.log(err);
     res.status(400);
@@ -226,11 +232,16 @@ router.get("/tweets/retweets", async function (req, res) {
 
 router.get("/bookmarks", async function (req, res) {
   try {
-    const user = await User.findById(req.query.user_id);
+    const user = await User.findById(req.query.id);
 
-    const tweets = await getTweets(user.bookmarks);
+    const tweets = await getTweets(
+      user.bookmarks.slice(
+        parseInt(req.query.page),
+        parseInt(req.query.page) + 10
+      )
+    );
 
-    res.send({ data: tweets.data });
+    res.send({ data: tweets, hasMore: tweets.length === 10 });
   } catch (err) {
     console.log(err);
     res.status(400);
@@ -240,25 +251,24 @@ router.get("/bookmarks", async function (req, res) {
 
 router.get("/tweets/mentions", async function (req, res) {
   try {
-    const mentions = await Tweet.find({
+    const mentioned_tweets = await Tweet.find({
       "entities.mentions.account_name": req.query.account_name,
+    })
+      .populate("author_id")
+      .sort({ createdAt: -1 })
+      .skip(parseInt(req.query.page))
+      .limit(10)
+      .transform((docs) => {
+        return docs.map((doc) => {
+          const { author_id, ...restDoc } = doc._doc;
+          return { ...restDoc, author: author_id };
+        });
+      });
+
+    res.send({
+      data: mentioned_tweets,
+      hasMore: mentioned_tweets.length === 10,
     });
-
-    const authors = await Promise.all(
-      mentions.map(async (mention) => {
-        return await User.findById(mention.author_id);
-      })
-    );
-
-    const mentioned_tweet = mentions.map((mention, index) => {
-      return { ...mention._doc, author: authors[index] };
-    });
-
-    mentioned_tweet.sort((a, b) => {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    });
-
-    res.send({ data: mentioned_tweet });
   } catch (err) {
     console.log(err);
     res.status(400);
@@ -270,14 +280,15 @@ router.get("/tweets", async function (req, res) {
   try {
     const user = await User.findOne({ account_name: req.query.account_name });
 
-    var tweets;
-
-    tweets = await Tweet.find({
+    const tweets = await Tweet.find({
       author_id: user._id,
       referenced_tweet: [],
-    }).sort({ createdAt: -1 });
+    })
+      .sort({ createdAt: -1 })
+      .skip(parseInt(req.query.page))
+      .limit(10);
 
-    tweets = tweets.map((tweet) => {
+    const data = tweets.map((tweet) => {
       return {
         ...tweet._doc,
         author: {
@@ -290,7 +301,7 @@ router.get("/tweets", async function (req, res) {
       };
     });
 
-    res.send({ data: tweets });
+    res.send({ data, hasMore: data.length === 10 });
   } catch (err) {
     console.log(err);
     res.status(400);
@@ -467,8 +478,8 @@ router.get("/feed", async function (req, res) {
     });
 
     const pagedTweets = unique_tweets.slice(
-      parseInt(req.query.cursor) * 20,
-      parseInt(req.query.cursor) * 20 + 20
+      parseInt(req.query.page),
+      parseInt(req.query.page) + 10
     );
 
     const ids = pagedTweets.map((tweet) => tweet._id);
@@ -523,7 +534,7 @@ router.get("/feed", async function (req, res) {
       return { ...tweet, referenced_tweet: ref_tweet, message: obj.message };
     });
 
-    res.send({ data: response });
+    res.send({ data: response, hasMore: pagedTweets.length === 10 });
   } catch (err) {
     console.log(err);
     res.status(400);

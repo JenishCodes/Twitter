@@ -1,21 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import Tweet from "../components/Tweet";
+import { AuthContext } from "../config/context";
 import { getHashtagTweets } from "../services/hashtag";
 
 export default function Hashtag() {
   const { hashtag } = useParams();
   const [tweets, setTweets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const { scrollY } = useContext(AuthContext);
 
   useEffect(() => {
-    getHashtagTweets(hashtag)
-      .then((res) => setTweets(res.data || []))
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
+    if (
+      hasMore &&
+      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+        tweets.length === 0)
+    ) {
+      setLoading(true);
+      getHashtagTweets(hashtag, tweets.length)
+        .then((res) => {
+          setHasMore(res.hasMore);
+          setTweets([...tweets, ...res.data]);
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setLoading(false));
+    }
+  }, [scrollY]);
+
+  useEffect(() => {
+    setHasMore(true);
+    setTweets([]);
+    window.scrollTo(0, 0);
   }, [hashtag]);
 
   return (

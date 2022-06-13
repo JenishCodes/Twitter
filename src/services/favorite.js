@@ -25,10 +25,22 @@ export async function removeFavorite(author_id, tweet_id) {
   }
 }
 
-export async function getTweetFavoriters(tweet_id, trim_user) {
+export async function isFavoriter(user_id, tweet_id) {
   try {
     const res = await api.get(
-      "/favorite/tweet?id=" + tweet_id + "&trim_user=" + trim_user
+      "/favorite/isFavoriter?user_id=" + user_id + "&tweet_id=" + tweet_id
+    );
+
+    return res.data;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function getTweetFavoriters(id, page) {
+  try {
+    const res = await api.get(
+      "/favorite/favoriters?id=" + id + "&page=" + page
     );
 
     return res.data;

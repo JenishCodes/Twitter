@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Tabbar(props) {
   const navigate = useNavigate();
-
+  const tabbar = useRef();
   return (
-    <div className="tabbar">
-      <div className="header position-sticky">
-        <div className="d-flex align-items-center py-1 px-2">
+    <div className="tabbar" ref={tabbar}>
+      <div className="header position-sticky pt-1">
+        <div className="d-flex align-items-center pb-1 px-2">
           {props.backArrow ? (
             <div
               className="start btn hover rounded-circle py-0 px-2"
@@ -30,7 +30,9 @@ export default function Tabbar(props) {
             ? props.tabs.map((tab) => (
                 <div
                   key={tab.name}
-                  onClick={() => navigate(tab.path, { replace: true })}
+                  onClick={() => {
+                    navigate(tab.path, { replace: true });
+                  }}
                   className="py-0 px-3 border-0 btn text-muted text-center hover flex-grow-1"
                 >
                   <div
@@ -47,7 +49,10 @@ export default function Tabbar(props) {
             : null}
         </div>
       </div>
-      <div className="current-tab">{props.children}</div>
+      <div className="current-tab">
+        {props.children}
+      </div>
+      <div className="h-50-vh"></div>
     </div>
   );
 }

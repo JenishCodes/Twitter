@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Tweet from "../components/Tweet";
 import List from "../components/List";
@@ -8,89 +8,108 @@ import { searchTweets } from "../services/tweet";
 import { searchUser } from "../services/user";
 import Loading from "../components/Loading";
 import { Helmet } from "react-helmet-async";
+import { AuthContext } from "../config/context";
 
 export default function Search() {
   const [hashtags, setHashtags] = useState([]);
   const [users, setUsers] = useState([]);
   const [tweets, setTweets] = useState([]);
-  const [hashCursor, setHashCursor] = useState(0);
-  const [userCursor, setUserCursor] = useState(0);
-  const [tweetCursor, setTweetCursor] = useState(0);
+  const [hasMoreTags, setHasMoreTags] = useState(true);
+  const [hasMoreUsers, setHasMoreUsers] = useState(true);
+  const [hasMoreTweets, setHasMoreTweets] = useState(true);
   const [loading, setLoading] = useState(false);
   const { search_type } = useParams();
   const { search } = useLocation();
   const [query, setQuery] = useState(search.replace("?q=", "").split("&")[0]);
   const navigate = useNavigate();
+  const { scrollY } = useContext(AuthContext);
 
-  const [tabs, setTabs] = useState([]);
-
-  useEffect(() => {
-    setTabs([
-      {
-        name: "Tweet",
-        code: "tweets",
-        path: "../search/tweets?q=" + query,
-      },
-      {
-        name: "User",
-        code: "users",
-        path: "../search/users?q=" + query,
-      },
-      {
-        name: "Hashtag",
-        code: "hashtags",
-        path: "../search/hashtags?q=" + query,
-      },
-    ]);
-  }, [query]);
+  const [tabs, setTabs] = useState([
+    {
+      name: "Tweet",
+      code: "tweets",
+      path: "../search/tweets?q=" + query,
+    },
+    {
+      name: "User",
+      code: "users",
+      path: "../search/users?q=" + query,
+    },
+    {
+      name: "Hashtag",
+      code: "hashtags",
+      path: "../search/hashtags?q=" + query,
+    },
+  ]);
 
   useEffect(() => {
     const q = search.replace("?q=", "").split("&")[0];
 
     if (q !== query) {
-      setHashCursor(0);
+      setHasMoreTags(true);
       setHashtags([]);
-      setUserCursor(0);
+      setHasMoreUsers(true);
       setUsers([]);
-      setTweetCursor(0);
+      setHasMoreTweets(true);
       setTweets([]);
       setQuery(q);
     }
+  }, [search]);
 
-    if (search_type === "hashtags" && (q !== query || hashCursor === 0)) {
+  const helper = (func, params, hasMore, setHasMore, data, setData) => {
+    if (
+      hasMore &&
+      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+        data.length === 0)
+    ) {
       setLoading(true);
-      searchHashtags(q, 0, 10)
+      func(...params)
         .then((res) => {
-          setHashCursor(1);
-          setHashtags(res.data);
-        })
-        .catch((err) => console.log(err))
-        .finally(() => setLoading(false));
-    } else if (search_type === "users" && (q !== query || userCursor === 0)) {
-      setLoading(true);
-      searchUser(q, true, 0, 10)
-        .then((res) => {
-          setUserCursor(1);
-          setUsers(res.data);
-        })
-        .catch((err) => console.log(err))
-        .finally(() => setLoading(false));
-    } else if (search_type === "tweets" && (q !== query || tweetCursor === 0)) {
-      setLoading(true);
-      searchTweets(q, 0, 10)
-        .then((res) => {
-          setTweetCursor(1);
-          setTweets(res.data);
+          setHasMore(res.hasMore);
+          setData(res.data);
         })
         .catch((err) => console.log(err))
         .finally(() => setLoading(false));
     }
-  }, [search_type, search]);
+  };
+
+  useEffect(() => {
+    if (search_type === "hashtags") {
+      helper(
+        searchHashtags,
+        [query, hashtags.length],
+        hasMoreTags,
+        setHasMoreTags,
+        hashtags,
+        setHashtags
+      );
+    } else if (search_type === "users") {
+      helper(
+        searchUser,
+        [query, true, users.length],
+        hasMoreUsers,
+        setHasMoreUsers,
+        users,
+        setUsers
+      );
+    } else if (search_type === "tweets") {
+      helper(
+        searchTweets,
+        [query, tweets.length],
+        hasMoreTweets,
+        setHasMoreTweets,
+        tweets,
+        setTweets
+      );
+    }
+  }, [search_type, query, scrollY]);
 
   return (
     <div>
       <Helmet>
-        <title>{query} - Search {search_type} / Twitter</title>
+        <title>
+          {query} - Search {search_type} / Twitter
+        </title>
       </Helmet>
       <Tabbar
         activeTab={search_type}
@@ -114,7 +133,7 @@ export default function Search() {
                   className="hover pointer"
                   data={{
                     title: user.name,
-                    subtitle: user.account_name,
+                    subtitle: "@" + user.account_name,
                     image_url: user.profile_image_url,
                     context: user.description,
                   }}
@@ -156,12 +175,6 @@ export default function Search() {
           className="my-5 text-app"
           style={{ width: "1.5rem", height: "1.5rem" }}
         />
-
-        {(search_type === "tweets" && tweets.length > 0) ||
-        (search_type === "users" && users.length > 0) ||
-        (search_type === "hashtags" && hashtags.length > 0) ? (
-          <div className="h-50-vh"></div>
-        ) : null}
       </Tabbar>
     </div>
   );

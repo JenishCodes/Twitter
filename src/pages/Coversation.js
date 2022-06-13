@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import Message from "../components/Message";
 import {
@@ -10,6 +10,7 @@ import { AuthContext } from "../config/context";
 import { getNewMessage } from "../services/chat";
 import Loading from "../components/Loading";
 import { Helmet } from "react-helmet-async";
+import { getUserFromId } from "../services/user";
 
 export default function Chat() {
   const navigate = useNavigate();
@@ -17,84 +18,126 @@ export default function Chat() {
   const { state } = useLocation();
   const [chatUser, setChatUser] = useState();
   const { user_id } = useParams();
-  const [cursor, setCursor] = useState(0);
   const [text, setText] = useState("");
   const [messages, setMessages] = useState([]);
+  const [lastMessage, setLastMessage] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [scrollY, setScrollY] = useState(0);
+  const [fetched, setFetched] = useState(false);
+  const [tag, setTag] = useState(0);
+  const contentRef = useRef();
 
   useEffect(() => {
-    if (cursor > 0) {
+    if (fetched) {
       const chatId = [user._id, user_id].sort().join("~");
 
       const unsub = getNewMessage(chatId, (message) => {
-        if (!message.text) {
-          return;
-        }
+        if (!message.text) return;
 
-        if (messages.length === 0) {
-          setMessages([{ ...message, date: true }]);
-        } else if (message._id !== messages[messages.length - 1]._id) {
-          const lastMessage = messages[messages.length - 1];
+        if (messages.length > 0) {
+          if (message._id !== messages[messages.length - 1]._id) {
+            const lastMessage = messages[messages.length - 1];
+            if (
+              message.createdAt.seconds - lastMessage.createdAt.seconds <
+              60
+            ) {
+              setMessages([
+                ...messages.slice(0, messages.length - 1),
+                { ...lastMessage, date: false },
+                { ...message, date: true },
+              ]);
+            } else {
+              setMessages([...messages, { ...message, date: true }]);
+            }
 
-          if (message.createdAt.seconds - lastMessage.createdAt.seconds <= 60) {
-            setMessages([
-              ...messages.slice(0, messages.length - 1),
-              { ...lastMessage, date: false },
-              { ...message, date: true },
-            ]);
-          } else {
-            setMessages([...messages, { ...message, date: true }]);
+            if (
+              contentRef.current.scrollHeight -
+                contentRef.current.scrollTop -
+                200 <
+              contentRef.current.clientHeight
+            ) {
+              contentRef.current.scroll(0, contentRef.current.scrollHeight);
+            } else {
+              console.log(tag);
+              setTag(tag + 1);
+            }
           }
-          window.scrollTo(0, document.body.scrollHeight);
+        } else {
+          setMessages([...messages, { ...message, date: true }]);
         }
       });
 
-      return () => {
-        unsub();
-      };
+      return () => unsub();
     }
-  }, [cursor, messages]);
+  }, [fetched, messages]);
 
   useEffect(() => {
-    const chatId = [user._id, user_id].sort().join("~");
-
     if (state && state.user) {
       setChatUser(state.user);
+    } else {
+      getUserFromId(user_id)
+        .then((res) => setChatUser(res.data))
+        .catch((err) => console.log(err));
     }
-    setLoading(true);
+  }, [user_id]);
 
-    getChatMessages(chatId, cursor, !state?.user && user_id)
-      .then((res) => {
-        if (res.user) {
-          setChatUser(res.user);
-        }
-        var next;
+  useEffect(() => {
+    if (lastMessage && scrollY === 0) {
+      const chatId = [user._id, user_id].sort().join("~");
 
-        const updatedMessages = res.data.map((message, index) => {
-          if (index < res.data.length - 1) {
-            next = res.data[index + 1];
-            if (next.createdAt.seconds - message.createdAt.seconds <= 60) {
-              return { ...message, date: false };
-            } else {
+      if (!fetched) {
+        setLoading(true);
+      }
+
+      getChatMessages(chatId, lastMessage)
+        .then((res) => {
+          var next;
+          const height = contentRef.current.scrollHeight;
+
+          const newMessages = [...res.data, ...messages];
+
+          setMessages(
+            newMessages.map((message, index) => {
+              if (index < newMessages.length - 1) {
+                next = newMessages[index + 1];
+                if (message.senderId === next.senderId) {
+                  if (next.createdAt.seconds - message.createdAt.seconds < 60) {
+                    return { ...message, date: false };
+                  }
+                }
+              }
               return { ...message, date: true };
-            }
-          } else {
-            if (
-              messages[0] &&
-              messages[0].createdAt.seconds - message.createdAt.seconds <= 60
-            ) {
-              return { ...message, date: false };
-            } else {
-              return { ...message, date: true };
-            }
+            })
+          );
+          setLastMessage(res.lastMessage);
+
+          if (!fetched) {
+            setFetched(true);
           }
-        });
+          contentRef.current.scroll(
+            0,
+            contentRef.current.scrollHeight - height
+          );
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setLoading(false));
+    } else if (
+      scrollY <
+      contentRef.current.scrollHeight - contentRef.current.clientHeight
+    ) {
+      setTag(0);
+    }
+  }, [scrollY]);
 
-        setMessages(updatedMessages.concat(messages));
-        setCursor(cursor + 1);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
+  useEffect(() => {
+    contentRef.current.addEventListener("scroll", () =>
+      setScrollY(contentRef.current.scrollTop)
+    );
+    return () => {
+      contentRef.current.removeEventListener("scroll", () =>
+        setScrollY(contentRef.current.scrollTop)
+      );
+    };
   }, []);
 
   const handleDelete = (messageId) => {
@@ -156,7 +199,7 @@ export default function Chat() {
           </div>
         </div>
       </div>
-      <div className="content">
+      <div className="content" ref={contentRef}>
         <div className="messages-container px-3">
           <Loading
             show={loading}
@@ -186,11 +229,40 @@ export default function Chat() {
             : null}
         </div>
       </div>
-      <div className="text-box w-100 bg-primary d-flex align-items-center px-2 border-top py-2">
+      <div
+        className="btn rounded-circle bg-muted filter position-absolute"
+        style={{
+          bottom: "5rem",
+          right: "1rem",
+          display:
+            contentRef.current &&
+            scrollY <
+              contentRef.current.scrollHeight -
+                contentRef.current.clientHeight -
+                200
+              ? "block"
+              : "none",
+        }}
+        onClick={() => {
+          setTag(0);
+          contentRef.current.scroll(0, contentRef.current.scrollHeight);
+        }}
+      >
         <div
-          className="btn hover rounded-circle"
-          onClick={() => console.log(messages)}
+          className="bg-app rounded-pill text-white position-absolute px-1"
+          style={{
+            top: "-0.25rem",
+            right: "-0.25rem",
+            display: tag > 0 ? "block" : "none",
+          }}
         >
+          {tag}
+        </div>
+        <i className="bi bi-chevron-down"></i>
+      </div>
+
+      <div className="text-box w-100 bg-primary d-flex align-items-center px-2 border-top py-2">
+        <div className="btn hover rounded-circle">
           <i className="bi bi-image"></i>
         </div>
         <div className="btn hover rounded-circle">

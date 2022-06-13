@@ -4,11 +4,13 @@ import {
   makeFavorite,
   removeFavorite,
   getTweetFavoriters,
+  isFavoriter,
 } from "../services/favorite";
 import { AuthContext } from "../config/context";
 import {
   deleteTweet,
   getRetweeters,
+  isRetweeter,
   postTweet,
   updatePrivateMetrics,
 } from "../services/tweet";
@@ -32,12 +34,9 @@ export default function Tweet(props) {
   useEffect(() => {
     setData(props.tweet);
     if (user.isAnonymous) return;
-    getTweetFavoriters(props.tweet._id, true).then((res) =>
-      setLiked(res.data.includes(user._id))
-    );
-    getRetweeters(props.tweet._id, true).then((res) =>
-      setRetweeted(res.data.includes(user._id))
-    );
+
+    isFavoriter(user._id, props.tweet._id).then((res) => setLiked(res.data));
+    isRetweeter(user._id, props.tweet._id).then((res) => setRetweeted(res.data));
 
     setBookmarked(user.bookmarks.includes(props.tweet._id));
   }, [props.tweet, user]);
@@ -46,10 +45,10 @@ export default function Tweet(props) {
     e.stopPropagation();
 
     if (user.isAnonymous) {
-      navigate("/login")
+      navigate("/login");
       return;
     }
-    
+
     if (user.pinned_tweet_id === data._id) {
       unpinTweet(user._id).catch((err) => console.log(err));
       setUser({ ...user, pinned_tweet_id: "" });
@@ -63,7 +62,7 @@ export default function Tweet(props) {
   const handleLike = (e) => {
     e.stopPropagation();
     if (user.isAnonymous) {
-      navigate("/login")
+      navigate("/login");
       return;
     }
     if (liked) {
@@ -92,7 +91,7 @@ export default function Tweet(props) {
   const handleRetweet = (e) => {
     e.stopPropagation();
     if (user.isAnonymous) {
-      navigate("/login")
+      navigate("/login");
       return;
     }
     if (retweeted) {
@@ -131,7 +130,7 @@ export default function Tweet(props) {
   const handleBookmark = (e) => {
     e.stopPropagation();
     if (user.isAnonymous) {
-      navigate("/login")
+      navigate("/login");
       return;
     }
     if (bookmarked) {

@@ -6,26 +6,37 @@ import {
   orderBy,
   query,
   setDoc,
-  // startAt,
   where,
   doc,
   collection,
   limit,
   serverTimestamp,
   updateDoc,
+  startAfter,
 } from "firebase/firestore";
 import { store } from "../config/firebase";
 import { deleteChat } from "./chat";
 
-export async function getChatMessages(chatId, page, userId = null) {
+export async function getChatMessages(chatId, lastMessage) {
   try {
-    const q = query(
-      collection(store, "messages"),
-      where("chatId", "==", chatId),
-      orderBy("createdAt", "desc")
-      // startAt(page * 20),
-      // limit(20)
-    );
+    var q;
+
+    if (lastMessage === true) {
+      q = query(
+        collection(store, "messages"),
+        where("chatId", "==", chatId),
+        orderBy("createdAt", "desc"),
+        limit(20)
+      );
+    } else {
+      q = query(
+        collection(store, "messages"),
+        where("chatId", "==", chatId),
+        orderBy("createdAt", "desc"),
+        startAfter(lastMessage),
+        limit(20)
+      );
+    }
 
     const res = await getDocs(q);
 
@@ -35,18 +46,10 @@ export async function getChatMessages(chatId, page, userId = null) {
       })
       .reverse();
 
-    if (userId) {
-      const user = await api.get("/user/show?user_id=" + userId);
-
-      return {
-        user: user.data,
-        data: messages,
-      };
-    } else {
-      return {
-        data: messages,
-      };
-    }
+    return {
+      data: messages,
+      lastMessage: res.size === 20 ? res.docs[res.docs.length - 1] : false,
+    };
   } catch (err) {
     throw err;
   }

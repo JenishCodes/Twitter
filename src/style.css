@@ -291,6 +291,7 @@
 }
 .tabbar .active {
   border-bottom: solid 5px;
+  font-weight: bold;
   border-color: var(--app-color) !important;
   color: var(--text-primary) !important;
 }

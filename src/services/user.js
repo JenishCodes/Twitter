@@ -11,17 +11,15 @@ import { auth, storage } from "../config/firebase";
 import api from "./api";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-export async function searchUser(name_query, deep_search, cursor, limit) {
+export async function searchUser(name_query, deep_search, page) {
   try {
     const res = await api.get(
       "/user/search?name_query=" +
         name_query +
         "&deep_search=" +
         deep_search +
-        "&cursor=" +
-        cursor +
-        "&limit=" +
-        limit
+        "&page=" +
+        page
     );
     return res.data;
   } catch (err) {
@@ -66,9 +64,9 @@ export async function addSeachHistory(
   }
 }
 
-export async function getBookmarkedTweets(user_id) {
+export async function getBookmarkedTweets(id, page) {
   try {
-    const res = await api.get("/user/bookmarks?user_id=" + user_id);
+    const res = await api.get("/user/bookmarks?id=" + id + "&page=" + page);
 
     return res.data;
   } catch (err) {
@@ -76,11 +74,21 @@ export async function getBookmarkedTweets(user_id) {
   }
 }
 
-export async function getUserFeed(account_name, cursor) {
+export async function getUserFeed(account_name, page) {
   try {
     const res = await api.get(
-      "/user/feed?account_name=" + account_name + "&cursor=" + cursor
+      "/user/feed?account_name=" + account_name + "&page=" + page
     );
+
+    return res.data;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function getUserFromId(id) {
+  try {
+    const res = await api.get("/user/show?id=" + id);
 
     return res.data;
   } catch (err) {
@@ -116,17 +124,17 @@ export async function updateUserSettings(user_id, settings) {
   }
 }
 
-export async function getUserTweets(account_name, cursor, request_type = "") {
+export async function getUserTweets(account_name, page, request_type = "") {
   try {
     var res;
 
     if (request_type === "likes") {
       res = await api.get(
-        `/favorite/user?account_name=${account_name}&cursor=${cursor}`
+        `/favorite/user?account_name=${account_name}&page=${page}`
       );
     } else {
       res = await api.get(
-        `/user/tweets/${request_type}?account_name=${account_name}&cursor=${cursor}`
+        `/user/tweets/${request_type}?account_name=${account_name}&page=${page}`
       );
     }
     return res.data;
@@ -270,7 +278,6 @@ export async function signUpWithGoogle(operation_type = "signup") {
 export async function logout() {
   await signOut(auth);
 }
-
 
 export async function signinAnonymously() {
   try {

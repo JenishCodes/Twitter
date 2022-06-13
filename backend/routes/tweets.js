@@ -12,23 +12,19 @@ const router = express.Router();
 
 router.get("/search", async function (req, res) {
   try {
-    const results = await Tweet.find(
-      {
-        text: {
-          $regex: new RegExp(req.query.search_query, "i"),
-        },
-        "referenced_tweet.type": { $ne: "retweet" },
+    const results = await Tweet.find({
+      text: {
+        $regex: new RegExp(req.query.search_query, "i"),
       },
-      {
-        _id: 1,
-      }
-    )
-      .skip(10 * req.query.cursor)
-      .limit(10);
+      "referenced_tweet.type": { $ne: "retweet" },
+    })
+      .skip(req.query.page)
+      .limit(10)
+      .select({ _id: 1 });
 
-    const response = await getTweets(results.map((result) => result._id));
+    const data = await getTweets(results.map((result) => result._id));
 
-    res.send({ data: response.data });
+    res.send({ data, hasMore: data.length === 10 });
   } catch (err) {
     console.log(err);
     res.status(400);
@@ -40,7 +36,7 @@ router.put("/metrics/:field", async function (req, res) {
   try {
     await Tweet.findByIdAndUpdate(req.query.id, {
       $inc: { [req.params.field]: 1 },
-    })
+    });
     res.sendStatus(200);
   } catch (err) {
     console.log(err);
@@ -223,11 +219,36 @@ router.put("/update", async function (req, res) {
 
 router.get("/replies", async function (req, res) {
   try {
+    var userReplies = [];
+    if (req.query.page === 0) {
+      userReplies = await Tweet.find({
+        author_id: req.query.user_id,
+        "referenced_tweet.type": "replied_to",
+        "referenced_tweet.id": req.query.id,
+      })
+        .sort({ createdAt: -1 })
+        .populate("author_id", {
+          name: 1,
+          account_name: 1,
+          auth_id: 1,
+          profile_image_url: 1,
+        })
+        .transform(function (docs) {
+          return docs.map((doc) => {
+            const { author_id, ...resDoc } = doc._doc;
+            return { ...resDoc, author: author_id };
+          });
+        });
+    }
+
     const replies = await Tweet.find({
+      user_id: { $ne: req.query.user_id },
       "referenced_tweet.type": "replied_to",
       "referenced_tweet.id": req.query.id,
     })
       .sort({ createdAt: -1 })
+      .skip(req.query.page)
+      .limit(10)
       .populate("author_id", {
         name: 1,
         account_name: 1,
@@ -241,18 +262,7 @@ router.get("/replies", async function (req, res) {
         });
       });
 
-    const rearrangedReplies = [];
-    var pointer = 0;
-    replies.forEach((reply) => {
-      if (reply.author_id === req.query.author_id) {
-        rearrangedReplies.slice(pointer, 0, reply);
-        pointer++;
-      } else {
-        rearrangedReplies.push(reply);
-      }
-    });
-
-    res.send({ data: rearrangedReplies });
+    res.send({ data: [...userReplies, ...replies] });
   } catch (err) {
     console.log(err);
     res.status(400);
@@ -294,35 +304,46 @@ router.get("/references", async function (req, res) {
   }
 });
 
+router.get("/isRetweeter", async function (req, res) {
+  try {
+    const tweet = await Tweet.findOne({
+      author_id: Types.ObjectId(req.query.user_id),
+      "referenced_tweet.type": "retweet_of",
+      "referenced_tweet.id": Types.ObjectId(req.query.tweet_id),
+    });
+
+    res.send({ data: tweet ? true : false });
+  } catch (err) {
+    console.log(err);
+    res.status(400);
+    res.send(err.message);
+  }
+});
+
 router.get("/retweeters", async function (req, res) {
   try {
-    const retweeters = await Tweet.find(
-      {
-        "referenced_tweet.type": "retweet_of",
-        "referenced_tweet.id": req.query.id,
-      },
-      { author_id: 1, _id: 0 }
-    );
+    const retweeters = await Tweet.find({
+      "referenced_tweet.type": "retweet_of",
+      "referenced_tweet.id": req.query.id,
+    })
+      .skip(parseInt(req.query.page))
+      .limit(10)
+      .populate("author_id")
+      .transform((docs) => docs.map((doc) => doc._doc.author_id));
 
-    if (req.query.trim_user === "true") {
-      res.send({ data: retweeters.map((retweeter) => retweeter.author_id) });
-    } else {
-      const users = await Promise.all(
-        retweeters.map(
-          async (retweeter) =>
-            await User.findById(retweeter.author_id, {
-              name: 1,
-              auth_id: 1,
-              entities: 1,
-              account_name: 1,
-              profile_image_url: 1,
-              description: 1,
-            })
-        )
-      );
+    var users = retweeters.map((retweeter) => {
+      return {
+        _id: retweeter._id,
+        account_name: retweeter.account_name,
+        profile_image_url: retweeter.profile_image_url,
+        name: retweeter.name,
+        description: retweeter.description,
+        auth_id: retweeter.auth_id,
+        entities: retweeter.entities,
+      };
+    });
 
-      res.send({ data: users });
-    }
+    res.send({ data: users });
   } catch (err) {
     console.log(err);
     res.status(400);

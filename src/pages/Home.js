@@ -7,21 +7,28 @@ import Loading from "../components/Loading";
 import { Helmet } from "react-helmet-async";
 
 export default function Home() {
-  const [cursor, setCursor] = useState(0);
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { user } = useContext(AuthContext);
+  const [hasMore, setHasMore] = useState(true);
+  const { user, scrollY } = useContext(AuthContext);
 
   useEffect(() => {
-    setLoading(true);
-    getUserFeed(user.account_name, cursor)
-      .then((res) => {
-        setFeed(res.data);
-        setCursor(cursor + 1);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
-  }, []);
+    if (
+      hasMore &&
+      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+        feed.length === 0)
+    ) {
+      setLoading(true);
+      getUserFeed(user.account_name, feed.length)
+        .then((res) => {
+          setHasMore(res.hasMore);
+          setFeed([...feed, ...res.data]);
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setLoading(false));
+    }
+  }, [scrollY]);
+
 
   return (
     <div className="h-100">

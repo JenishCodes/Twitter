@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Tabbar from "../components/Tabbar";
 import { getFollowers, getFollowing } from "../services/friendship";
@@ -6,17 +6,35 @@ import List from "../components/List";
 import { getUser } from "../services/user";
 import Loading from "../components/Loading";
 import { Helmet } from "react-helmet-async";
+import { AuthContext } from "../config/context";
 
 export default function Network() {
+  const { scrollY } = useContext(AuthContext);
   const { friendship_type, account_name } = useParams();
-  const [followCursor, setFollowCursor] = useState(0);
-  const [followingCursor, setFollowingCursor] = useState(0);
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [hasMoreFollowers, setHasMoreFollowers] = useState(true);
+  const [hasMoreFollowing, setHasMoreFollowing] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const helper = (func, data, setData, hasMore, setHasMore) => {
+    if (
+      hasMore &&
+      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+        data.length === 0)
+    )
+      setLoading(true);
+    func(account_name, data.length)
+      .then((res) => {
+        setHasMore(res.hasMore);
+        setData([...data, ...res.data]);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
+  };
 
   useEffect(() => {
     if (!user) {
@@ -31,24 +49,24 @@ export default function Network() {
   }, [account_name]);
 
   useEffect(() => {
-    if (friendship_type === "following" && following.length === 0) {
-      getFollowing(account_name, followCursor)
-        .then((res) => {
-          setFollowingCursor(followingCursor + 1);
-          setFollowing(res.data || []);
-        })
-        .catch((err) => console.log(err))
-        .finally(() => setLoading(false));
-    } else if (friendship_type === "followers" && followers.length === 0) {
-      getFollowers(account_name, followingCursor)
-        .then((res) => {
-          setFollowCursor(followCursor + 1);
-          setFollowers(res.data || []);
-        })
-        .catch((err) => console.log(err))
-        .finally(() => setLoading(false));
+    if (friendship_type === "following") {
+      helper(
+        getFollowing,
+        following,
+        setFollowing,
+        hasMoreFollowing,
+        setHasMoreFollowing
+      );
+    } else if (friendship_type === "followers") {
+      helper(
+        getFollowers,
+        followers,
+        setFollowers,
+        hasMoreFollowers,
+        setHasMoreFollowers
+      );
     }
-  }, [friendship_type]);
+  }, [scrollY, friendship_type]);
 
   return (
     <div>

@@ -103,5 +103,5 @@ exports.getTweets = async function getTweets(ids) {
     })
   );
 
-  return { data: res };
+  return res;
 };

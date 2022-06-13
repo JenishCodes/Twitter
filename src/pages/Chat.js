@@ -16,7 +16,10 @@ export default function Message() {
 
   useEffect(() => {
     getChats(user._id)
-      .then((res) => setChats(res.data))
+      .then((res) => {
+        console.log(res)
+        setChats(res.data)
+      })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   }, []);

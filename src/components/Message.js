@@ -13,15 +13,15 @@ export default function Message(props) {
 
   return (
     <div className="text-message-container w-100 mb-1">
-      <div className={`d-flex text-message justify-content-${align}`}>
+      <div className={`d-flex text-message align-items-center justify-content-${align}`}>
         {align === "end" ? (
           <div
-            className="message-delete btn hover me-3"
+            className="message-delete btn hover me-2 py-1 px-2"
             onClick={() => handleDelete(message._id)}
             data-title="Delete"
             style={{ height: "fit-content" }}
           >
-            <i className="bi bi-trash text-muted"></i>
+            <i className="bi bi-trash text-muted fs-6"></i>
           </div>
         ) : null}
         <div

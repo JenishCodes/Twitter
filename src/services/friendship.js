@@ -1,9 +1,9 @@
 import api from "./api";
 
-export async function getFollowers(account_name, cursor = 0) {
+export async function getFollowers(account_name, page) {
   try {
     const res = await api.get(
-      "/friendship/followers?account_name=" + account_name + "&cursor=" + cursor
+      "/friendship/followers?account_name=" + account_name + "&page=" + page
     );
 
     return res.data;
@@ -11,10 +11,10 @@ export async function getFollowers(account_name, cursor = 0) {
     throw err;
   }
 }
-export async function getFollowing(account_name, cursor = 0) {
+export async function getFollowing(account_name, page) {
   try {
     const res = await api.get(
-      "/friendship/following?account_name=" + account_name + "&cursor=" + cursor
+      "/friendship/following?account_name=" + account_name + "&page=" + page
     );
 
     return res.data;

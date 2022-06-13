@@ -9,14 +9,25 @@ import { getBookmarkedTweets } from "../services/user";
 export default function Bookmark() {
   const [tweets, setTweets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useContext(AuthContext);
+  const [hasMore, setHasMore] = useState(true);
+  const { user, scrollY } = useContext(AuthContext);
 
   useEffect(() => {
-    getBookmarkedTweets(user._id)
-      .then((res) => setTweets(res.data))
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
-  }, [user._id]);
+    if (
+      hasMore &&
+      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+        tweets.length === 0)
+    ) {
+      setLoading(true);
+      getBookmarkedTweets(user._id, tweets.length)
+        .then((res) => {
+          setHasMore(res.hasMore);
+          setTweets([...tweets, ...res.data]);
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setLoading(false));
+    }
+  }, [scrollY]);
 
   return (
     <div>

@@ -36,11 +36,21 @@ export async function updatePrivateMetrics(field, id) {
   }
 }
 
-export async function getRetweeters(tweet_id, trim_user) {
+export async function isRetweeter(user_id, tweet_id) {
   try {
     const res = await api.get(
-      "/tweet/retweeters?id=" + tweet_id + "&trim_user=" + trim_user
+      `/tweet/isRetweeter?user_id=${user_id}&tweet_id=${tweet_id}`
     );
+
+    return res.data;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function getRetweeters(id, page) {
+  try {
+    const res = await api.get("/tweet/retweeters?id=" + id + "&page=" + page);
     return res.data;
   } catch (err) {
     throw err;
@@ -61,8 +71,31 @@ export async function deleteTweet(tweet_id, author_id = null) {
   }
 }
 
+export async function getTweetReplies(tweet_id, user_id, page) {
+  try {
+    const replies = await api.get(
+      "/tweet/replies?id=" + tweet_id + "&user_id=" + user_id + "&page=" + page
+    );
+    return replies.data;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function getTweetReferences(tweet_id) {
+  const references = await api.get("/tweet/references?id=" + tweet_id);
+  return references.data;
+}
+export async function getTweet(id) {
+  try {
+    const tweet = await api.get("/tweet/show?id=" + id);
+    return tweet.data;
+  } catch (err) {
+    throw err;
+  }
+}
 export async function getTweetTimeline(tweet_id, author_id) {
-  try {    
+  try {
     const tweet = await api.get("/tweet/show?id=" + tweet_id);
     var references = { data: {} };
     var replies = { data: {} };
@@ -88,15 +121,10 @@ export async function getTweetTimeline(tweet_id, author_id) {
   }
 }
 
-export async function searchTweets(query, cursor, limit) {
+export async function searchTweets(query, page) {
   try {
     const res = await api.get(
-      "/tweet/search?search_query=" +
-        query +
-        "&cursor=" +
-        cursor +
-        "&limit=" +
-        limit
+      "/tweet/search?search_query=" + query + "&page=" + page
     );
     return res.data;
   } catch (err) {

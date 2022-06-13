@@ -34,7 +34,7 @@ export async function getChats(userId) {
           chatUserId = chat.userIds[0];
         }
 
-        const user = await api.get("/user/show?user_id=" + chatUserId);
+        const user = await api.get("/user/show?id=" + chatUserId);
 
         return {
           lastMessage: { ...lastMessage.data(), _id: chat.lastMessageId },

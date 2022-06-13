@@ -11,21 +11,34 @@ export default function Reactions() {
   const { account_name, status_id, reaction_type } = useParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const [scrollY, setScrollY] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (reaction_type === "likes") {
-      getTweetFavoriters(status_id, false)
-        .then((res) => setData(res.data || []))
-        .catch((err) => console.log(err))
-        .finally(() => setLoading(false));
-    } else {
-      getRetweeters(status_id, false)
-        .then((res) => setData(res.data || []))
+    if (
+      hasMore &&
+      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+        data.length === 0)
+    ) {
+      (reaction_type === "likes" ? getTweetFavoriters : getRetweeters)(
+        status_id,
+        data.length
+      )
+        .then((res) => {
+          setHasMore(res.hasMore);
+          setData([...data, ...res.data]);
+        })
         .catch((err) => console.log(err))
         .finally(() => setLoading(false));
     }
-  }, [account_name, status_id, reaction_type]);
+  }, [scrollY]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", () => setScrollY(window.scrollY));
+    return () =>
+      window.removeEventListener("scroll", () => setScrollY(window.scrollY));
+  }, []);
 
   return (
     <div>

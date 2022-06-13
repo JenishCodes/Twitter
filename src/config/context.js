@@ -9,6 +9,13 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    window.addEventListener("scroll", () => setScrollY(window.scrollY));
+    return () =>
+      window.removeEventListener("scroll", () => setScrollY(window.scrollY));
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (res) => {
@@ -37,7 +44,9 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, show, setShow, setLoading }}>
+    <AuthContext.Provider
+      value={{ user, setUser, loading, show, setShow, setLoading, scrollY }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -3,8 +3,11 @@ import Header from "../components/Header";
 import Editor from "../components/Editor";
 import {
   deleteTweet,
-  getRetweeters,
+  getTweet,
+  getTweetReferences,
+  getTweetReplies,
   getTweetTimeline,
+  isRetweeter,
   postTweet,
   updatePrivateMetrics,
 } from "../services/tweet";
@@ -12,7 +15,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Tweet from "../components/Tweet";
 import { AuthContext } from "../config/context";
 import {
-  getTweetFavoriters,
+  isFavoriter,
   makeFavorite,
   removeFavorite,
 } from "../services/favorite";
@@ -34,8 +37,8 @@ export default function Status() {
   const [show, setShow] = useState(false);
   const [mediaModalShow, setMediaModalShow] = useState(false);
   const [analyticsModalShow, setAnalyticsModalShow] = useState(null);
-  const [references, setReferences] = useState();
-  const [replies, setReplies] = useState();
+  const [references, setReferences] = useState([]);
+  const [replies, setReplies] = useState([]);
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [retweeted, setRetweeted] = useState(false);
@@ -47,33 +50,38 @@ export default function Status() {
   useEffect(() => {
     setLoading(true);
     setTweet(null);
-    setReferences(null);
-    setReplies(null);
-    getTweetTimeline(status_id)
+    setReferences([]);
+    setReplies([]);
+
+    getTweet(status_id)
       .then((res) => {
-        if (res.data.author.account_name !== account_name) {
+        setTweet(res.data);
+        setLoading(false);
+        if (res.data.author_id === user._id) {
           updatePrivateMetrics("detail_expands", status_id);
         }
-        setTweet(res.data);
-        setReferences(res.includes.references);
-        setReplies(res.includes.replies);
-        window.scroll(0, tweetRef.current.scrollHeight);
+        if (res.data.referenced_tweet.length > 0) {
+          getTweetReferences(status_id)
+            .then((res) => setReferences(res.data))
+            .catch((err) => console.log(err));
+        }
       })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
+      .catch((err) => console.log(err));
 
     if (user.isAnonymous) return;
 
-    getTweetFavoriters(status_id, true)
-      .then((res) => setLiked(res.data.includes(user._id)))
+    isFavoriter(user._id, status_id)
+      .then((res) => setLiked(res.data))
       .catch((err) => console.log(err));
 
-    getRetweeters(status_id, true)
-      .then((res) => setRetweeted(res.data.includes(user._id)))
+    isRetweeter(user._id, status_id)
+      .then((res) => setRetweeted(res.data))
       .catch((err) => console.log(err));
 
     setBookmarked(user.bookmarks.includes(status_id));
-  }, [status_id, account_name, user]);
+
+    handleLoadMore();
+  }, [status_id]);
 
   const handleLike = (e) => {
     e.stopPropagation();
@@ -179,6 +187,16 @@ export default function Status() {
       .catch((err) => console.log(err));
   };
 
+  const handleLoadMore = (e) => {
+    setLoading(true);
+    getTweetReplies(status_id, user._id, replies.length)
+      .then((res) => {
+        setReplies([...replies, ...res.data]);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
+  };
+
   return (
     <div className="h-100">
       <Helmet>
@@ -187,7 +205,7 @@ export default function Status() {
             ? tweet.author.account_name +
               " on Twitter: " +
               '"' +
-              (references
+              (references.length > 0
                 ? "@" +
                   references[references.length - 1].author.account_name +
                   " "
@@ -220,7 +238,11 @@ export default function Status() {
                 maxWidth: "90%",
               }}
             >
-              <img className="h-100 w-100" src={tweet.media} alt="Tweet media" />
+              <img
+                className="h-100 w-100"
+                src={tweet.media}
+                alt="Tweet media"
+              />
             </div>
           </div>
         </Modal>
@@ -428,7 +450,7 @@ export default function Status() {
               </div>
             </div>
           </div>
-          {references ? (
+          {references.length > 0 ? (
             <div className="px-3 pt-2 my-1 text-muted">
               Replying to{" "}
               <Link
@@ -547,7 +569,7 @@ export default function Status() {
                   <i className="bi fs-3 bi-share"></i>
                 </div>
               </div>
-              {user.isAnonymous && account_name === user.account_name ? (
+              {!user.isAnonymous && account_name === user.account_name ? (
                 <div className="flex-grow-1 text-center">
                   <div
                     onClick={() => {
@@ -574,17 +596,28 @@ export default function Status() {
         reference_tweet={tweet}
       />
 
-      <Loading
-        show={loading}
-        className="my-5 text-app"
-        style={{ width: "1.5rem", height: "1.5rem" }}
-      />
-
       {replies
         ? replies.map((reply) => (
             <Tweet key={reply._id} tweet={reply} reply_to={account_name} />
           ))
         : null}
+
+      {loading ? (
+        <Loading
+          show={true}
+          className="my-5 text-app"
+          style={{ width: "1.5rem", height: "1.5rem" }}
+        />
+      ) : (
+        <div className="d-flex justify-content-center">
+          <div
+            className="btn hover rounded-circle mt-3"
+            onClick={handleLoadMore}
+          >
+            <i className="bi bi-plus-circle text-muted fs-3"></i>
+          </div>
+        </div>
+      )}
 
       <div className="h-50-vh"></div>
     </div>
