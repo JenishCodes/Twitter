@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Loading from "../components/Loading";
@@ -9,11 +9,16 @@ export default function Signin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSignin = () => {
+    if (!email || !password) {
+      setError("Please fill all fields");
+      return;
+    }
     setLoading(true);
     signin(email, password)
-      .catch((err) => console.log(err))
+      .catch((err) => setError(err.code))
       .finally(() => setLoading(false));
   };
 
@@ -23,6 +28,10 @@ export default function Signin() {
     setLoading(false);
   };
 
+  useEffect(() => {
+    if (error) setTimeout(() => setError(""), 5000);
+  }, [error]);
+
   return (
     <div className="signin py-3">
       <Helmet>
@@ -31,11 +40,11 @@ export default function Signin() {
       {loading ? (
         <Modal
           style={{
-            right: 0,
+            right: document.body.scrollWidth > 973 ? 0 : "none",
             position: "absolute",
             width:
-              window.screen.width > 991
-                ? (window.screen.width * 5) / 12
+              document.body.scrollWidth > 973
+                ? (document.body.scrollWidth * 5) / 12
                 : "100%",
           }}
         >
@@ -45,6 +54,23 @@ export default function Signin() {
             style={{ width: "1.5rem", height: "1.5rem" }}
           />
         </Modal>
+      ) : null}
+      {error ? (
+        <div
+          className="text-white bg-danger rounded-3 p-2 position-absolute"
+          style={{ width: "300px", left: "50%", transform: "translateX(-50%)" }}
+        >
+          <div className="d-flex align-items-center justify-content-between">
+            <div className="d-flex align-items-center">
+              <i className="bi bi-exclamation-circle fs-2"></i>
+              <div className="ms-2">{error}</div>
+            </div>
+            <div
+              onClick={() => setError("")}
+              className="btn-close pointer btn-close-white me-2 m-auto"
+            ></div>
+          </div>
+        </div>
       ) : null}
       <div
         className="p-3 pt-0 d-flex justify-content-center"

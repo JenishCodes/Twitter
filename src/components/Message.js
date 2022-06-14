@@ -1,19 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { timeFormatter } from "../utils";
 
 export default function Message(props) {
-  const [time, setTime] = useState("");
   const { message, align, handleDelete, shape } = props;
-
-  useEffect(() => {
-    if (message.date) {
-      setTime(timeFormatter(message.createdAt.seconds * 1000, "Message"));
-    }
-  }, []);
 
   return (
     <div className="text-message-container w-100 mb-1">
-      <div className={`d-flex text-message align-items-center justify-content-${align}`}>
+      <div
+        className={`d-flex text-message align-items-center justify-content-${align}`}
+      >
         {align === "end" ? (
           <div
             className="message-delete btn hover me-2 py-1 px-2"
@@ -52,9 +47,9 @@ export default function Message(props) {
           {message.text}
         </div>
       </div>
-      {message.date && time ? (
+      {message.date ? (
         <div className={`message-time text-muted text-${align} fs-7 mb-3 mt-1`}>
-          {time}
+          {timeFormatter(message.createdAt.seconds * 1000, "Message")}
         </div>
       ) : null}
     </div>

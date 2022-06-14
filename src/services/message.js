@@ -55,6 +55,23 @@ export async function getChatMessages(chatId, lastMessage) {
   }
 }
 
+export async function getFirstChatMessage(chatId) {
+  try {
+    const q = query(
+      collection(store, "messages"),
+      where("chatId", "==", chatId),
+      orderBy("createdAt"),
+      limit(1)
+    );
+
+    const res = await getDocs(q);
+      
+    return res.docs[0].data();
+  } catch (err) {
+    throw err;
+  }
+}
+
 export async function sendMessage(message) {
   try {
     const res = await addDoc(collection(store, "messages"), {

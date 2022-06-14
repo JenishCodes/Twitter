@@ -1,19 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
+import { getPasswordResetLink } from "../services/user";
 
 export default function Forgot() {
-  const [email, setEmail] = useState();
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState(null);
 
   const handleSubmit = () => {
+    if (!email) {
+      setToast("Please fill all fields");
+      return;
+    }
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    getPasswordResetLink(email)
+      .then(() =>
+        setToast({
+          error: false,
+          message: "Password reset link sent to your email",
+        })
+      )
+      .catch((err) => setToast({ error: true, message: err.code }))
+      .finally(() => setLoading(false));
   };
+
+  useEffect(() => {
+    if (toast) setTimeout(() => setToast(null), 5000);
+  }, [toast]);
 
   return (
     <div className="signup py-3">
@@ -37,6 +53,25 @@ export default function Forgot() {
             style={{ width: "1.5rem", height: "1.5rem" }}
           />
         </Modal>
+      ) : null}
+      {toast ? (
+        <div
+          className={`text-white bg-${
+            toast.error ? "danger" : "success"
+          } rounded-3 p-2 position-absolute`}
+          style={{ width: "300px", left: "50%", transform: "translateX(-50%)" }}
+        >
+          <div className="d-flex align-items-center justify-content-between">
+            <div className="d-flex align-items-center">
+              <i className="bi bi-exclamation-circle fs-2"></i>
+              <div className="ms-2">{toast.message}</div>
+            </div>
+            <div
+              onClick={() => setToast("")}
+              className="btn-close pointer btn-close-white me-2 m-auto"
+            ></div>
+          </div>
+        </div>
       ) : null}
       <div
         className="p-3 pt-0 d-flex justify-content-center"

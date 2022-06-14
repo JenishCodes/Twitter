@@ -55,7 +55,7 @@ export default function Reactions() {
       {data.length > 0
         ? data.map((user) => (
             <List
-              className="hover"
+              className="hover pointer"
               key={user._id}
               data={{
                 title: user.name,

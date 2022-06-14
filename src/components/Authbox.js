@@ -14,13 +14,13 @@ export function Authbox() {
         <div>
           <div
             className="btn fw-bold mt-3 mb-2 w-100 text-secondary filter bg-secondary rounded-pill p-2"
-            onClick={() => logout().then(() => navigate("/signup"))}
+            onClick={() => logout(true).then(() => navigate("/signup"))}
           >
             Sign up
           </div>
           <div
             className="btn fw-bold mb-3 mt-2 w-100 hover border rounded-pill p-2"
-            onClick={() => logout().then(() => navigate("/signin"))}
+            onClick={() => logout(true).then(() => navigate("/signin"))}
           >
             Log in
           </div>

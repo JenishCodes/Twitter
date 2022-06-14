@@ -141,17 +141,30 @@ router.get("/show", async function (req, res) {
   }
 });
 
-router.get("/lookup", async function (req, res) {
+router.get("/isAccountNameAvailable", async function (req, res) {
   try {
-    const ans = getUsers(req.query.ids);
+    const ans = await User.findOne({ account_name: req.query.account_name });
 
-    res.send(ans);
+    res.send({ data: ans ? false : true });
   } catch (err) {
     console.log(err);
     res.status(400);
     res.send(err.message);
   }
 });
+
+router.put("/updateAccountName", async function (req, res) {
+  try {
+    await User.findByIdAndUpdate(req.query.id, {
+      account_name: req.query.account_name,
+    });
+    res.send({ data: true });
+  } catch (err) {
+    console.log(err);
+    res.status(400);
+    res.send(err.message);
+  }
+})
 
 router.get("/tweets/replies", async function (req, res) {
   try {

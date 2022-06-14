@@ -13,7 +13,7 @@ import {
 export default function Notifications() {
   const { user } = useContext(AuthContext);
   const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {

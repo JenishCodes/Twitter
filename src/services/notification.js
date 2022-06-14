@@ -24,15 +24,7 @@ export async function getUnseenNotififcationCount(userId) {
 
 export async function markNotificationAsRead(notificationId) {
   try {
-    await api.put("/notification/" + notificationId);
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-export async function markAllAsRead(userId) {
-  try {
-    await api.put("/notification?id=" + userId);
+    await api.put("/notification/read/" + notificationId);
   } catch (err) {
     console.log(err);
   }

@@ -80,12 +80,6 @@ export default function Profile(props) {
         </div>
         <div className="btns pt-2">
           <div
-            className="btn text-primary px-2 py-1 rounded-circle border hover"
-            data-title="More"
-          >
-            <i className="bi bi-three-dots fs-3"></i>
-          </div>
-          <div
             className="btn text-primary rounded-circle hover border px-2 py-1 mx-2"
             data-title={"Message @" + props.user.account_name}
             onClick={() =>

@@ -8,7 +8,7 @@ import Loading from "../components/Loading";
 import { timeFormatter } from "../utils";
 import { Helmet } from "react-helmet-async";
 
-export default function Message() {
+export default function Messages() {
   const { user } = useContext(AuthContext);
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,16 +16,13 @@ export default function Message() {
 
   useEffect(() => {
     getChats(user._id)
-      .then((res) => {
-        console.log(res)
-        setChats(res.data)
-      })
+      .then((res) => setChats(res.data))
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   }, []);
 
   return (
-    <div className="chats">
+    <div className="messages">
       <Helmet>
         <title>Messages / Twitter</title>
       </Helmet>

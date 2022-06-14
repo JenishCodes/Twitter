@@ -18,8 +18,8 @@ export default function List(props) {
             />
           ) : null}
         </div>
-        <div className="details">
-          <div className="d-flex align-items-center justify-content-between h-100">
+        <div className="details h-100">
+          <div className="d-flex align-items-center justify-content-between">
             <div className="w-100">
               {props.data.title ? (
                 <div className="fw-bold">{props.data.title}</div>

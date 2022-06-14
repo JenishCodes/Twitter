@@ -21,13 +21,17 @@ export default function Account() {
             title: "Username",
             subtitle: "@" + user.account_name,
             image: (
-              <div className="text-primary py-2">
+              <div className="py-2">
                 <i className="bi bi-person-fill fs-2 mx-2"></i>
               </div>
             ),
           }}
           className="hover pointer"
-          onClick={() => navigate("account_name")}
+          onClick={() =>
+            navigate("account_name", {
+              state: { account_name: user.account_name },
+            })
+          }
           actionButton={<i className="bi bi-chevron-right text-muted"></i>}
         ></List>
         <List
@@ -35,27 +39,26 @@ export default function Account() {
             title: "Email",
             subtitle: user.email,
             image: (
-              <div className="text-primary py-2">
+              <div className="py-2">
                 <i className="bi bi-envelope fs-2 mx-2"></i>
               </div>
             ),
           }}
           className="hover pointer"
-          onClick={() => navigate("email")}
+          onClick={() => navigate("email", { state: { email: user.email } })}
           actionButton={<i className="bi bi-chevron-right text-muted"></i>}
         ></List>
         <List
           data={{
-            title: "Phone",
-            subtitle: "+91 7096132190",
+            title: "Update Password",
             image: (
-              <div className="text-primary py-2">
-                <i className="bi bi-phone fs-2 mx-2"></i>
+              <div className="py-2">
+                <i className="bi bi-key fs-2 mx-2"></i>
               </div>
             ),
           }}
           className="hover pointer"
-          onClick={() => navigate("phone")}
+          onClick={() => navigate("password")}
           actionButton={<i className="bi bi-chevron-right text-muted"></i>}
         ></List>
       </div>
@@ -65,13 +68,15 @@ export default function Account() {
             title: "Country",
             subtitle: "India",
             image: (
-              <div className="text-primary py-2">
+              <div className="py-2">
                 <i className="bi bi-globe fs-2 mx-2"></i>
               </div>
             ),
           }}
           className="hover pointer"
-          onClick={() => navigate("country")}
+          onClick={() =>
+            navigate("country", { state: { country: user.country } })
+          }
           actionButton={<i className="bi bi-chevron-right text-muted"></i>}
         ></List>
         <List
@@ -79,13 +84,13 @@ export default function Account() {
             title: "Gender",
             subtitle: "Male",
             image: (
-              <div className="text-primary py-2">
+              <div className="py-2">
                 <i className="bi bi-gender-ambiguous fs-3 mx-2"></i>
               </div>
             ),
           }}
           className="hover pointer"
-          onClick={() => navigate("gender")}
+          onClick={() => navigate("gender", { state: { gender: user.gender } })}
           actionButton={<i className="bi bi-chevron-right text-muted"></i>}
         ></List>
         <List
@@ -93,7 +98,7 @@ export default function Account() {
             title: "Birth Date",
             subtitle: "May 3, 2002",
             image: (
-              <div className="text-primary py-2">
+              <div className="py-2">
                 <i className="bi bi-gift fs-3 mx-2"></i>
               </div>
             ),
@@ -101,15 +106,16 @@ export default function Account() {
         ></List>
       </div>
       <List
+        className="hover pointer text-danger"
         data={{
-          title: "Age",
-          subtitle: "19",
+          title: "Delete account permanently",
           image: (
-            <div className="text-primary py-2">
-              <i className="bi bi-123 fs-2 mx-2"></i>
+            <div className="text-danger py-2">
+              <i className="bi bi-trash fs-2 mx-2"></i>
             </div>
           ),
         }}
+        onClick={() => console.log("Delete account")}
       ></List>
     </div>
   );

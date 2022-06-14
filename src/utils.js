@@ -8,6 +8,7 @@ const themes = {
     ["--text-muted", "#6E767D"],
     ["--border", "#2F3336"],
     ["--hover", "rgba(255,255,255,0.05)"],
+    ["--shadow", "rgb(255 255 255 / 20%) 0px 0px 15px, rgb(255 255 255 / 15%) 0px 0px 3px 1px"],
   ],
   dim: [
     ["--bg-primary", "#15202B"],
@@ -18,6 +19,7 @@ const themes = {
     ["--text-muted", "#8899A6"],
     ["--border", "#38444D"],
     ["--hover", "rgba(255,255,255,0.1)"],
+    ["--shadow", "rgb(136 153 166 / 20%) 0px 0px 15px, rgb(136 153 166 / 15%) 0px 0px 3px 1px"],
   ],
   light: [
     ["--bg-primary", "#FFFFFF"],
@@ -28,6 +30,7 @@ const themes = {
     ["--text-muted", "#536471"],
     ["--border", "#CFD9DE"],
     ["--hover", "rgba(15,20,25,0.1)"],
+    ["--shadow", "rgb(101 119 134 / 20%) 0px 0px 15px, rgb(101 119 134 / 15%) 0px 0px 3px 1px"],
   ],
 };
 const fonts = {
@@ -88,6 +91,8 @@ const colors = {
 
 export function setCSSVariables(theme, color, font) {
   const root = document.documentElement;
+
+  root.style.setProperty("", color);
 
   window.localStorage.setItem("theme", theme ? theme : "light");
   window.localStorage.setItem("color", color ? color : "blue");

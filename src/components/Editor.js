@@ -111,7 +111,7 @@ export default function Editor({
       <div className="compose bg-primary w-100 h-100 overflow-y-auto">
         <div className="w-100 position-sticky top-0 px-2 py-1">
           <div
-            className="btn hover rounded-circle px-2 py-0"
+            className="btn hover rounded-circle px-2 py-0 my-1"
             onClick={() => {
               setText("");
               setShow(false);
@@ -189,7 +189,7 @@ export default function Editor({
               />
             </div>
             <div className="editor-area">
-              <div className="text-area position-relative">
+              <div className="text-area">
                 <div
                   ref={tweet}
                   className={`pb-3 text-field w-100 fs-3 ${
@@ -204,46 +204,11 @@ export default function Editor({
                   contentEditable
                   spellCheck
                 ></div>
-                {searchData.length > 0 ? (
-                  <div className="auto-compelete bg-primary border-rounded">
-                    {searchData.map((search, index) =>
-                      searchDataType === "user" ? (
-                        <List
-                          key={index}
-                          className="hover pointer"
-                          data={{
-                            title: search.name,
-                            image_url: search.profile_image_url,
-                            subtitle: search.account_name,
-                          }}
-                          onClick={() =>
-                            handleOnClick("@" + search.account_name)
-                          }
-                        />
-                      ) : (
-                        <List
-                          key={index}
-                          className="hover pointer"
-                          onClick={() => handleOnClick("#" + search.tag)}
-                          data={{
-                            title: "#" + search.tag,
-                            subtitle: search.tweet_count + " Tweets",
-                            image: (
-                              <div className="text-primary rounded-circle border px-2">
-                                <i className="bi bi-hash fs-1"></i>
-                              </div>
-                            ),
-                          }}
-                        />
-                      )
-                    )}
-                  </div>
-                ) : null}
               </div>
               {image ? (
                 <div className="media position-relative my-2">
                   <div
-                    className="btn position-absolute m-2 bg-muted rounded-circle px-1 py-0"
+                    className="btn position-absolute m-2 filter bg-muted rounded-circle px-1 py-0"
                     onClick={() => {
                       setImageUrl("");
                       setImage(null);
@@ -310,6 +275,39 @@ export default function Editor({
           </div>
         </div>
       </div>
+      {searchData.length > 0 ? (
+        <div className="auto-compelete bg-primary border-rounded">
+          {searchData.map((search, index) =>
+            searchDataType === "user" ? (
+              <List
+                key={index}
+                className="hover pointer"
+                data={{
+                  title: search.name,
+                  image_url: search.profile_image_url,
+                  subtitle: search.account_name,
+                }}
+                onClick={() => handleOnClick("@" + search.account_name)}
+              />
+            ) : (
+              <List
+                key={index}
+                className="hover pointer"
+                onClick={() => handleOnClick("#" + search.tag)}
+                data={{
+                  title: "#" + search.tag,
+                  subtitle: search.tweet_count + " Tweets",
+                  image: (
+                    <div className="text-primary rounded-circle border px-2">
+                      <i className="bi bi-hash fs-1"></i>
+                    </div>
+                  ),
+                }}
+              />
+            )
+          )}
+        </div>
+      ) : null}
     </Modal>
   ) : null;
 }

@@ -1,30 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
-import { updateUserEmail } from "../services/user";
+import { reAuthenticate } from "../services/user";
 
-export default function Email(props) {
-  const [email, setEmail] = useState("");
-  const { state } = useLocation();
+export default function Reauth() {
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState("");
+  const [toast, setToast] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => setEmail(state.email), []);
-
   const handleSubmit = () => {
-    if (!email) {
+    if (!password) {
       setToast("Please fill all fields");
       return;
     }
-    
+
     setLoading(true);
-    updateUserEmail(email)
-      .then(() => navigate("/settings/account", { replace: true }))
-      .catch((err) => setToast(err.code))
-      .finally(() => setLoading(false));
+    reAuthenticate(password)
+      .then(() => {
+        setLoading(false);
+        navigate("/settings/account", { replace: true });
+      })
+      .catch((err) => setToast(err.code));
   };
 
   useEffect(() => {
@@ -32,20 +31,15 @@ export default function Email(props) {
   }, [toast]);
 
   return (
-    <div className="email">
+    <div>
       <Helmet>
-        <title>Change email / Twitter</title>
+        <title>Change account name / Twitter</title>
       </Helmet>
-      <Header title="Change email" backArrow="full" />
+      <Header title="Re-Authenticate" backArrow="full" />
       {toast ? (
         <div
           className="text-white bg-danger rounded-3 p-2 position-absolute"
-          style={{
-            width: "300px",
-            left: "50%",
-            bottom: "5%",
-            transform: "translateX(-50%)",
-          }}
+          style={{ width: "300px", left: "50%", transform: "translateX(-50%)" }}
         >
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center">
@@ -60,16 +54,21 @@ export default function Email(props) {
         </div>
       ) : null}
       <div className="px-3">
+        <div className="text-muted">
+          Your Account contains some sensitive updation settings so you need to
+          re-authenticate to go further.
+        </div>
         <div className="form-floating my-3">
           <input
-            type="text"
+            type="password"
             className="form-control rounded-5"
+            id="account-name-input"
             disabled={loading}
             style={{ backgroundColor: "transparent" }}
-            value={email}
-            onChange={(e) => setEmail(e.currentTarget.value)}
+            value={password}
+            onChange={(e) => setPassword(e.currentTarget.value)}
           />
-          <label htmlFor="email-input">Email</label>
+          <label htmlFor="account-name-input">Password</label>
         </div>
       </div>
       <hr className="my-2" />
@@ -84,7 +83,7 @@ export default function Email(props) {
           className="me-3"
           style={{ width: "20px", height: "20px" }}
         />
-        Update email
+        Check Password
       </div>
     </div>
   );

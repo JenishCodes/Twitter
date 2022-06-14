@@ -13,7 +13,6 @@ import EditProfile from "../pages/EditProfile";
 import Reactions from "../pages/Reactions";
 import Hashtag from "../pages/Hashtag";
 import Bookmark from "../pages/Bookmark";
-import Chat from "../pages/Chat";
 import Account from "../pages/Account";
 import NotificationSettings from "../pages/NotificationSettings";
 import Privacy from "../pages/Privacy";
@@ -22,11 +21,14 @@ import AccountName from "../pages/AccountName";
 import Email from "../pages/Email";
 import Country from "../pages/Country";
 import Gender from "../pages/Gender";
-import Phone from "../pages/Phone";
+import Password from "../pages/Password";
 import Notifications from "../pages/Notifications";
 import Drawer from "../components/Drawer";
 import Explore from "../pages/Explore";
 import { Followbox } from "../components/Followbox";
+import Reauth from "../pages/Reauth";
+import Messages from "../pages/Messages";
+import ConversationInfo from "../pages/ConversationInfo";
 
 export default function AppScreen() {
   return (
@@ -57,19 +59,23 @@ export default function AppScreen() {
               <Route path="hashtag/:hashtag" element={<Hashtag />} />
 
               <Route path="messages">
-                <Route index element={<Chat />} />
-                <Route path=":user_id" element={<Conversation />} />
+                <Route index element={<Messages />} />
+                <Route path=":user_id">
+                  <Route index element={<Conversation />} />
+                  <Route path="info" element={<ConversationInfo />} />
+                </Route>
               </Route>
 
               <Route path="settings">
                 <Route index element={<Settings />} />
+                <Route path="re-authenticate" element={<Reauth />} />
                 <Route path="account">
                   <Route index element={<Account />} />
                   <Route path="account_name" element={<AccountName />} />
                   <Route path="email" element={<Email />} />
                   <Route path="country" element={<Country />} />
                   <Route path="gender" element={<Gender />} />
-                  <Route path="phone" element={<Phone />} />
+                  <Route path="password" element={<Password />} />
                 </Route>
                 <Route
                   path="notifications"

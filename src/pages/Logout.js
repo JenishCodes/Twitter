@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
+import { AuthContext } from "../config/context";
 import { logout } from "../services/user";
 
 export default function Logout() {
+  const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -45,7 +47,7 @@ export default function Logout() {
               className="btn bg-secondary text-secondary filter pointer w-100 fw-bold rounded-pill mt-2 mb-1"
               onClick={() => {
                 setLoading(true);
-                logout()
+                logout(user.isAnonymous)
                   .then(() => {
                     setLoading(false);
                     navigate("/");

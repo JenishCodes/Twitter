@@ -143,7 +143,7 @@
     transform: translateX(-50%);
     opacity: 0;
     border-radius: 2px;
-    z-index: 101;
+    z-index: 1;
     top: 110%;
   }
   [data-title] {
@@ -244,6 +244,5 @@ a {
   }
 }
 .dropdown-menu {
-  box-shadow: rgb(255 255 255 / 20%) 0px 0px 15px,
-    rgb(255 255 255 / 15%) 0px 0px 3px 1px;
+  box-shadow: var(--shadow);
 }

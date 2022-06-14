@@ -1,27 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
-import { updateUserEmail } from "../services/user";
+import { resetPassword } from "../services/user";
 
-export default function Email(props) {
-  const [email, setEmail] = useState("");
-  const { state } = useLocation();
+export default function Password() {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => setEmail(state.email), []);
-
   const handleSubmit = () => {
-    if (!email) {
+    if (!password || !confirmPassword) {
       setToast("Please fill all fields");
       return;
     }
-    
+
+    if (password !== confirmPassword) {
+      setToast("Passwords do not match");
+      return;
+    }
+
     setLoading(true);
-    updateUserEmail(email)
+    resetPassword(password)
       .then(() => navigate("/settings/account", { replace: true }))
       .catch((err) => setToast(err.code))
       .finally(() => setLoading(false));
@@ -32,11 +35,12 @@ export default function Email(props) {
   }, [toast]);
 
   return (
-    <div className="email">
+    <div>
       <Helmet>
-        <title>Change email / Twitter</title>
+        <title>Update password / Twitter</title>
       </Helmet>
-      <Header title="Change email" backArrow="full" />
+      <Header title="Update password" backArrow="full" />
+
       {toast ? (
         <div
           className="text-white bg-danger rounded-3 p-2 position-absolute"
@@ -62,14 +66,25 @@ export default function Email(props) {
       <div className="px-3">
         <div className="form-floating my-3">
           <input
-            type="text"
+            type="password"
             className="form-control rounded-5"
-            disabled={loading}
             style={{ backgroundColor: "transparent" }}
-            value={email}
-            onChange={(e) => setEmail(e.currentTarget.value)}
+            value={password}
+            disabled={loading}
+            onChange={(e) => setPassword(e.currentTarget.value)}
           />
-          <label htmlFor="email-input">Email</label>
+          <label htmlFor="phone-input">New Password</label>
+        </div>
+        <div className="form-floating my-3">
+          <input
+            type="password"
+            className="form-control rounded-5"
+            style={{ backgroundColor: "transparent" }}
+            value={confirmPassword}
+            disabled={loading}
+            onChange={(e) => setConfirmPassword(e.currentTarget.value)}
+          />
+          <label htmlFor="phone-input">Confirm Password</label>
         </div>
       </div>
       <hr className="my-2" />
@@ -84,7 +99,7 @@ export default function Email(props) {
           className="me-3"
           style={{ width: "20px", height: "20px" }}
         />
-        Update email
+        Update password
       </div>
     </div>
   );

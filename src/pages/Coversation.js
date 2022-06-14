@@ -32,8 +32,6 @@ export default function Chat() {
       const chatId = [user._id, user_id].sort().join("~");
 
       const unsub = getNewMessage(chatId, (message) => {
-        if (!message.text) return;
-
         if (messages.length > 0) {
           if (message._id !== messages[messages.length - 1]._id) {
             const lastMessage = messages[messages.length - 1];
@@ -58,7 +56,6 @@ export default function Chat() {
             ) {
               contentRef.current.scroll(0, contentRef.current.scrollHeight);
             } else {
-              console.log(tag);
               setTag(tag + 1);
             }
           }
@@ -94,21 +91,26 @@ export default function Chat() {
           var next;
           const height = contentRef.current.scrollHeight;
 
-          const newMessages = [...res.data, ...messages];
-
-          setMessages(
-            newMessages.map((message, index) => {
-              if (index < newMessages.length - 1) {
-                next = newMessages[index + 1];
-                if (message.senderId === next.senderId) {
-                  if (next.createdAt.seconds - message.createdAt.seconds < 60) {
-                    return { ...message, date: false };
-                  }
-                }
+          const newMessages = res.data.map((message, index) => {
+            if (index < res.data.length - 1) {
+              next = res.data[index + 1];
+            } else {
+              if (messages.length > 0) {
+                next = messages[0];
+              } else {
+                return { ...message, date: true };
               }
-              return { ...message, date: true };
-            })
-          );
+            }
+
+            if (message.senderId === next.senderId) {
+              if (next.createdAt.seconds - message.createdAt.seconds < 60) {
+                return { ...message, date: false };
+              }
+            }
+            return { ...message, date: true };
+          });
+
+          setMessages([...newMessages, ...messages]);
           setLastMessage(res.lastMessage);
 
           if (!fetched) {
@@ -147,6 +149,8 @@ export default function Chat() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (text.length === 0) return;
 
     const chatId = [user._id, user_id].sort().join("~");
     const message = {
@@ -194,7 +198,7 @@ export default function Chat() {
               {messages.length} Messages
             </div>
           </div>
-          <div className="btn rounded-pill hover">
+          <div className="btn rounded-pill hover" onClick={()=>navigate("details")}>
             <i className="bi bi-info-circle"></i>
           </div>
         </div>
@@ -262,29 +266,23 @@ export default function Chat() {
       </div>
 
       <div className="text-box w-100 bg-primary d-flex align-items-center px-2 border-top py-2">
-        <div className="btn hover rounded-circle">
-          <i className="bi bi-image"></i>
-        </div>
-        <div className="btn hover rounded-circle">
-          <i className="bi bi-gift"></i>
-        </div>
-        <div className="flex-grow-1 mx-1">
-          <input
-            type="text"
-            onChange={(e) => setText(e.target.value)}
-            value={text}
-            placeholder="Type message here"
-            className="w-100 text-input text-primary flex-grow-1 py-1"
-          />
-        </div>
-        <div className="border h-100"></div>
-        <div
-          className={`btn hover rounded-circle${text ? "" : " disabled"}`}
-          onClick={handleSubmit}
-          onMouseDown={(e) => e.preventDefault()}
-        >
-          <i className="bi bi-send"></i>
-        </div>
+        <form className="d-flex flex-grow-1" onSubmit={handleSubmit}>
+          <div className="flex-grow-1 ms-2 me-1 pe-2 border-end">
+            <input
+              type="text"
+              onChange={(e) => setText(e.target.value)}
+              value={text}
+              placeholder="Type message here"
+              className="w-100 text-input text-primary flex-grow-1 py-1"
+            />
+          </div>
+          <div
+            className={`btn hover rounded-circle${text ? "" : " disabled"}`}
+            onClick={handleSubmit}
+          >
+            <i className="bi bi-send"></i>
+          </div>
+        </form>
       </div>
     </div>
   );

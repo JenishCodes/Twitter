@@ -7,6 +7,7 @@ import {
   getDoc,
   onSnapshot,
   deleteDoc,
+   
 } from "firebase/firestore";
 import { store } from "../config/firebase";
 import api from "./api";
@@ -52,6 +53,10 @@ export async function getChats(userId) {
 
 export async function deleteChat(chatId) {
   try {
+    await deleteDoc(
+      query(collection(store, "messages"), where("chatId", "==", chatId))
+    );
+
     await deleteDoc(doc(store, "chats", chatId));
   } catch (err) {
     throw err;

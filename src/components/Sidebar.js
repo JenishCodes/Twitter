@@ -282,8 +282,8 @@ export default function Sidebar() {
             className="hover rounded-pill flex-shrink-0 btn my-3 p-2 d-none d-sm-block"
           >
             {user.isAnonymous ? (
-              <div className="d-flex align-items-center">
-                <div className="profile-image mx-auto flex-shrink-0 me-xl-2">
+              <div className="d-flex align-items-center justify-content-center">
+                <div className="flex-shrink-0 me-xl-3 ms-xl-2">
                   <i className="bi bi-box-arrow-right fs-3"></i>
                 </div>
                 <div className="d-xl-flex d-none align-items-center justify-content-between details">

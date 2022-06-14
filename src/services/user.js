@@ -1,10 +1,15 @@
 import {
   createUserWithEmailAndPassword,
+  EmailAuthProvider,
   GoogleAuthProvider,
+  reauthenticateWithCredential,
+  sendPasswordResetEmail,
   signInAnonymously,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  updateEmail,
+  updatePassword,
   updateProfile,
 } from "firebase/auth";
 import { auth, storage } from "../config/firebase";
@@ -186,38 +191,63 @@ export async function unbookmarkTweet(tweet_id, user_id) {
   }
 }
 
+export async function updateAccountName(user_id, account_name) {
+  try {
+    const res = await api.get(
+      "/user/isAccountNameAvailable?account_name=" + account_name
+    );
+
+    if (res) {
+      await api.put("/user/updateAccountName?id=" + user_id, {
+        account_name,
+      });
+    }
+  } catch (err) {
+    throw err;
+  }
+}
+
 export async function editProfile(data) {
-  if (data.profile_image_url) {
-    const profileImageRef = ref(
-      storage,
-      `/profile_images/${auth.currentUser.uid}`
-    );
+  try {
+    if (data.profile_image_url) {
+      const profileImageRef = ref(
+        storage,
+        `/profile_images/${auth.currentUser.uid}`
+      );
 
-    await uploadBytes(profileImageRef, data.profile_image_url);
-    const profile_image_url = await getDownloadURL(profileImageRef);
+      await uploadBytes(profileImageRef, data.profile_image_url);
+      const profile_image_url = await getDownloadURL(profileImageRef);
 
-    data = { ...data, profile_image_url };
+      data = { ...data, profile_image_url };
+    }
+
+    if (data.banner_image_url) {
+      const bannerImageRef = ref(
+        storage,
+        `/banner_images/${auth.currentUser.uid}.jpg`
+      );
+
+      await uploadBytes(bannerImageRef, data.banner_image_url);
+      const banner_image_url = await getDownloadURL(bannerImageRef);
+
+      data = { ...data, banner_image_url };
+    }
+
+
+    
+
+    api.put("/user/" + auth.currentUser.uid, data);
+  } catch (err) {
+    throw err;
   }
-
-  if (data.banner_image_url) {
-    const bannerImageRef = ref(
-      storage,
-      `/banner_images/${auth.currentUser.uid}.jpg`
-    );
-
-    await uploadBytes(bannerImageRef, data.banner_image_url);
-    const banner_image_url = await getDownloadURL(bannerImageRef);
-
-    data = { ...data, banner_image_url };
-  }
-
-  api.put("/user/" + auth.currentUser.uid, data);
 }
 
 export async function signup(name, email, password, account_name, uid = null) {
-  const user = await api.get("/user/lookup?account_names=" + account_name);
+  const res = await api.get(
+    "/user/isAccountNameAvailable?account_name=" + account_name
+  );
 
-  if (user.data.data) {
+  if (res.data.data) {
     throw Error("Username not available!");
   }
 
@@ -275,13 +305,52 @@ export async function signUpWithGoogle(operation_type = "signup") {
     .catch((err) => console.log(err));
 }
 
-export async function logout() {
-  await signOut(auth);
+export async function logout(deleteAlso = false) {
+  if (deleteAlso) {
+    await auth.currentUser.delete();
+  } else {
+    await signOut(auth);
+  }
 }
 
 export async function signinAnonymously() {
   try {
     await signInAnonymously(auth);
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function getPasswordResetLink(email) {
+  try {
+    await sendPasswordResetEmail(auth, email);
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function reAuthenticate(password) {
+  try {
+    const credentials = EmailAuthProvider.credential(
+      auth.currentUser.email,
+      password
+    );
+    await reauthenticateWithCredential(auth.currentUser, credentials);
+  } catch (err) {
+    throw err;
+  }
+}
+export async function resetPassword(newPassword) {
+  try {
+    await updatePassword(auth.currentUser, newPassword);
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function updateUserEmail(newEmail) {
+  try {
+    await updateEmail(auth.currentUser, newEmail);
   } catch (err) {
     throw err;
   }

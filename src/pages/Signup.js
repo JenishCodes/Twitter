@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Loading from "../components/Loading";
@@ -11,8 +11,14 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSignup = () => {
+    if (!email || !password || !name || !username) {
+      setError("Please fill all fields");
+      return;
+    }
+
     setLoading(true);
     signup(name, email, password, username)
       .catch((err) => console.log(err))
@@ -24,6 +30,10 @@ export default function Signup() {
     signUpWithGoogle();
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (error) setTimeout(() => setError(""), 5000);
+  }, [error]);
 
   return (
     <div className="signup py-3">
@@ -47,6 +57,23 @@ export default function Signup() {
             style={{ width: "1.5rem", height: "1.5rem" }}
           />
         </Modal>
+      ) : null}
+      {error ? (
+        <div
+          className="text-white bg-danger rounded-3 p-2 position-absolute"
+          style={{ width: "300px", left: "50%", transform: "translateX(-50%)" }}
+        >
+          <div className="d-flex align-items-center justify-content-between">
+            <div className="d-flex align-items-center">
+              <i className="bi bi-exclamation-circle fs-2"></i>
+              <div className="ms-2">{error}</div>
+            </div>
+            <div
+              onClick={() => setError("")}
+              className="btn-close pointer btn-close-white me-2 m-auto"
+            ></div>
+          </div>
+        </div>
       ) : null}
       <div
         className="p-3 pt-0 d-flex justify-content-center"
