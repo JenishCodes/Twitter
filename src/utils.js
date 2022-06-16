@@ -8,7 +8,10 @@ const themes = {
     ["--text-muted", "#6E767D"],
     ["--border", "#2F3336"],
     ["--hover", "rgba(255,255,255,0.05)"],
-    ["--shadow", "rgb(255 255 255 / 20%) 0px 0px 15px, rgb(255 255 255 / 15%) 0px 0px 3px 1px"],
+    [
+      "--shadow",
+      "rgb(255 255 255 / 20%) 0px 0px 15px, rgb(255 255 255 / 15%) 0px 0px 3px 1px",
+    ],
   ],
   dim: [
     ["--bg-primary", "#15202B"],
@@ -19,7 +22,10 @@ const themes = {
     ["--text-muted", "#8899A6"],
     ["--border", "#38444D"],
     ["--hover", "rgba(255,255,255,0.1)"],
-    ["--shadow", "rgb(136 153 166 / 20%) 0px 0px 15px, rgb(136 153 166 / 15%) 0px 0px 3px 1px"],
+    [
+      "--shadow",
+      "rgb(136 153 166 / 20%) 0px 0px 15px, rgb(136 153 166 / 15%) 0px 0px 3px 1px",
+    ],
   ],
   light: [
     ["--bg-primary", "#FFFFFF"],
@@ -30,7 +36,10 @@ const themes = {
     ["--text-muted", "#536471"],
     ["--border", "#CFD9DE"],
     ["--hover", "rgba(15,20,25,0.1)"],
-    ["--shadow", "rgb(101 119 134 / 20%) 0px 0px 15px, rgb(101 119 134 / 15%) 0px 0px 3px 1px"],
+    [
+      "--shadow",
+      "rgb(101 119 134 / 20%) 0px 0px 15px, rgb(101 119 134 / 15%) 0px 0px 3px 1px",
+    ],
   ],
 };
 const fonts = {
@@ -119,17 +128,67 @@ export function parseTweet(tweet, link = false) {
   return tweet
     .replace(/[@]+[A-Za-z0-9-_]+/g, function (a) {
       return link
-        ? `<a class="text-app" href="/${a.replace("@", "")}">${a}</a>`
-        : `<span class="text-app" onclick="alert('hi')">${a}</span>`;
+        ? `<a class="text-app user-link" href="/${a.replace("@", "")}">${a}</a>`
+        : `<span class="text-app">${a}</span>`;
     })
     .replace(/[#]+[A-Za-z0-9-_]+/g, function (t) {
       return link
-        ? `<a class="text-app" href="/hashtag/${t.replace("#", "")}">${t}</a>`
-        : `<span class="text-app" onclick="window.history.pushState({}, null, '/hashtag/${t.replace(
+        ? `<a class="text-app hash-link" href="/hashtag/${t.replace(
             "#",
             ""
-          )}')">${t}</span>`;
+          )}">${t}</a>`
+        : `<span class="text-app">${t}</span>`;
     });
+}
+
+export function getTweetEntities(text) {
+  const entities = [];
+
+  var content = "";
+  var type = "normal";
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+
+    if (char === "#" || char === "@") {
+      if (content.length > 0) {
+        entities.push({
+          type,
+          content,
+          url: null,
+        });
+      }
+
+      content = "";
+      type = char === "#" ? "hashtag" : "user";
+    } else if (char === " " && type !== "normal") {
+      entities.push({
+        type,
+        content,
+        url:
+          type === "hashtag"
+            ? `/hashtag/${content.slice(1)}`
+            : `/${content.slice(1)}`,
+      });
+      type = "normal";
+      content = "";
+    }
+    content += char;
+  }
+
+  if (content !== "") {
+    entities.push({
+      type,
+      content,
+      url:
+        type === "hashtag"
+          ? `/hashtag/${content.slice(1)}`
+          : type === "user"
+          ? `/${content.slice(1)}`
+          : null,
+    });
+  }
+
+  return entities;
 }
 
 export function extractEntities(tweet) {

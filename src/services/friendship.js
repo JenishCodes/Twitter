@@ -3,7 +3,7 @@ import api from "./api";
 export async function getFollowers(account_name, page) {
   try {
     const res = await api.get(
-      "/friendship/followers?account_name=" + account_name + "&page=" + page
+      `/friendship/${account_name}/followers?page=${page}`
     );
 
     return res.data;
@@ -14,7 +14,7 @@ export async function getFollowers(account_name, page) {
 export async function getFollowing(account_name, page) {
   try {
     const res = await api.get(
-      "/friendship/following?account_name=" + account_name + "&page=" + page
+      `/friendship/${account_name}/following?page=${page}`
     );
 
     return res.data;
@@ -22,11 +22,9 @@ export async function getFollowing(account_name, page) {
     throw err;
   }
 }
-export async function getFriendship(user1_id, user2_id) {
+export async function getRelationship(user1, user2) {
   try {
-    const friendship_id = [user1_id, user2_id].sort().join("~");
-
-    const res = await api.get("/friendship?friendship_id=" + friendship_id);
+    const res = await api.get(`/friendship?source=${user1}&target=${user2}`);
 
     return res.data;
   } catch (err) {
@@ -34,16 +32,16 @@ export async function getFriendship(user1_id, user2_id) {
   }
 }
 
-export async function follow(user1_id, user2_id) {
+export async function follow(user1, user2) {
   try {
     const friendship_id =
-      user1_id > user2_id
-        ? user2_id + "~" + user1_id
-        : user1_id + "~" + user2_id;
+      user1 > user2
+        ? user2 + "~" + user1
+        : user1 + "~" + user2;
 
     await api.post("/friendship", {
-      followed_by: user1_id,
-      following: user2_id,
+      followed_by: user1,
+      following: user2,
       friendship_id,
     });
   } catch (err) {
@@ -51,10 +49,10 @@ export async function follow(user1_id, user2_id) {
   }
 }
 
-export async function unfollow(user1_id, user2_id) {
+export async function unfollow(user1, user2) {
   try {
     await api.delete(
-      "/friendship?source_id=" + user1_id + "&target_id=" + user2_id
+      "/friendship?source_id=" + user1 + "&target_id=" + user2
     );
   } catch (err) {
     throw err;

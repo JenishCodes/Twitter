@@ -1,30 +1,24 @@
 import {
   createUserWithEmailAndPassword,
   EmailAuthProvider,
-  GoogleAuthProvider,
   reauthenticateWithCredential,
   sendPasswordResetEmail,
   signInAnonymously,
   signInWithEmailAndPassword,
-  signInWithPopup,
   signOut,
   updateEmail,
   updatePassword,
   updateProfile,
 } from "firebase/auth";
-import { auth, storage } from "../config/firebase";
+import { auth, storage } from "../firebase";
 import api from "./api";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getUserFavorites } from "./favorite";
 
-export async function searchUser(name_query, deep_search, page) {
+export async function searchUser(name_query, deep_search, page, limit) {
   try {
     const res = await api.get(
-      "/user/search?name_query=" +
-        name_query +
-        "&deep_search=" +
-        deep_search +
-        "&page=" +
-        page
+      `/user/search?query=${name_query}&deep_search=${deep_search}&page=${page}&limit=${limit}`
     );
     return res.data;
   } catch (err) {
@@ -34,7 +28,7 @@ export async function searchUser(name_query, deep_search, page) {
 
 export async function deleteSearchHistory(id, delete_all = false) {
   try {
-    await api.delete("/user/history?id=" + id + "&delete_all=" + delete_all);
+    await api.delete(`/user/${id}/history?delete_all=${delete_all}`);
   } catch (err) {
     console.log(err);
   }
@@ -42,7 +36,7 @@ export async function deleteSearchHistory(id, delete_all = false) {
 
 export async function getSeachHistory(user_id) {
   try {
-    const res = await api.get("/user/history?user_id=" + user_id);
+    const res = await api.get(`/user/${user_id}/history`);
 
     return res.data;
   } catch (err) {
@@ -56,7 +50,7 @@ export async function addSeachHistory(
   image_url = null
 ) {
   try {
-    const res = await api.post("/user/history", {
+    const res = await api.post(`/user/${user_id}/history`, {
       user_id,
       title,
       subtitle,
@@ -69,9 +63,9 @@ export async function addSeachHistory(
   }
 }
 
-export async function getBookmarkedTweets(id, page) {
+export async function getBookmarkedTweets(user_id, page) {
   try {
-    const res = await api.get("/user/bookmarks?id=" + id + "&page=" + page);
+    const res = await api.get(`/user/${user_id}/bookmarks?page=${page}`);
 
     return res.data;
   } catch (err) {
@@ -79,11 +73,9 @@ export async function getBookmarkedTweets(id, page) {
   }
 }
 
-export async function getUserFeed(account_name, page) {
+export async function getUserFeed(user_id, page) {
   try {
-    const res = await api.get(
-      "/user/feed?account_name=" + account_name + "&page=" + page
-    );
+    const res = await api.get(`/user/${user_id}/feed?page=${page}`);
 
     return res.data;
   } catch (err) {
@@ -93,7 +85,7 @@ export async function getUserFeed(account_name, page) {
 
 export async function getUserFromId(id) {
   try {
-    const res = await api.get("/user/show?id=" + id);
+    const res = await api.get(`/user?key=id&value=${id}`);
 
     return res.data;
   } catch (err) {
@@ -103,7 +95,7 @@ export async function getUserFromId(id) {
 
 export async function getUser(account_name) {
   try {
-    const res = await api.get("/user/show?account_name=" + account_name);
+    const res = await api.get(`/user?key=account_name&value=${account_name}`);
 
     return res.data;
   } catch (err) {
@@ -113,7 +105,7 @@ export async function getUser(account_name) {
 
 export async function getUserSettings(user_id) {
   try {
-    const res = await api.get("/user/settings?id=" + user_id);
+    const res = await api.get(`/user/${user_id}/settings`);
 
     return res.data;
   } catch (err) {
@@ -123,36 +115,32 @@ export async function getUserSettings(user_id) {
 
 export async function updateUserSettings(user_id, settings) {
   try {
-    await api.put("/user/settings?id=" + user_id, settings);
+    await api.put(`/user/${user_id}/settings`, settings);
   } catch (err) {
     console.log(err);
   }
 }
 
-export async function getUserTweets(account_name, page, request_type = "") {
+export async function getUserTweets(user_id, page, request_type = "tweets") {
   try {
     var res;
 
     if (request_type === "likes") {
-      res = await api.get(
-        `/favorite/user?account_name=${account_name}&page=${page}`
-      );
+      res = await getUserFavorites(user_id, page);
+      return res;
     } else {
-      res = await api.get(
-        `/user/tweets/${request_type}?account_name=${account_name}&page=${page}`
-      );
+      res = await api.get(`/user/${user_id}/${request_type}?page=${page}`);
+      return res.data;
     }
-    return res.data;
   } catch (err) {
     throw err;
   }
 }
 
-export async function pinTweet(tweet_id, user_id) {
+export async function pinTweet(user_id, tweet_id) {
   try {
-    await api.post("/user/tweet/pin", {
-      tweet_id: tweet_id,
-      user_id: user_id,
+    await api.put(`/user/${user_id}`, {
+      pinned_tweet: tweet_id,
     });
   } catch (err) {
     throw err;
@@ -161,30 +149,32 @@ export async function pinTweet(tweet_id, user_id) {
 
 export async function unpinTweet(user_id) {
   try {
-    await api.post("/user/tweet/unpin", {
-      user_id: user_id,
+    await api.put(`/user/${user_id}`, {
+      pinned_tweet: null,
     });
   } catch (err) {
     throw err;
   }
 }
 
-export async function bookmarkTweet(tweet_id, user_id) {
+export async function bookmarkTweet(user_id, tweet_id) {
   try {
-    await api.post("/user/tweet/bookmark", {
-      tweet_id: tweet_id,
-      user_id: user_id,
+    await api.post(`/user/${user_id}`, {
+      $push: {
+        bookmarks: tweet_id,
+      },
     });
   } catch (err) {
     throw err;
   }
 }
 
-export async function unbookmarkTweet(tweet_id, user_id) {
+export async function unbookmarkTweet(user_id, tweet_id) {
   try {
-    await api.post("/user/tweet/unbookmark", {
-      tweet_id: tweet_id,
-      user_id: user_id,
+    await api.post(`/user/${user_id}`, {
+      $pull: {
+        bookmarks: tweet_id,
+      },
     });
   } catch (err) {
     throw err;
@@ -197,17 +187,23 @@ export async function updateAccountName(user_id, account_name) {
       "/user/isAccountNameAvailable?account_name=" + account_name
     );
 
-    if (res) {
-      await api.put("/user/updateAccountName?id=" + user_id, {
+    if (res.data) {
+      await api.put(`/user/${user_id}/updateAccountName`, {
         account_name,
       });
+
+      await updateProfile(auth.currentUser, {
+        displayName: account_name,
+      });
+    } else {
+      throw "Account name is not available";
     }
   } catch (err) {
     throw err;
   }
 }
 
-export async function editProfile(data) {
+export async function editProfile(user_id, data) {
   try {
     if (data.profile_image_url) {
       const profileImageRef = ref(
@@ -233,10 +229,7 @@ export async function editProfile(data) {
       data = { ...data, banner_image_url };
     }
 
-
-    
-
-    api.put("/user/" + auth.currentUser.uid, data);
+    api.put(`/user/${user_id}`, data);
   } catch (err) {
     throw err;
   }
@@ -280,29 +273,6 @@ export async function signin(email, password) {
   } catch (err) {
     throw err;
   }
-}
-
-export async function signUpWithGoogle(operation_type = "signup") {
-  const provider = new GoogleAuthProvider();
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      if (operation_type === "signup") {
-        updateProfile(auth.currentUser, {
-          displayName: result.user.email.split("@")[0],
-        })
-          .then(() =>
-            api
-              .post("/user", {
-                name: result.user.displayName,
-                account_name: result.user.email.split("@")[0],
-                auth_id: result.user.uid,
-              })
-              .catch((err) => console.log(err))
-          )
-          .catch((err) => console.log(err));
-      }
-    })
-    .catch((err) => console.log(err));
 }
 
 export async function logout(deleteAlso = false) {

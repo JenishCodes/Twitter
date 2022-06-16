@@ -6,12 +6,12 @@ const Favorite = mongoose.model(
   "Favorite",
   new mongoose.Schema(
     {
-      author_id: {
+      author: {
         type: ObjectId,
         ref: "User",
         required: true,
       },
-      tweet_id: {
+      tweet: {
         type: ObjectId,
         ref: "Tweet",
         required: true,

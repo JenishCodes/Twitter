@@ -1,10 +1,10 @@
 import api from "./api";
 
-export async function makeFavorite(author_id, tweet_id) {
+export async function makeFavorite(author, tweet) {
   try {
     const res = await api.post("/favorite", {
-      author_id,
-      tweet_id,
+      author,
+      tweet,
     });
 
     return res.data;
@@ -16,7 +16,7 @@ export async function makeFavorite(author_id, tweet_id) {
 export async function removeFavorite(author_id, tweet_id) {
   try {
     const res = await api.delete(
-      "/favorite?author_id=" + author_id + "&tweet_id=" + tweet_id
+      `/favorite?tweet_id=${tweet_id}&author_id=${author_id}`
     );
 
     return res.data;
@@ -28,7 +28,7 @@ export async function removeFavorite(author_id, tweet_id) {
 export async function isFavoriter(user_id, tweet_id) {
   try {
     const res = await api.get(
-      "/favorite/isFavoriter?user_id=" + user_id + "&tweet_id=" + tweet_id
+      `/favorite/isFavoriter?tweet_id=${tweet_id}&user_id=${user_id}`
     );
 
     return res.data;
@@ -37,11 +37,9 @@ export async function isFavoriter(user_id, tweet_id) {
   }
 }
 
-export async function getTweetFavoriters(id, page) {
+export async function getTweetFavoriters(tweet_id, page) {
   try {
-    const res = await api.get(
-      "/favorite/favoriters?id=" + id + "&page=" + page
-    );
+    const res = await api.get(`/favorite/${tweet_id}/favoriters?page=${page}`);
 
     return res.data;
   } catch (err) {
@@ -49,9 +47,9 @@ export async function getTweetFavoriters(id, page) {
   }
 }
 
-export async function getUserFavorites(user_id) {
+export async function getUserFavorites(user_id, page) {
   try {
-    const res = await api.get("/favorite/user?id=" + user_id);
+    const res = await api.get(`/favorite/${user_id}/favorites?page=${page}`);
 
     return res.data;
   } catch (err) {

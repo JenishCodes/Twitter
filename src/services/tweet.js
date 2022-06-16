@@ -1,5 +1,5 @@
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { storage } from "../config/firebase";
+import { storage } from "../firebase";
 import { extractEntities } from "../utils";
 import api from "./api";
 
@@ -28,18 +28,18 @@ export async function postTweet(tweet) {
   }
 }
 
-export async function updatePrivateMetrics(field, id) {
+export async function updatePrivateMetrics(tweet_id, newData) {
   try {
-    await api.put(`/tweet/metrics/private_metrics.${field}?id=${id}`);
+    await api.put(`/tweet/${tweet_id}`, newData);
   } catch (err) {
     throw err;
   }
 }
 
-export async function isRetweeter(user_id, tweet_id) {
+export async function isRetweeter(tweet_id, user_id) {
   try {
     const res = await api.get(
-      `/tweet/isRetweeter?user_id=${user_id}&tweet_id=${tweet_id}`
+      `/tweet/${tweet_id}/isRetweeter?user_id=${user_id}`
     );
 
     return res.data;
@@ -48,9 +48,9 @@ export async function isRetweeter(user_id, tweet_id) {
   }
 }
 
-export async function getRetweeters(id, page) {
+export async function getRetweeters(tweet_id, page) {
   try {
-    const res = await api.get("/tweet/retweeters?id=" + id + "&page=" + page);
+    const res = await api.get(`/tweet/${tweet_id}/retweeters?page=${page}`);
     return res.data;
   } catch (err) {
     throw err;
@@ -60,11 +60,9 @@ export async function getRetweeters(id, page) {
 export async function deleteTweet(tweet_id, author_id = null) {
   try {
     if (author_id) {
-      await api.delete(
-        "/tweet/destroy?id=" + tweet_id + "&author_id=" + author_id
-      );
+      await api.delete(`/tweet/${tweet_id}?author_id=${author_id}`);
     } else {
-      await api.delete("/tweet/destroy?id=" + tweet_id);
+      await api.delete(`/tweet/${tweet_id}`);
     }
   } catch (err) {
     throw err;
@@ -74,7 +72,7 @@ export async function deleteTweet(tweet_id, author_id = null) {
 export async function getTweetReplies(tweet_id, user_id, page) {
   try {
     const replies = await api.get(
-      "/tweet/replies?id=" + tweet_id + "&user_id=" + user_id + "&page=" + page
+      `/tweet/${tweet_id}/replies?user_id=${user_id}&page=${page}`
     );
     return replies.data;
   } catch (err) {
@@ -83,29 +81,31 @@ export async function getTweetReplies(tweet_id, user_id, page) {
 }
 
 export async function getTweetReferences(tweet_id) {
-  const references = await api.get("/tweet/references?id=" + tweet_id);
+  const references = await api.get(`/tweet/${tweet_id}/references`);
   return references.data;
 }
-export async function getTweet(id) {
+
+export async function getTweet(tweet_id) {
   try {
-    const tweet = await api.get("/tweet/show?id=" + id);
+    const tweet = await api.get(`/tweet/${tweet_id}`);
     return tweet.data;
   } catch (err) {
     throw err;
   }
 }
-export async function getTweetTimeline(tweet_id, author_id) {
+export async function getTweetTimeline(tweet_id, user_id) {
   try {
-    const tweet = await api.get("/tweet/show?id=" + tweet_id);
+    const tweet = await api.get(`/tweet/${tweet_id}`);
+
     var references = { data: {} };
     var replies = { data: {} };
 
     if (tweet.data.data.referenced_tweet.length > 0) {
-      references = await api.get("/tweet/references?id=" + tweet_id);
+      references = await api.get(`/tweet/${tweet_id}/references`);
     }
     if (tweet.data.data.public_metrics.reply_count > 0) {
       replies = await api.get(
-        "/tweet/replies?id=" + tweet_id + "&author_id=" + author_id
+        `/tweet/${tweet_id}/replies?user_id=${user_id}&page=0`
       );
     }
 
@@ -123,9 +123,7 @@ export async function getTweetTimeline(tweet_id, author_id) {
 
 export async function searchTweets(query, page) {
   try {
-    const res = await api.get(
-      "/tweet/search?search_query=" + query + "&page=" + page
-    );
+    const res = await api.get(`/tweet/search?query=${query}&page=${page}`);
     return res.data;
   } catch (err) {
     throw err;
