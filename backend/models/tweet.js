@@ -11,14 +11,14 @@ const Tweet = mongoose.model(
         required: true,
         maxlength: 256,
       },
-      author_id: {
+      author: {
         type: ObjectId,
         required: true,
         ref: "User",
       },
       reply_settings: {
         type: String,
-        enum: ["everyone", "followers"],
+        enum: ["everyone", "followings", "nobody"],
         default: "everyone",
       },
       media: {

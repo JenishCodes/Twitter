@@ -1,72 +1,10 @@
 import api from "./api";
-import {
-  addDoc,
-  deleteDoc,
-  getDocs,
-  orderBy,
-  query,
-  setDoc,
-  where,
-  doc,
-  collection,
-  limit,
-  serverTimestamp,
-  updateDoc,
-  startAfter,
-} from "firebase/firestore";
-import { store } from "../config/firebase";
-import { deleteChat } from "./chat";
 
-export async function getChatMessages(chatId, lastMessage) {
+export async function getChatMessages(conversationId, page) {
   try {
-    var q;
+    const res = await api.get(`/message/${conversationId}?page=${page}`);
 
-    if (lastMessage === true) {
-      q = query(
-        collection(store, "messages"),
-        where("chatId", "==", chatId),
-        orderBy("createdAt", "desc"),
-        limit(20)
-      );
-    } else {
-      q = query(
-        collection(store, "messages"),
-        where("chatId", "==", chatId),
-        orderBy("createdAt", "desc"),
-        startAfter(lastMessage),
-        limit(20)
-      );
-    }
-
-    const res = await getDocs(q);
-
-    const messages = res.docs
-      .map((d) => {
-        return { ...d.data(), _id: d.id };
-      })
-      .reverse();
-
-    return {
-      data: messages,
-      lastMessage: res.size === 20 ? res.docs[res.docs.length - 1] : false,
-    };
-  } catch (err) {
-    throw err;
-  }
-}
-
-export async function getFirstChatMessage(chatId) {
-  try {
-    const q = query(
-      collection(store, "messages"),
-      where("chatId", "==", chatId),
-      orderBy("createdAt"),
-      limit(1)
-    );
-
-    const res = await getDocs(q);
-      
-    return res.docs[0].data();
+    return res.data;
   } catch (err) {
     throw err;
   }
@@ -74,44 +12,19 @@ export async function getFirstChatMessage(chatId) {
 
 export async function sendMessage(message) {
   try {
-    const res = await addDoc(collection(store, "messages"), {
-      ...message,
-      createdAt: serverTimestamp(),
-    });
+    const res = await api.post("/message", message);
 
-    await setDoc(
-      doc(store, "chats", message.chatId),
-      {
-        userIds: message.chatId.split("~"),
-        lastMessageId: res.id,
-      },
-      { merge: true }
-    );
+    return res.data;
   } catch (err) {
     throw err;
   }
 }
 
-export async function deleteMessage(messageId, chatId) {
+export async function deleteMessage(messageId) {
   try {
-    await deleteDoc(doc(store, "messages", messageId));
+    const res = await api.delete(`/message/${messageId}`);
 
-    const lastMessage = await getDocs(
-      query(
-        collection(store, "messages"),
-        where("chatId", "==", chatId),
-        orderBy("createdAt", "desc"),
-        limit(1)
-      )
-    );
-
-    if (lastMessage.docs.length > 0) {
-      updateDoc(doc(store, "chats", chatId), {
-        lastMessageId: lastMessage.docs[0].id,
-      });
-    } else {
-      deleteChat(chatId);
-    }
+    return res.data;
   } catch (err) {
     throw err;
   }

@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "./config/context";
-import Navigator from "./screens/Navigator";
-import { setCSSVariables } from "./utils";
 import { HelmetProvider } from "react-helmet-async";
+import Navigator from "./screens/Navigator";
+import { AuthProvider } from "./context";
+import { setCSSVariables } from "./utils";
 import "./App.css";
 
 function App() {

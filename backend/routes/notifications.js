@@ -1,19 +1,18 @@
 const express = require("express");
-const { Types } = require("mongoose");
-const { Notification } = require("../models/notification");
+const {
+  markAllNotificationsAsSeen,
+  markNotificationAsRead,
+  getUnseenNotificationCount,
+  getUserNotifications,
+} = require("../controllers/notificationController");
 
 const router = express.Router();
 
-router.get("/", async function (req, res) {
+router.get("/:user_id", async function (req, res) {
   try {
-    const notifications = await Notification.find({
-      user: Types.ObjectId(req.query.id),
-    })
-      .sort({ createdAt: -1 })
-      .skip(req.query.limit * req.query.cursor)
-      .limit(req.query.limit);
+    const data = await getUserNotifications(req.params.user_id, req.query.page);
 
-    res.send({ data: notifications });
+    res.send(data);
   } catch (err) {
     console.log(err);
     res.status(400);
@@ -21,14 +20,11 @@ router.get("/", async function (req, res) {
   }
 });
 
-router.get("/unseen", async function (req, res) {
+router.get("/:user_id/unseen", async function (req, res) {
   try {
-    const unseen = await Notification.countDocuments({
-      user: Types.ObjectId(req.query.id),
-      seen: false,
-    });
+    const data = await getUnseenNotificationCount(req.params.user_id);
 
-    res.send({ data: unseen });
+    res.send({count:data});
   } catch (err) {
     console.log(err);
     res.status(400);
@@ -36,13 +32,11 @@ router.get("/unseen", async function (req, res) {
   }
 });
 
-router.put("/read/:notificationId", async function (req, res) {
+router.put("/:notificationId/read", async function (req, res) {
   try {
-    await Notification.findByIdAndUpdate(req.params.notificationId, {
-      read: true,
-    });
+    const data = await markNotificationAsRead(req.params.notificationId);
 
-    res.sendStatus(200);
+    res.send(data);
   } catch (err) {
     console.log(err);
     res.status(400);
@@ -50,14 +44,11 @@ router.put("/read/:notificationId", async function (req, res) {
   }
 });
 
-router.put("/seen", async function (req, res) {
+router.put("/:user_id/seen", async function (req, res) {
   try {
-    await Notification.updateMany(
-      { user: req.query.id, seen: false },
-      { $set: { seen: true } }
-    );
+    const data = await markAllNotificationsAsSeen(req.params.user_id);
 
-    res.sendStatus(200);
+    res.send(data);
   } catch (err) {
     console.log(err);
     res.status(400);

@@ -1,12 +1,11 @@
 import api from "./api";
 
-export async function searchHashtags(tag_query, page) {
+export async function searchHashtags(query, page, limit) {
   try {
     const res = await api.get(
-      "/hashtag/search?tag_query=" +
-        encodeURIComponent(tag_query) +
-        "&page=" +
-        page
+      `/hashtag/search?query=${encodeURIComponent(
+        query
+      )}&page=${page}&limit=${limit}`
     );
     return res.data;
   } catch (err) {
@@ -16,8 +15,8 @@ export async function searchHashtags(tag_query, page) {
 
 export async function getHashtagTweets(tag, page) {
   try {
-    const res = await api.get("/hashtag/tweets?tag=" + tag + "&page=" + page);
-    console.log(res);
+    const res = await api.get(`/hashtag/${tag}?page=${page}`);
+
     return res.data;
   } catch (err) {
     console.log(err);

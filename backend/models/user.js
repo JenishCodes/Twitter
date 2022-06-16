@@ -27,7 +27,7 @@ const User = mongoose.model(
         maxlength: 256,
         default: "",
       },
-      pinned_tweet_id: {
+      pinned_tweet: {
         type: ObjectId,
         ref: "Tweet",
         default: null,
@@ -39,29 +39,6 @@ const User = mongoose.model(
           _id: false,
         },
       ],
-      entities: {
-        hashtags: [
-          {
-            start: Number,
-            end: Number,
-            tag: String,
-          },
-        ],
-        urls: [
-          {
-            start: Number,
-            end: Number,
-            url: String,
-          },
-        ],
-        mentions: [
-          {
-            start: Number,
-            end: Number,
-            tag: String,
-          },
-        ],
-      },
       website: {
         type: String,
         default: "",
