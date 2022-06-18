@@ -20,6 +20,7 @@ export default function AuthNavigator() {
           <Route path="signin" element={<Signin />} />
           <Route path="signup" element={<Signup />} />
           <Route path="forgot" element={<Forgot />} />
+          
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>

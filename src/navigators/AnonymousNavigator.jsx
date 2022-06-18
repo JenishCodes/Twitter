@@ -23,19 +23,24 @@ export default function AnonymousNavigator() {
           <div className="position-relative p-0 col-lg-7-2 col-sm-12">
             <Routes>
               <Route index element={<Navigate to="/explore" />} />
-              <Route path="home" element={<Navigate to="/explore" />} />
               <Route path="signin" element={<Navigate to="/explore" />} />
               <Route path="signup" element={<Navigate to="/explore" />} />
               <Route path="forgot" element={<Navigate to="/explore" />} />
+              
+              <Route path="home" element={<Navigate to="/explore" />} />
+              
               <Route
                 path="notifications"
                 element={<Navigate to="/explore" />}
               />
+              
               <Route path="settings">
                 <Route path="display" element={<Display />} />
                 <Route path="*" element={<Navigate to="/explore" />} />
               </Route>
+              
               <Route path="messages/*" element={<Navigate to="/explore" />} />
+              
               <Route path="bookmarks" element={<Navigate to="/explore" />} />
 
               <Route path="explore" element={<Explore />} />
@@ -48,12 +53,16 @@ export default function AnonymousNavigator() {
 
               <Route path=":account_name">
                 <Route index element={<User />} />
+                
                 <Route path=":profile_type" index element={<User />} />
+                
                 <Route path="status/:status_id">
                   <Route index element={<Status />} />
                   <Route path=":reaction_type" element={<Reactions />} />
                 </Route>
+                
                 <Route path="network/:friendship_type" element={<Network />} />
+                
                 <Route path="edit" element={<Navigate to="/explore" />} />
               </Route>
 
