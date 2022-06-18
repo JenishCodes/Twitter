@@ -81,7 +81,7 @@ export default function EditProfile() {
         <div className="photo-btn d-flex justify-content-between px-3">
           <div className="photo w-25 position-relative">
             <img
-              className="w-100 rounded-circle"
+              className="w-100 rounded-circle square"
               src={imageUrl}
               alt="profile"
             />

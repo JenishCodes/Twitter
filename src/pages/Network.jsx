@@ -106,7 +106,7 @@ export default function Network() {
                   key={friend.account_name}
                   data={{
                     title: friend.name,
-                    subtitle: friend.account_name,
+                    subtitle: "@" + friend.account_name,
                     image_url: friend.profile_image_url,
                     context: friend.description,
                   }}
@@ -124,7 +124,7 @@ export default function Network() {
                   key={friend.account_name}
                   data={{
                     title: friend.name,
-                    subtitle: friend.account_name,
+                    subtitle: "@" + friend.account_name,
                     image_url: friend.profile_image_url,
                     context: friend.description,
                   }}

@@ -177,7 +177,7 @@ export default function Chat() {
       </Helmet>
 
       <div className="header position-absolute">
-        <div className="d-flex px-2 align-items-center">
+        <div className="d-flex px-2 align-items-center py-1">
           <div
             className="btn hover rounded-circle me-2 py-0 px-2"
             onClick={() => navigate(-1)}
@@ -186,7 +186,7 @@ export default function Chat() {
           </div>
           <img
             src={conversationUser?.profile_image_url}
-            className="profile-image rounded-circle me-2"
+            className="profile-image rounded-circle me-2 square"
             alt="profile"
           />
           <div className="flex-grow-1">

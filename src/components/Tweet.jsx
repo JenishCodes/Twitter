@@ -12,13 +12,8 @@ import {
   postTweet,
   updatePrivateMetrics,
 } from "../services/tweet";
-import { getTweetEntities, parseTweet, timeFormatter } from "../utils";
-import {
-  bookmarkTweet,
-  pinTweet,
-  unbookmarkTweet,
-  unpinTweet,
-} from "../services/user";
+import { getTweetEntities, timeFormatter } from "../utils";
+import { editProfile } from "../services/user";
 
 export default function Tweet(props) {
   const { user, setUser } = useContext(AuthContext);
@@ -27,17 +22,17 @@ export default function Tweet(props) {
   const [bookmarked, setBookmarked] = useState(false);
   const [menuVisisble, setMenuVisisble] = useState(false);
   const [data, setData] = useState();
-  const [textEntities, setTextEntities] = useState([])
+  const [textEntities, setTextEntities] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     setData(props.tweet);
 
-    setTextEntities(getTweetEntities(props.tweet.text))
+    setTextEntities(getTweetEntities(props.tweet.text));
 
     if (user.isAnonymous) return;
 
-    isFavoriter(user._id, props.tweet._id).then((res) => setLiked(res));
+    isFavoriter(props.tweet._id).then((res) => setLiked(res));
     isRetweeter(props.tweet._id, user._id).then((res) => setRetweeted(res));
 
     setBookmarked(user.bookmarks.includes(props.tweet._id));
@@ -52,10 +47,10 @@ export default function Tweet(props) {
     }
 
     if (user.pinned_tweet_id === data._id) {
-      unpinTweet(user._id).catch((err) => console.log(err));
+      editProfile({ pinned_tweet: null }).catch((err) => console.log(err));
       setUser({ ...user, pinned_tweet_id: "" });
     } else {
-      pinTweet(user._id, data._id).catch((err) => console.log(err));
+      editProfile({ pinned_tweet: data._id }).catch((err) => console.log(err));
       setUser({ ...user, pinned_tweet_id: data._id });
     }
     setMenuVisisble(!menuVisisble);
@@ -76,7 +71,7 @@ export default function Tweet(props) {
           like_count: data.public_metrics.like_count - 1,
         },
       });
-      removeFavorite(user._id, data._id);
+      removeFavorite(data._id);
     } else {
       setLiked(true);
       setData({
@@ -86,7 +81,7 @@ export default function Tweet(props) {
           like_count: data.public_metrics.like_count + 1,
         },
       });
-      makeFavorite(user._id, data._id);
+      makeFavorite(data._id);
     }
   };
 
@@ -136,10 +131,14 @@ export default function Tweet(props) {
       return;
     }
     if (bookmarked) {
-      unbookmarkTweet(user._id, data._id).catch((err) => console.log(err));
+      editProfile({ $pull: { bookmarks: data._id } }).catch((err) =>
+        console.log(err)
+      );
       setBookmarked(false);
     } else {
-      bookmarkTweet(user._id, data._id).catch((err) => console.log(err));
+      editProfile({ $push: { bookmarks: data._id } }).catch((err) =>
+        console.log(err)
+      );
       setBookmarked(true);
     }
   };
@@ -182,7 +181,7 @@ export default function Tweet(props) {
             <div className="d-flex flex-column align-items-center">
               <div className="profile-image">
                 <img
-                  className="w-100 h-auto rounded-circle"
+                  className="w-100 h-auto rounded-circle square"
                   src={data.author.profile_image_url}
                   alt=""
                 />
@@ -299,7 +298,7 @@ export default function Tweet(props) {
                 entity.type !== "normal" ? (
                   <span
                     key={index}
-                    className="text-app"
+                    className="text-app pointer"
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(entity.url);

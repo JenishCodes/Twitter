@@ -1,19 +1,8 @@
-import {
-  createUserWithEmailAndPassword,
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-  sendPasswordResetEmail,
-  signInAnonymously,
-  signInWithEmailAndPassword,
-  signOut,
-  updateEmail,
-  updatePassword,
-  updateProfile,
-} from "firebase/auth";
-import { auth, storage } from "../firebase";
-import api from "./api";
+import { storage } from "../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getUserFavorites } from "./favorite";
+import jwtDecode from "jwt-decode";
+import api from "./api";
 
 export async function searchUser(name_query, deep_search, page, limit) {
   try {
@@ -26,23 +15,24 @@ export async function searchUser(name_query, deep_search, page, limit) {
   }
 }
 
-export async function deleteSearchHistory(id, delete_all = false) {
+export async function deleteSearchHistory(delete_all) {
   try {
-    await api.delete(`/user/${id}/history?delete_all=${delete_all}`);
+    await api.delete(`/user/history?delete_all=${delete_all}`);
   } catch (err) {
     console.log(err);
   }
 }
 
-export async function getSeachHistory(user_id) {
+export async function getSeachHistory() {
   try {
-    const res = await api.get(`/user/${user_id}/history`);
+    const res = await api.get(`/user/history`);
 
     return res.data;
   } catch (err) {
     console.log(err);
   }
 }
+
 export async function addSeachHistory(
   user_id,
   title,
@@ -50,7 +40,7 @@ export async function addSeachHistory(
   image_url = null
 ) {
   try {
-    const res = await api.post(`/user/${user_id}/history`, {
+    const res = await api.post(`/user/history`, {
       user_id,
       title,
       subtitle,
@@ -63,9 +53,9 @@ export async function addSeachHistory(
   }
 }
 
-export async function getBookmarkedTweets(user_id, page) {
+export async function getBookmarkedTweets(page) {
   try {
-    const res = await api.get(`/user/${user_id}/bookmarks?page=${page}`);
+    const res = await api.get(`/user/bookmarks?page=${page}`);
 
     return res.data;
   } catch (err) {
@@ -73,9 +63,9 @@ export async function getBookmarkedTweets(user_id, page) {
   }
 }
 
-export async function getUserFeed(user_id, page) {
+export async function getUserFeed(page) {
   try {
-    const res = await api.get(`/user/${user_id}/feed?page=${page}`);
+    const res = await api.get(`/user/feed?page=${page}`);
 
     return res.data;
   } catch (err) {
@@ -85,7 +75,7 @@ export async function getUserFeed(user_id, page) {
 
 export async function getUserFromId(id) {
   try {
-    const res = await api.get(`/user?key=id&value=${id}`);
+    const res = await api.get(`/user?key=_id&value=${id}`);
 
     return res.data;
   } catch (err) {
@@ -103,9 +93,9 @@ export async function getUser(account_name) {
   }
 }
 
-export async function getUserSettings(user_id) {
+export async function getUserSettings() {
   try {
-    const res = await api.get(`/user/${user_id}/settings`);
+    const res = await api.get(`/user/settings`);
 
     return res.data;
   } catch (err) {
@@ -113,9 +103,9 @@ export async function getUserSettings(user_id) {
   }
 }
 
-export async function updateUserSettings(user_id, settings) {
+export async function updateUserSettings(settings) {
   try {
-    await api.put(`/user/${user_id}/settings`, settings);
+    await api.put(`/user/settings`, settings);
   } catch (err) {
     console.log(err);
   }
@@ -137,67 +127,12 @@ export async function getUserTweets(user_id, page, request_type = "tweets") {
   }
 }
 
-export async function pinTweet(user_id, tweet_id) {
+export async function updateAccountName(account_name, password) {
   try {
-    await api.put(`/user/${user_id}`, {
-      pinned_tweet: tweet_id,
+    await api.put(`/user/updateAccountName`, {
+      account_name,
+      password,
     });
-  } catch (err) {
-    throw err;
-  }
-}
-
-export async function unpinTweet(user_id) {
-  try {
-    await api.put(`/user/${user_id}`, {
-      pinned_tweet: null,
-    });
-  } catch (err) {
-    throw err;
-  }
-}
-
-export async function bookmarkTweet(user_id, tweet_id) {
-  try {
-    await api.post(`/user/${user_id}`, {
-      $push: {
-        bookmarks: tweet_id,
-      },
-    });
-  } catch (err) {
-    throw err;
-  }
-}
-
-export async function unbookmarkTweet(user_id, tweet_id) {
-  try {
-    await api.post(`/user/${user_id}`, {
-      $pull: {
-        bookmarks: tweet_id,
-      },
-    });
-  } catch (err) {
-    throw err;
-  }
-}
-
-export async function updateAccountName(user_id, account_name) {
-  try {
-    const res = await api.get(
-      "/user/isAccountNameAvailable?account_name=" + account_name
-    );
-
-    if (res.data) {
-      await api.put(`/user/${user_id}/updateAccountName`, {
-        account_name,
-      });
-
-      await updateProfile(auth.currentUser, {
-        displayName: account_name,
-      });
-    } else {
-      throw "Account name is not available";
-    }
   } catch (err) {
     throw err;
   }
@@ -206,10 +141,7 @@ export async function updateAccountName(user_id, account_name) {
 export async function editProfile(user_id, data) {
   try {
     if (data.profile_image_url) {
-      const profileImageRef = ref(
-        storage,
-        `/profile_images/${auth.currentUser.uid}`
-      );
+      const profileImageRef = ref(storage, `/profile_images/${user_id}`);
 
       await uploadBytes(profileImageRef, data.profile_image_url);
       const profile_image_url = await getDownloadURL(profileImageRef);
@@ -218,10 +150,7 @@ export async function editProfile(user_id, data) {
     }
 
     if (data.banner_image_url) {
-      const bannerImageRef = ref(
-        storage,
-        `/banner_images/${auth.currentUser.uid}.jpg`
-      );
+      const bannerImageRef = ref(storage, `/banner_images/${user_id}`);
 
       await uploadBytes(bannerImageRef, data.banner_image_url);
       const banner_image_url = await getDownloadURL(bannerImageRef);
@@ -229,99 +158,93 @@ export async function editProfile(user_id, data) {
       data = { ...data, banner_image_url };
     }
 
-    api.put(`/user/${user_id}`, data);
+    api.put(`/user`, data);
   } catch (err) {
     throw err;
   }
 }
 
-export async function signup(name, email, password, account_name, uid = null) {
-  const res = await api.get(
-    "/user/isAccountNameAvailable?account_name=" + account_name
-  );
-
-  if (res.data.data) {
-    throw Error("Username not available!");
-  }
-
+export async function signup(name, email, password, account_name) {
   try {
-    if (!uid) {
-      const auth_user = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      await updateProfile(auth.currentUser, { displayName: account_name });
-
-      uid = auth_user.user.uid;
-    }
-
-    await api.post("/user", {
+    const res = await api.post("/user", {
       name,
+      email,
+      password,
       account_name,
-      auth_id: uid,
+    });
+
+    api.defaults.headers.common["x-auth-token"] = res.headers["x-auth-token"];
+
+    localStorage.setItem("token", res.headers["x-auth-token"]);
+
+    return res.data;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function signin(credential, password) {
+  try {
+    const res = await api.post("/user/signin", {
+      credential,
+      password,
+    });
+
+    api.defaults.headers.common["x-auth-token"] = res.headers["x-auth-token"];
+
+    localStorage.setItem("token", res.headers["x-auth-token"]);
+    return res.data;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export function logout() {
+  try {
+    localStorage.removeItem("token");
+
+    api.defaults.headers.common["x-auth-token"] = null;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function signinAnonymously() {
+  try {
+    const res = await api.post("/user/signinAnonymously");
+
+    localStorage.setItem("token", res.data);
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function resetPassword(oldPassword, newPassword) {
+  try {
+    await api.put(`/user/resetPassword`, {
+      old_password: oldPassword,
+      new_password: newPassword,
     });
   } catch (err) {
     throw err;
   }
 }
 
-export async function signin(email, password) {
+export async function updateUserEmail(newEmail, password) {
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    await api.put(`/user/updateEmail`, {
+      email: newEmail,
+      password,
+    });
   } catch (err) {
     throw err;
   }
 }
 
-export async function logout(deleteAlso = false) {
-  if (deleteAlso) {
-    await auth.currentUser.delete();
-  } else {
-    await signOut(auth);
-  }
+export function getJwt() {
+  return localStorage.getItem("token");
 }
 
-export async function signinAnonymously() {
-  try {
-    await signInAnonymously(auth);
-  } catch (err) {
-    throw err;
-  }
-}
-
-export async function getPasswordResetLink(email) {
-  try {
-    await sendPasswordResetEmail(auth, email);
-  } catch (err) {
-    throw err;
-  }
-}
-
-export async function reAuthenticate(password) {
-  try {
-    const credentials = EmailAuthProvider.credential(
-      auth.currentUser.email,
-      password
-    );
-    await reauthenticateWithCredential(auth.currentUser, credentials);
-  } catch (err) {
-    throw err;
-  }
-}
-export async function resetPassword(newPassword) {
-  try {
-    await updatePassword(auth.currentUser, newPassword);
-  } catch (err) {
-    throw err;
-  }
-}
-
-export async function updateUserEmail(newEmail) {
-  try {
-    await updateEmail(auth.currentUser, newEmail);
-  } catch (err) {
-    throw err;
-  }
+export function isAuthenticated() {
+  return getJwt() ? jwtDecode(getJwt()) : false;
 }

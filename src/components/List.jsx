@@ -12,7 +12,7 @@ export default function List(props) {
             props.data.image
           ) : props.data.image_url ? (
             <img
-              className="w-100 h-auto rounded-circle"
+              className="w-100 h-auto rounded-circle square"
               src={props.data.image_url}
               alt=""
             />

@@ -17,8 +17,7 @@ router.get("/:conversationId", async (req, res) => {
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.messages);
+    res.status(400).send(err.messages);
   }
 });
 
@@ -29,8 +28,7 @@ router.post("/", async (req, res) => {
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.messages);
+    res.status(400).send(err.messages);
   }
 });
 
@@ -41,8 +39,7 @@ router.delete("/:message_id", async (req, res) => {
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.messages);
+    res.status(400).send(err.messages);
   }
 });
 

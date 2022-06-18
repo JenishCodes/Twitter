@@ -10,14 +10,13 @@ const router = express.Router();
 
 router.get("/search", async function (req, res) {
   try {
-    const {query, page, limit} = req.query
+    const { query, page, limit } = req.query;
     const data = await searchHashtag(query, page, limit);
 
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
@@ -28,8 +27,7 @@ router.get("/:tag", async function (req, res) {
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
@@ -40,8 +38,7 @@ router.post("/", async function (req, res) {
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
@@ -52,8 +49,7 @@ router.put("/", async function (req, res) {
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 

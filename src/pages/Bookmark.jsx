@@ -19,7 +19,7 @@ export default function Bookmark() {
         tweets.length === 0)
     ) {
       setLoading(true);
-      getBookmarkedTweets(user._id, tweets.length)
+      getBookmarkedTweets(tweets.length)
         .then((res) => {
           console.log(res);
           setHasMore(res.hasMore);

@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
-import { getPasswordResetLink } from "../services/user";
 
 export default function Forgot() {
   const [email, setEmail] = useState("");
@@ -16,15 +15,6 @@ export default function Forgot() {
       return;
     }
     setLoading(true);
-    getPasswordResetLink(email)
-      .then(() =>
-        setToast({
-          error: false,
-          message: "Password reset link sent to your email",
-        })
-      )
-      .catch((err) => setToast({ error: true, message: err.code }))
-      .finally(() => setLoading(false));
   };
 
   useEffect(() => {

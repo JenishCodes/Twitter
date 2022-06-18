@@ -12,7 +12,9 @@ export default function Drawer() {
       <Modal style={{ height: "100%", width: "100%" }}>
         <div id="drawer" className="drawer position-fixed bg-primary h-100">
           <div className="drawer-header d-flex justify-content-between align-items-center px-3 pt-3">
-            <div className="drawer-header-title fs-4 fw-bold">{user.isAnonymous?"Twitter":"Account info"}</div>
+            <div className="drawer-header-title fs-4 fw-bold">
+              {user.isAnonymous ? "Twitter" : "Account info"}
+            </div>
             <div
               className="drawer-header-icon hover rounded-circle px-2 py-0 btn"
               onClick={() => {
@@ -29,7 +31,7 @@ export default function Drawer() {
               <div className="profile-image mb-1">
                 <img
                   src={user.profile_image_url}
-                  className="w-100 rounded-circle"
+                  className="w-100 rounded-circle square"
                   alt="profile"
                 />
               </div>
@@ -48,8 +50,12 @@ export default function Drawer() {
             </div>
           ) : null}
 
-          {user.isAnonymous ? <hr className="mb-0 mt-3" /> : <hr className="my-0" />}
-          
+          {user.isAnonymous ? (
+            <hr className="mb-0 mt-3" />
+          ) : (
+            <hr className="my-0" />
+          )}
+
           {user.isAnonymous ? (
             <div className="drawer-body py-1">
               <div

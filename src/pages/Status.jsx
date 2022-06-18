@@ -18,25 +18,21 @@ import {
   makeFavorite,
   removeFavorite,
 } from "../services/favorite";
-import { parseTweet, timeFormatter } from "../utils";
-import {
-  bookmarkTweet,
-  pinTweet,
-  unbookmarkTweet,
-  unpinTweet,
-} from "../services/user";
+import { getTweetEntities, timeFormatter } from "../utils";
+import { editProfile } from "../services/user";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
 import { Helmet } from "react-helmet-async";
 import { getRelationship } from "../services/friendship";
 
 export default function Status() {
-  const { user } = useContext(AuthContext);
+  const { user, scrollY } = useContext(AuthContext);
   const { account_name, status_id } = useParams();
   const [tweet, setTweet] = useState();
+  const [textEntities, setTextEntities] = useState([]);
   const [show, setShow] = useState(false);
   const [mediaModalShow, setMediaModalShow] = useState(false);
-  const [analyticsModalShow, setAnalyticsModalShow] = useState(null);
+  const [analyticsModalShow, setAnalyticsModalShow] = useState(false);
   const [references, setReferences] = useState([]);
   const [replies, setReplies] = useState([]);
   const [liked, setLiked] = useState(false);
@@ -46,50 +42,69 @@ export default function Status() {
   const [menuVisisble, setMenuVisisble] = useState(false);
   const [relation, setRelation] = useState("strangers");
   const [loading, setLoading] = useState(false);
+  const [loadedRefs, setLoadedRefs] = useState(false);
   const navigate = useNavigate();
-  const tweetRef = useRef();
 
   useEffect(() => {
     setLoading(true);
     setTweet(null);
     setReferences([]);
     setReplies([]);
+    setLiked(false);
+    setBookmarked(false);
+    setRetweeted(false);
+    setHasMoreReplies(true);
+    setRelation("strangers");
+    setLoading(true);
 
     getTweet(status_id)
       .then((res) => {
         setTweet(res);
+
+        if (res.referenced_tweet.length === 0) {
+          setLoadedRefs(true);
+        } else {
+          window.scrollTo(0, 2);
+        }
+
+        setTextEntities(getTweetEntities(res.text));
+
         setLoading(false);
-        if (res.author._id === user._id) {
+        if (res.author._id !== user._id) {
           updatePrivateMetrics(status_id, {
             $inc: { "private_metrics.detail_expands": 1 },
           });
         }
-        if (res.referenced_tweet.length > 0) {
-          getTweetReferences(status_id)
-            .then((res) => setReferences(res))
-            .catch((err) => console.log(err));
-        }
+
+        if (user.isAnonymous) return;
+
+        isFavoriter(status_id)
+          .then((res) => setLiked(res))
+          .catch((err) => console.log(err));
+
+        isRetweeter(status_id, user._id)
+          .then((res) => setRetweeted(res))
+          .catch((err) => console.log(err));
+
+        setBookmarked(user.bookmarks.includes(status_id));
+
+        getRelationship(user._id, res.author._id)
+          .then((res) => setRelation(res.relation))
+          .catch((err) => console.log(err));
       })
       .catch((err) => console.log(err));
 
-    if (user.isAnonymous) return;
-
-    isFavoriter(user._id, status_id)
-      .then((res) => setLiked(res))
-      .catch((err) => console.log(err));
-
-    isRetweeter(status_id, user._id)
-      .then((res) => setRetweeted(res))
-      .catch((err) => console.log(err));
-
-    getRelationship(user._id, tweet.author._id)
-      .then((res) => setRelation(res.relation))
-      .catch((err) => console.log(err));
-
-    setBookmarked(user.bookmarks.includes(status_id));
-
-    handleLoadMore();
+    handleLoadMore(true);
   }, [status_id]);
+
+  useEffect(() => {
+    if (!loadedRefs && scrollY === 1 && tweet) {
+      getTweetReferences(status_id)
+        .then((res) => setReferences(res))
+        .catch((err) => console.log(err))
+        .finally(() => setLoadedRefs(true));
+    }
+  }, [loadedRefs, scrollY]);
 
   const handleLike = (e) => {
     e.stopPropagation();
@@ -107,7 +122,7 @@ export default function Status() {
           like_count: tweet.public_metrics.like_count - 1,
         },
       });
-      removeFavorite(user._id, tweet._id);
+      removeFavorite(tweet._id);
     } else {
       setLiked(true);
       setTweet({
@@ -117,7 +132,7 @@ export default function Status() {
           like_count: tweet.public_metrics.like_count + 1,
         },
       });
-      makeFavorite(user._id, tweet._id);
+      makeFavorite(tweet._id);
     }
   };
 
@@ -128,9 +143,9 @@ export default function Status() {
       return;
     }
     if (user.pinned_tweet_id === tweet._id) {
-      unpinTweet(user._id).catch((err) => console.log(err));
+      editProfile({ pinned_tweet: null }).catch((err) => console.log(err));
     } else {
-      pinTweet(user._id, tweet._id).catch((err) => console.log(err));
+      editProfile({ pinned_tweet: tweet._id }).catch((err) => console.log(err));
     }
     setMenuVisisble(!menuVisisble);
   };
@@ -181,10 +196,14 @@ export default function Status() {
       return;
     }
     if (bookmarked) {
-      unbookmarkTweet(user._id, status_id).catch((err) => console.log(err));
+      editProfile({ $pull: { bookmarks: status_id } }).catch((err) =>
+        console.log(err)
+      );
       setBookmarked(false);
     } else {
-      bookmarkTweet(user._id, status_id).catch((err) => console.log(err));
+      editProfile({ $push: { bookmarks: status_id } }).catch((err) =>
+        console.log(err)
+      );
       setBookmarked(true);
     }
   };
@@ -195,11 +214,15 @@ export default function Status() {
       .catch((err) => console.log(err));
   };
 
-  const handleLoadMore = (e) => {
+  const handleLoadMore = (newTweet = false) => {
     setLoading(true);
-    getTweetReplies(status_id, user._id, replies.length)
+    getTweetReplies(status_id, replies.length)
       .then((res) => {
-        setReplies([...replies, ...res.data]);
+        if (newTweet) {
+          setReplies(res.data);
+        } else {
+          setReplies([...replies, ...res.data]);
+        }
         setHasMoreReplies(res.hasMore);
       })
       .catch((err) => console.log(err))
@@ -335,7 +358,7 @@ export default function Status() {
         </Modal>
       ) : null}
 
-      <div className="reference-list" ref={tweetRef}>
+      <div className="reference-list">
         {references
           ? references.map((reference, index) =>
               reference ? (
@@ -365,12 +388,19 @@ export default function Status() {
           : null}
       </div>
 
+      {!loadedRefs ? (
+        <div
+          style={{ marginLeft: "40px", width: "2px", height: "10px" }}
+          className="border"
+        ></div>
+      ) : null}
+
       {tweet ? (
-        <div>
+        <div className="status">
           <div className="d-flex list px-3 pt-2">
             <div className="me-3 image">
               <img
-                className="w-100 h-auto rounded-circle"
+                className="w-100 h-auto rounded-circle square"
                 src={tweet.author.profile_image_url}
                 alt=""
               />
@@ -471,17 +501,27 @@ export default function Status() {
                 @{references[references.length - 1].author.account_name}
               </Link>
             </div>
-          ) : (
-            ""
-          )}
+          ) : null}
           <div className="px-3">
             {tweet.text ? (
-              <div
-                className="fs-2 mt-2"
-                dangerouslySetInnerHTML={{
-                  __html: parseTweet(tweet.text, true),
-                }}
-              ></div>
+              <div className="fs-2 mt-2">
+                {textEntities.map((entity, index) =>
+                  entity.type !== "normal" ? (
+                    <span
+                      key={index}
+                      className="text-app pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(entity.url);
+                      }}
+                    >
+                      {entity.content}
+                    </span>
+                  ) : (
+                    <span key={index}>{entity.content}</span>
+                  )
+                )}
+              </div>
             ) : null}
             {tweet.media ? (
               <div className="media my-2">

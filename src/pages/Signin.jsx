@@ -1,23 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
+import { AuthContext } from "../context";
 import { signin } from "../services/user";
 
 export default function Signin() {
-  const [email, setEmail] = useState("");
+  const [credential, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSignin = () => {
-    if (!email || !password) {
+    if (!credential || !password) {
       setError("Please fill all fields");
       return;
     }
     setLoading(true);
-    signin(email, password)
+    signin(credential, password)
+      .then((user) => {
+        setUser(user);
+        navigate("/home")
+      })
       .catch((err) => setError(err.code))
       .finally(() => setLoading(false));
   };
@@ -81,11 +88,10 @@ export default function Signin() {
         <div className="mb-5">
           <div className="form-floating mt-2 mb-3">
             <input
-              type="email"
+              type="text"
               className="form-control rounded-5 border"
-              id="email-input"
               style={{ backgroundColor: "transparent" }}
-              value={email}
+              value={credential}
               onChange={(e) => setEmail(e.currentTarget.value)}
               autoComplete="off"
             />

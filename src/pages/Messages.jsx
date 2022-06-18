@@ -15,7 +15,7 @@ export default function Messages() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getConversations(user._id)
+    getConversations()
       .then((res) => setConversations(res))
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));

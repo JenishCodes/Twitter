@@ -1,24 +1,26 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import List from "../components/List";
 import Loading from "../components/Loading";
-import { AuthContext } from "../context";
 import {
   getNotifications,
   markNotificationAsRead,
 } from "../services/notification";
 
 export default function Notifications() {
-  const { user } = useContext(AuthContext);
   const [notifications, setNotifications] = useState([]);
+  const [hasMoreNotifications, setHasMoreNotifications] = useState(true);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    getNotifications(user._id, 0, 10)
-      .then((res) => setNotifications(res.data))
+    getNotifications(notifications.length)
+      .then((res) => {
+        setHasMoreNotifications(res.hasMore);
+        setNotifications(res.data)
+      })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   }, []);

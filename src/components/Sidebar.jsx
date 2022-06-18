@@ -298,7 +298,7 @@ export default function Sidebar() {
                   <div className="profile-image mx-auto flex-shrink-0 me-xl-2">
                     <img
                       src={user.profile_image_url}
-                      className="w-100 rounded-circle"
+                      className="w-100 rounded-circle square"
                       alt="profile"
                     />
                   </div>

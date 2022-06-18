@@ -39,22 +39,23 @@ export default function Editor({
   const handleTextChange = (newText) => {
     setText(newText ? newText : null);
 
-    const words = newText.split(" ");
-    const word = words[words.length - 1];
+    const lines = newText.split("\n");
+    const words = lines[lines.length - 1].split(" ");
+    const lastWord = words[words.length - 1];
 
-    if (word === "") {
+    if (lastWord === "") {
       setTweetInnerHTML(newText);
       setSearchData([]);
-    } else if (word.charAt(0) === "@" && word.length > 1) {
+    } else if (lastWord.charAt(0) === "@" && lastWord.length > 1) {
       setTweetInnerHTML(newText);
-      searchUser(word, false, 0, 3).then((res) => {
+      searchUser(lastWord, false, 0, 3).then((res) => {
         setSearchDataType("user");
         setSearchData(res.data);
       });
-    } else if (word.charAt(0) === "#" && word.length > 1) {
+    } else if (lastWord.charAt(0) === "#" && lastWord.length > 1) {
       setTweetInnerHTML(newText);
       setSearchDataType("hashtag", 0, 3);
-      searchHashtags(word, 0, 3).then((res) => setSearchData(res.data));
+      searchHashtags(lastWord, 0, 3).then((res) => setSearchData(res.data));
     } else {
       setSearchData([]);
     }
@@ -134,7 +135,7 @@ export default function Editor({
               <div className="d-flex flex-column align-items-center">
                 <div className="profile-image">
                   <img
-                    className="w-100 h-auto rounded-circle"
+                    className="w-100 h-auto rounded-circle square"
                     src={reference_tweet.author.profile_image_url}
                     alt=""
                   />
@@ -191,7 +192,7 @@ export default function Editor({
             <div className="me-3 profile-image">
               <img
                 src={user.profile_image_url}
-                className="w-100 h-auto rounded-circle"
+                className="w-100 h-auto rounded-circle square"
                 alt="profile"
               />
             </div>
@@ -327,7 +328,7 @@ export default function Editor({
                 data={{
                   title: search.name,
                   image_url: search.profile_image_url,
-                  subtitle: search.account_name,
+                  subtitle: "@" + search.account_name,
                 }}
                 onClick={() => handleOnClick("@" + search.account_name)}
               />

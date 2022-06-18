@@ -59,7 +59,7 @@ export default function Reactions() {
               key={user._id}
               data={{
                 title: user.name,
-                subtitle: user.account_name,
+                subtitle: "@" + user.account_name,
                 image_url: user.profile_image_url,
                 context: user.description,
               }}

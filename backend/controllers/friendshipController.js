@@ -47,11 +47,11 @@ exports.getFollowings = async function (account_name, page) {
 exports.createFriendship = async function (friendshipData) {
   await Friendship.create(friendshipData);
 
-  await updateUserDetails(friendshipData.followed_by, {
+  await userController.updateUserDetails(friendshipData.followed_by, {
     $inc: { following_count: 1 },
   });
 
-  await updateUserDetails(friendshipData.following, {
+  await userController.updateUserDetails(friendshipData.following, {
     $inc: { followers_count: 1 },
   });
 
@@ -60,7 +60,7 @@ exports.createFriendship = async function (friendshipData) {
   });
 
   if (followingSettings.followNotification) {
-    const follower = userController.getUser(
+    const follower = await userController.getUser(
       "id",
       friendshipData.followed_by,
       "account_name -_id"

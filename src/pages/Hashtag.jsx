@@ -14,20 +14,24 @@ export default function Hashtag() {
   const [hasMore, setHasMore] = useState(true);
   const { scrollY } = useContext(AuthContext);
 
+  const fetchTweets = () => {
+    setLoading(true);
+    getHashtagTweets(hashtag, tweets.length)
+      .then((res) => {
+        setTweets([...tweets, ...res.data]);
+        setHasMore(res.hasMore);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
+  };
+
   useEffect(() => {
     if (
       hasMore &&
       (scrollY + window.innerHeight >= document.body.offsetHeight ||
         tweets.length === 0)
     ) {
-      setLoading(true);
-      getHashtagTweets(hashtag, tweets.length)
-        .then((res) => {
-          setHasMore(res.hasMore);
-          setTweets([...tweets, ...res.data]);
-        })
-        .catch((err) => console.log(err))
-        .finally(() => setLoading(false));
+      fetchTweets();
     }
   }, [scrollY]);
 
@@ -35,6 +39,7 @@ export default function Hashtag() {
     setHasMore(true);
     setTweets([]);
     window.scrollTo(0, 0);
+    fetchTweets();
   }, [hashtag]);
 
   return (

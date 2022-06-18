@@ -22,7 +22,7 @@ export default function Searchbar() {
   useEffect(() => {
     if (user.isAnonymous) return;
 
-    getSeachHistory(user._id).then((res) => {
+    getSeachHistory().then((res) => {
       const upadtedHistory = res.map((item) => ({
         ...item,
         type: "history",
@@ -55,7 +55,7 @@ export default function Searchbar() {
     e.stopPropagation();
     if (user.isAnonymous) return;
 
-    deleteSearchHistory(id);
+    deleteSearchHistory(false);
     const newList = history.filter((elem) => elem._id !== id);
     setResults(newList);
     setHistory(newList);
@@ -64,7 +64,7 @@ export default function Searchbar() {
   const handleClearAll = () => {
     if (user.isAnonymous) return;
 
-    deleteSearchHistory(user._id, true);
+    deleteSearchHistory(true);
     setHistory([]);
     setResults([]);
   };
@@ -82,27 +82,27 @@ export default function Searchbar() {
       if (searchQuery[0] === "#") {
         searchHashtags(searchQuery, 0, 6)
           .then((res) =>
-            setResults(res.map((item) => ({ ...item, type: "hashtag" })))
+            setResults(res.data.map((item) => ({ ...item, type: "hashtag" })))
           )
           .catch((err) => console.log(err))
           .finally(() => setLoading(false));
       } else if (searchQuery[0] === "@") {
         searchUser(searchQuery, true, 0, 6)
           .then((res) =>
-            setResults(res.map((item) => ({ ...item, type: "user" })))
+            setResults(res.data.map((item) => ({ ...item, type: "user" })))
           )
           .catch((err) => console.log(err))
           .finally(() => setLoading(false));
       } else {
         searchUser(searchQuery, false, 0, 3)
           .then((res) => {
-            const users = res.map((item) => ({ ...item, type: "user" }));
+            const users = res.data.map((item) => ({ ...item, type: "user" }));
 
             searchHashtags(searchQuery, 0, 3)
               .then((res) =>
                 setResults([
                   ...users,
-                  ...res.map((item) => ({ ...item, type: "hashtag" })),
+                  ...res.data.map((item) => ({ ...item, type: "hashtag" })),
                 ])
               )
               .catch((err) => console.log(err));
@@ -223,7 +223,7 @@ export default function Searchbar() {
                     ? {
                         image_url: result.profile_image_url,
                         title: result.name,
-                        subtitle: result.account_name,
+                        subtitle: "@" + result.account_name,
                       }
                     : result.type === "hashtag"
                     ? {

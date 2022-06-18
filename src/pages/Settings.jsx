@@ -12,7 +12,7 @@ export default function Settings() {
 
   const handleClick = (e, type) => {
     e.preventDefault();
-    updateUserSettings(user._id, { [type]: !user.settings[type] })
+    updateUserSettings({ [type]: !user.settings[type] })
       .then(() => {
         const settings = { ...user.settings, [type]: !user.settings[type] };
         setUser({ ...user, settings });

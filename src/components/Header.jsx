@@ -37,8 +37,8 @@ export default function Header(props) {
             ) : (
               <img
                 src={user.profile_image_url}
-                    className="profile-image rounded-circle"
-                    alt="profile"
+                className="profile-image rounded-circle square"
+                alt="profile"
               />
             )}
           </div>

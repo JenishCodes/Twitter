@@ -22,7 +22,7 @@ export default function ConversationInfo() {
   useEffect(() => {
     const conversationId = [user._id, user_id].sort().join("~");
 
-    getConversation(conversationId, user._id)
+    getConversation(conversationId)
       .then((res) => {
         setConversationUser(res.user);
         setStartedOn(timeFormatter(res.createdAt, "Status"));
@@ -126,7 +126,7 @@ export default function ConversationInfo() {
               onClick={() => navigate("/" + user.account_name)}
               data={{
                 title: user.name,
-                subtitle: user.account_name,
+                subtitle: "@" + user.account_name,
                 context: user.description,
                 image_url: user.profile_image_url,
               }}

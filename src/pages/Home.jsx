@@ -19,7 +19,7 @@ export default function Home() {
         feed.length === 0)
     ) {
       setLoading(true);
-      getUserFeed(user._id, feed.length)
+      getUserFeed(feed.length)
         .then((res) => {
           setHasMore(res.hasMore);
           setFeed([...feed, ...res.data]);

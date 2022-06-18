@@ -11,6 +11,31 @@ exports.updateUserDetails = async function (user_id, newData) {
   await User.findByIdAndUpdate(user_id, newData);
 };
 
+exports.signinAnonymously = function () {
+  return User.generateAnonymousAuthToken();
+};
+
+exports.signin = async function (credential, password) {
+  var user = await User.findOne({ account_name: credential });
+  if (!user) {
+    user = await User.findOne({ email: credential });
+
+    if (!user) {
+      throw new Error("Invalid credentials");
+    }
+  }
+
+  const isPasswordValid = await user.verifyPassword(password);
+  if (!isPasswordValid) {
+    throw new Error("Invalid credentials");
+  }
+
+  const settings = await Setting.findOne({ user_id: user._id });
+
+  const token = user.generateAuthToken();
+  return { user: { ...user._doc, settings }, token };
+};
+
 exports.getUser = async function (key, value, fields, include = null) {
   if (key === "id") {
     const data = await User.findById(value, fields).populate(include);
@@ -104,8 +129,53 @@ exports.isAccountNameAvailable = async function (account_name) {
   return !data;
 };
 
-exports.updateAccountName = async function (user_id, account_name) {
-  await User.findByIdAndUpdate(user_id, { account_name });
+exports.updateAccountName = async function (user_id, account_name, password) {
+  var user = await User.findOne({ account_name });
+  if (user) {
+    throw new Error("Account name already taken");
+  }
+
+  user = await User.findById(user_id);
+  if (!user.verifyPassword(password)) {
+    throw new Error("Invalid password");
+  }
+
+  user.account_name = account_name;
+  await user.save();
+
+  return true;
+};
+
+exports.updateEmail = async function (user_id, email, password) {
+  const mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  if (!email.match(mailFormat)) {
+    throw new Error("Email is not valid");
+  }
+
+  var user = await User.findOne({ email });
+  if (user) {
+    throw new Error("Email is already in use");
+  }
+
+  user = await User.findById(user_id);
+  if (!user.verifyPassword(password)) {
+    throw new Error("Invalid password");
+  }
+
+  user.email = email;
+  await user.save();
+
+  return true;
+};
+
+exports.updatePassword = async function (user_id, oldPassword, newPassword) {
+  var user = await User.findById(user_id);
+  if (!user.verifyPassword(oldPassword)) {
+    throw new Error("Invalid password");
+  }
+
+  user.password = newPassword;
+  await user.save();
 
   return true;
 };
@@ -170,13 +240,18 @@ exports.getUserBookmarks = async function (user_id, page) {
 };
 
 exports.createUser = async function (userData) {
-  const data = new User(userData);
+  const user = new User(userData);
+  await user.save();
 
-  await data.save();
+  const settings = new Setting({
+    user_id: user._id,
+    username: user.account_name,
+  });
+  await settings.save();
 
-  await Setting.create({ user_id: data._id, username: data.account_name });
+  const token = user.generateAuthToken();
 
-  return true;
+  return { user: { ...user._doc, settings }, token };
 };
 
 exports.getUserFeed = async function (user_id, page) {
@@ -389,6 +464,5 @@ exports.deleteUser = async function (user_id) {
   await User.deleteOne({ _id: user_id });
   await Tweet.deleteMany({ author: user_id });
   await Favorite.deleteMany({ author: user_id });
-  await Follow.deleteMany({ follower: user_id });
-  await Follow.deleteMany({ following: user_id });
-}
+  await Friendship.deleteMany({ followed_by: user_id });
+};

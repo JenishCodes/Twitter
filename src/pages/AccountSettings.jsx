@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import Header from "../components/Header";
 import {
-  reAuthenticate,
   resetPassword,
   updateAccountName,
   updateUserEmail,
@@ -30,18 +29,13 @@ export default function AccountSettings({ settingType }) {
   const handleSubmit = () => {
     setLoading(true);
 
-    reAuthenticate(password).catch((err) => {
-      setLoading(false);
-      setToast(err.code);
-    });
-
     (settingType === "account"
-      ? updateAccountName(user._id, accountName).then(() =>
+      ? updateAccountName(accountName, password).then(() =>
           setUser({ ...user, account_name: accountName })
         )
       : settingType === "email"
-      ? updateUserEmail(email).then(() => setUser({ ...user, email }))
-      : resetPassword(password)
+      ? updateUserEmail(email, password).then(() => setUser({ ...user, email }))
+      : resetPassword(password, newPassword)
     )
       .then(() => navigate("/settings", { replace: true }))
       .catch((err) => setToast(err))

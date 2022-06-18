@@ -267,19 +267,21 @@ export const timeFormatter = (timestamp, format) => {
     return Math.floor(seconds) + "s";
   }
 
-  if (now.getFullYear() === then.getFullYear()) {
-    if (
-      now.getMonth() === then.getMonth() &&
-      now.getDate() === then.getDate()
-    ) {
+  var seconds = Math.floor((now - then) / 1000);
+  var interval = seconds / 31536000;
+  if (interval < 1) {
+    interval = seconds / 86400;
+    if (interval < 1) {
       if (format === "Tweet") {
-        if (now.getHours() === then.getHours()) {
-          if (now.getMinutes() === then.getMinutes()) {
+        interval = seconds / 3600;
+        if (interval < 1) {
+          interval = seconds / 60;
+          if (interval < 1) {
             return "now";
           }
-          return `${now.getMinutes() - then.getMinutes()}m`;
+          return `${Math.floor(interval)}m`;
         }
-        return `${now.getHours() - then.getHours()}h`;
+        return `${Math.floor(interval)}h`;
       }
       return thenTime;
     }

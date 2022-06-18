@@ -17,7 +17,13 @@ const {
   getUserTweets,
   getUser,
   searchUsers,
+  deleteUser,
+  updateEmail,
+  updatePassword,
+  signin,
+  signinAnonymously,
 } = require("../controllers/userController");
+const { auth } = require("../middlewares/auth");
 
 const router = express.Router();
 
@@ -29,68 +35,59 @@ router.get("/search", async function (req, res) {
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
-router.get("/:user_id/settings", async (req, res) => {
+router.get("/settings", auth, async (req, res) => {
   try {
-    const data = await getUserSettings(req.params.user_id);
+    const data = await getUserSettings(req.user);
 
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
-router.put("/:user_id/settings", async (req, res) => {
+router.put("/settings", auth, async (req, res) => {
   try {
-    const data = await updateUserSettings(req.params.user_id, req.body);
+    const data = await updateUserSettings(req.user, req.body);
 
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
-router.get("/:user_id/history", async function (req, res) {
+router.get("/history", auth, async function (req, res) {
   try {
-    const data = await getUserHistory(req.params.user_id);
+    const data = await getUserHistory(req.user);
 
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
-router.post("/:user_id/history", async function (req, res) {
+router.post("/history", auth, async function (req, res) {
   try {
-    const data = await updateUserHistory(req.params.user_id, req.body);
+    const data = await updateUserHistory(req.user, req.body);
 
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
-router.delete("/:user_id/history", async function (req, res) {
+router.delete("/history", auth, async function (req, res) {
   try {
-    const data = await deleteUserHistory(
-      req.params.user_id,
-      req.query.delete_all
-    );
+    const data = await deleteUserHistory(req.user, req.query.delete_all);
 
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
@@ -102,8 +99,7 @@ router.get("/", async function (req, res) {
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
@@ -114,158 +110,176 @@ router.get("/isAccountNameAvailable", async function (req, res) {
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
-router.put("/:user_id/updateAccountName", async function (req, res) {
+router.put("/updateAccountName", auth, async function (req, res) {
   try {
     const data = await updateAccountName(
-      req.params.user_id,
-      req.body.account_name
+      req.user,
+      req.body.account_name,
+      req.body.password
     );
 
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
-router.get("/:user_id/replies", async function (req, res) {
+router.put("/updateEmail", auth, async function (req, res) {
+  try {
+    const data = await updateEmail(req.user, req.body.email, req.body.password);
+
+    res.send(data);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err.message);
+  }
+});
+
+router.put("/updatePassword", auth, async function (req, res) {
+  try {
+    const data = await updatePassword(
+      req.user,
+      req.body.old_password,
+      req.body.new_password
+    );
+
+    res.send(data);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err.message);
+  }
+});
+
+router.get("/bookmarks", auth, async function (req, res) {
+  try {
+    const data = await getUserBookmarks(req.user, req.query.page);
+
+    res.send(data);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err.message);
+  }
+});
+
+router.get("/:user_id/replies", auth, async function (req, res) {
   try {
     const data = await getUserReplies(req.params.user_id, req.query.page);
 
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
-router.get("/:user_id/retweets", async function (req, res) {
+router.get("/:user_id/retweets", auth, async function (req, res) {
   try {
     const data = await getUserRetweets(req.params.user_id, req.query.page);
 
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
-router.get("/:user_id/bookmarks", async function (req, res) {
-  try {
-    const data = await getUserBookmarks(req.params.user_id, req.query.page);
-
-    res.send(data);
-  } catch (err) {
-    console.log(err);
-    res.status(400);
-    res.send(err.message);
-  }
-});
-
-router.get("/:user_id/mentions", async function (req, res) {
+router.get("/:user_id/mentions", auth, async function (req, res) {
   try {
     const data = await getUserMentions(req.params.user_id, req.query.page);
 
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
-router.get("/:user_id/tweets", async function (req, res) {
+router.get("/:user_id/tweets", auth, async function (req, res) {
   try {
     const data = await getUserTweets(req.params.user_id, req.query.page);
 
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
-router.get("/:user_id/feed", async function (req, res) {
+router.get("/feed", auth, async function (req, res) {
   try {
-    const data = await getUserFeed(req.params.user_id, req.query.page);
+    const data = await getUserFeed(req.user, req.query.page);
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
-router.put("/:user_id/bookmark", async function (req, res) {
+router.post("/signinAnonymously", async function (req, res) {
   try {
-    const data = await updateUserDetails(req.params.user_id, {
-      $push: { bookmarks: req.body.tweet_id },
-    });
-
-    res.send(data);
+    const token = signinAnonymously();
+    res.send(token);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
-router.put("/:user_id/unbookmark", async function (req, res) {
+router.post("/signin", async function (req, res) {
   try {
-    const data = await updateUserDetails(req.params.user_id, {
-      $pull: { bookmarks: req.body.tweet_id },
-    });
+    const { user, token } = await signin(
+      req.body.credential,
+      req.body.password
+    );
 
-    res.send(data);
+    res
+      .header("x-auth-token", token)
+      .header("access-control-expose-headers", "x-auth-token")
+      .send(user);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
 router.post("/", async function (req, res) {
   try {
-    const data = await createUser(req.body);
+    const { token, user } = await createUser(req.body);
 
-    res.send(data);
+    res
+      .header("x-auth-token", token)
+      .header("access-control-expose-headers", "x-auth-token")
+      .send(user);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
-router.put("/:user_id", async function (req, res) {
+router.put("/", auth, async function (req, res) {
   try {
-    const data = await updateUserDetails(req.params.user_id, req.body);
+    const data = await updateUserDetails(req.user, req.body);
 
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
-router.delete("/:user_id", async function (req, res) {
+router.delete("/:user_id", auth, async function (req, res) {
   try {
-    const data = await deleteUser(req.params.user_id);
+    const data = await deleteUser(req.user);
 
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 

@@ -16,8 +16,7 @@ router.get("/:account_name/followers", async function (req, res) {
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
@@ -28,8 +27,7 @@ router.get("/:account_name/following", async function (req, res) {
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
@@ -40,8 +38,7 @@ router.get("/", async function (req, res) {
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
@@ -52,8 +49,7 @@ router.post("/", async function (req, res) {
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 
@@ -67,8 +63,7 @@ router.delete("/", async function (req, res) {
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err.message);
+    res.status(400).send(err.message);
   }
 });
 

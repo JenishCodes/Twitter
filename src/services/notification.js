@@ -1,19 +1,20 @@
 import api from "./api";
 
-export async function getNotifications(userId, page) {
+export async function getNotifications(page) {
   try {
-    const res = await api.get(`/notification/${userId}?page=${page}`);
+    const res = await api.get(`/notification?page=${page}`);
 
-    api.put(`/notification/${userId}/seen`);
+    api.put(`/notification/seen`);
+
     return res.data;
   } catch (err) {
     console.log(err);
   }
 }
 
-export async function getUnseenNotififcationCount(userId) {
+export async function getUnseenNotififcationCount() {
   try {
-    const res = await api.get(`/notification/${userId}/unseen`);
+    const res = await api.get(`/notification/unseen`);
     return res.data;
   } catch (err) {
     console.log(err);

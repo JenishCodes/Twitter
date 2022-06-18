@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
+import { AuthContext } from "../context";
 import { signup } from "../services/user";
 
 export default function Signup() {
@@ -12,6 +13,8 @@ export default function Signup() {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { setUser } = useContext(AuthContext)
+  const navigate = useNavigate()
 
   const handleSignup = () => {
     if (!email || !password || !name || !username) {
@@ -21,6 +24,10 @@ export default function Signup() {
 
     setLoading(true);
     signup(name, email, password, username)
+      .then((user) => {
+        setUser(user)
+        navigate("/home")
+    })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   };

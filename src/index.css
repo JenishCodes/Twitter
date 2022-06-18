@@ -217,6 +217,9 @@ a {
   z-index: 2;
   top: 0%;
 }
+.square{
+  aspect-ratio: 1 !important;
+}
 @media screen and (max-width: 575px) {
   .bottom-sm-0 {
     bottom: 0 !important;

@@ -6,12 +6,13 @@ const {
   createFavorite,
   deleteFavorite,
 } = require("../controllers/favoriteController");
+const { auth } = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.get("/isFavoriter", async function (req, res) {
+router.get("/isFavoriter", auth, async function (req, res) {
   try {
-    const data = await isFavorite(req.query.tweet_id, req.query.user_id);
+    const data = await isFavorite(req.query.tweet_id, req.user);
 
     res.send(data);
   } catch (err) {
@@ -32,9 +33,9 @@ router.get("/:tweet_id/favoriters", async function (req, res) {
   }
 });
 
-router.get("/:user_id/favorites", async function (req, res) {
+router.get("/:user_id/favorites", auth, async function (req, res) {
   try {
-    const data = await getFavorites(req.params.user_id, req.query.page);
+    const data = await getFavorites(req.user, req.query.page);
     res.send(data);
   } catch (err) {
     console.log(err);
@@ -43,26 +44,27 @@ router.get("/:user_id/favorites", async function (req, res) {
   }
 });
 
-router.post("/", async function (req, res) {
+router.post("/", auth, async function (req, res) {
   try {
-    const data = await createFavorite(req.body);
+    const data = await createFavorite({
+      author: req.user,
+      tweet: req.body.tweet,
+    });
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err);
+    res.status(400).send(err.message);
   }
 });
 
-router.delete("/", async function (req, res) {
+router.delete("/", auth, async function (req, res) {
   try {
-    const data = await deleteFavorite(req.query.tweet_id, req.query.author_id);
+    const data = await deleteFavorite(req.query.tweet_id, req.user);
 
     res.send(data);
   } catch (err) {
     console.log(err);
-    res.status(400);
-    res.send(err);
+    res.status(400).send(err.message);
   }
 });
 

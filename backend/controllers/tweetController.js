@@ -97,7 +97,7 @@ exports.createTweet = async function (tweetData) {
         if (user && user.mentionNotification) {
           notificationController.createNotification({
             message: `${author.account_name} mentioned you in a tweet`,
-            user: user.userId,
+            user: user.user_id,
             action: "/" + author.account_name + "/status/" + tweet._id,
           });
         }
@@ -105,9 +105,9 @@ exports.createTweet = async function (tweetData) {
     );
   }
 
-  if (tweetData.referenced_tweet) {
+  if (tweet.referenced_tweet) {
     const referenced_tweet =
-      tweetData.referenced_tweet[tweetData.referenced_tweet.length - 1];
+      tweet.referenced_tweet[tweet.referenced_tweet.length - 1];
 
     if (referenced_tweet.type === "replied_to") {
       await Tweet.findByIdAndUpdate(referenced_tweet.id, {
@@ -139,7 +139,8 @@ exports.createTweet = async function (tweetData) {
 
 exports.getTweetReplies = async function (tweet_id, user_id, page) {
   var userReplies = [];
-  if (page === 0) {
+
+  if (page === 0 || user_id) {
     userReplies = await Tweet.find({
       author: ObjectId(user_id),
       "referenced_tweet.type": "replied_to",
@@ -150,7 +151,7 @@ exports.getTweetReplies = async function (tweet_id, user_id, page) {
   }
 
   const replies = await Tweet.find({
-    author: { $ne: ObjectId(user_id) },
+    author: { $ne: user_id ? ObjectId(user_id) : null },
     "referenced_tweet.type": "replied_to",
     "referenced_tweet.id": ObjectId(tweet_id),
   })
@@ -158,7 +159,7 @@ exports.getTweetReplies = async function (tweet_id, user_id, page) {
     .skip(page)
     .limit(10)
     .populate("author", "name account_name auth_id profile_image_url");
-  console.log([...userReplies, ...replies]);
+
   return { data: [...userReplies, ...replies], hasMore: replies.length === 10 };
 };
 
@@ -177,9 +178,11 @@ exports.getTweetReferences = async function (tweet_id) {
     referenced_tweets.map(async (reference) => {
       if (reference.author) {
         const ref_tweet_author = await userController.getUser(
+          "_id",
           reference.author,
           "name account_name auth_id profile_image_url"
         );
+
         return { ...reference, author: ref_tweet_author };
       } else {
         return null;

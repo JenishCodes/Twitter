@@ -61,7 +61,7 @@ export default function Profile(props) {
       <div className="photo-btn d-flex justify-content-between px-3">
         <div className="photo w-25">
           <img
-            className="pointer w-100 rounded-circle"
+            className="pointer w-100 rounded-circle square"
             src={props.user.profile_image_url}
             alt="profile"
             onClick={() => {

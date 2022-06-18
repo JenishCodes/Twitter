@@ -38,9 +38,7 @@ export async function updatePrivateMetrics(tweet_id, newData) {
 
 export async function isRetweeter(tweet_id, user_id) {
   try {
-    const res = await api.get(
-      `/tweet/${tweet_id}/isRetweeter?user_id=${user_id}`
-    );
+    const res = await api.get(`/tweet/${tweet_id}/isRetweeter`);
 
     return res.data;
   } catch (err) {
@@ -57,22 +55,18 @@ export async function getRetweeters(tweet_id, page) {
   }
 }
 
-export async function deleteTweet(tweet_id, author_id = null) {
+export async function deleteTweet(tweet_id) {
   try {
-    if (author_id) {
-      await api.delete(`/tweet/${tweet_id}?author_id=${author_id}`);
-    } else {
-      await api.delete(`/tweet/${tweet_id}`);
-    }
+    await api.delete(`/tweet/${tweet_id}`);
   } catch (err) {
     throw err;
   }
 }
 
-export async function getTweetReplies(tweet_id, user_id, page) {
+export async function getTweetReplies(tweet_id, page) {
   try {
     const replies = await api.get(
-      `/tweet/${tweet_id}/replies?user_id=${user_id}&page=${page}`
+      `/tweet/${tweet_id}/replies?page=${page}`
     );
     return replies.data;
   } catch (err) {
@@ -89,33 +83,6 @@ export async function getTweet(tweet_id) {
   try {
     const tweet = await api.get(`/tweet/${tweet_id}`);
     return tweet.data;
-  } catch (err) {
-    throw err;
-  }
-}
-export async function getTweetTimeline(tweet_id, user_id) {
-  try {
-    const tweet = await api.get(`/tweet/${tweet_id}`);
-
-    var references = { data: {} };
-    var replies = { data: {} };
-
-    if (tweet.data.data.referenced_tweet.length > 0) {
-      references = await api.get(`/tweet/${tweet_id}/references`);
-    }
-    if (tweet.data.data.public_metrics.reply_count > 0) {
-      replies = await api.get(
-        `/tweet/${tweet_id}/replies?user_id=${user_id}&page=0`
-      );
-    }
-
-    return {
-      data: tweet.data.data,
-      includes: {
-        replies: replies.data.data,
-        references: references.data.data,
-      },
-    };
   } catch (err) {
     throw err;
   }
