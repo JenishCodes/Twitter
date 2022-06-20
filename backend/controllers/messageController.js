@@ -19,10 +19,7 @@ exports.createMessage = async function (messageData) {
 
   await conversationController.updateConversationDetails(
     { conversationId: messageData.conversationId },
-    {
-      conversationId: messageData.conversationId,
-      lastMessage: messageData.text,
-    }
+    { lastMessage: messageData.text }
   );
 
   return data;
@@ -60,6 +57,6 @@ exports.deleteMessage = async function (message_id) {
 };
 
 exports.destroyMessages = async function (conversation_id) {
-  await Message.deleteMany({ conversationId: conversation_id  });
+  await Message.deleteMany({ conversationId: conversation_id });
   return true;
 };

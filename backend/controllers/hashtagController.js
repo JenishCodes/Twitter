@@ -26,25 +26,24 @@ exports.searchHashtag = async function (query, page, limit) {
     .skip(page)
     .limit(limit)
     .select({ tag: 1, tweet_count: { $size: "$tweets" } });
-  
-  return {data, hasMore: data.length === limit};
+
+  return { data, hasMore: data.length === limit };
 };
 
 exports.getHashtagTweets = async function (tag, page) {
   const hashtag = await Hashtag.findOne({ tag });
 
   if (hashtag) {
-    
     const data = await tweetController.getTweets(
       { _id: { $in: hashtag.tweets } },
-    page,
-    "name account_name auth_id profile_image_url"
-  );
-  
-  return { data, hasMore: data.length === 20 };
+      page,
+      "name account_name auth_id profile_image_url"
+    );
+
+    return { data, hasMore: data.length === 20 };
   } else {
-    return {data:[], hasMore:false}
-}
+    return { data: [], hasMore: false };
+  }
 };
 
 exports.createHashtag = async function (hashtagData) {

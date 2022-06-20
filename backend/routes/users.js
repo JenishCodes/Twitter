@@ -166,7 +166,7 @@ router.get("/bookmarks", auth, async function (req, res) {
   }
 });
 
-router.get("/:user_id/replies", auth, async function (req, res) {
+router.get("/:user_id/replies", async function (req, res) {
   try {
     const data = await getUserReplies(req.params.user_id, req.query.page);
 
@@ -177,7 +177,7 @@ router.get("/:user_id/replies", auth, async function (req, res) {
   }
 });
 
-router.get("/:user_id/retweets", auth, async function (req, res) {
+router.get("/:user_id/retweets", async function (req, res) {
   try {
     const data = await getUserRetweets(req.params.user_id, req.query.page);
 
@@ -188,7 +188,7 @@ router.get("/:user_id/retweets", auth, async function (req, res) {
   }
 });
 
-router.get("/:user_id/mentions", auth, async function (req, res) {
+router.get("/:user_id/mentions", async function (req, res) {
   try {
     const data = await getUserMentions(req.params.user_id, req.query.page);
 
@@ -199,7 +199,7 @@ router.get("/:user_id/mentions", auth, async function (req, res) {
   }
 });
 
-router.get("/:user_id/tweets", auth, async function (req, res) {
+router.get("/:user_id/tweets", async function (req, res) {
   try {
     const data = await getUserTweets(req.params.user_id, req.query.page);
 
@@ -225,7 +225,6 @@ router.post("/signinAnonymously", async function (req, res) {
     const token = signinAnonymously();
     res.send(token);
   } catch (err) {
-    console.log(err);
     res.status(400).send(err.message);
   }
 });
@@ -242,7 +241,6 @@ router.post("/signin", async function (req, res) {
       .header("access-control-expose-headers", "x-auth-token")
       .send(user);
   } catch (err) {
-    console.log(err);
     res.status(400).send(err.message);
   }
 });
@@ -272,7 +270,7 @@ router.put("/", auth, async function (req, res) {
   }
 });
 
-router.delete("/:user_id", auth, async function (req, res) {
+router.delete("/", auth, async function (req, res) {
   try {
     const data = await deleteUser(req.user);
 

@@ -1,31 +1,24 @@
 const { Favorite } = require("../models/favorite");
 const tweetController = require("./tweetController");
-const userController = require("./userController");
 const { ObjectId } = require("mongoose").Types;
 
 exports.destoryFavorites = async function (tweet) {
-  await Favorite.deleteMany({ tweet: ObjectId(tweet) });
+  const favorites = await Favorite.find({ tweet: ObjectId(tweet) });
+
+  await Promise.all(
+    favorites.map(async (favorite) => {
+      await Favorite.findOneAndRemove({ _id: favorite._id });
+    })
+  );
 
   return true;
 };
 
 exports.deleteFavorite = async function (tweet, author) {
-  const favorite = await Favorite.findOne({
-    author: ObjectId(favoriteData.author),
-    tweet: ObjectId(favoriteData.tweet),
+  await Favorite.findOneAndRemove({
+    author: ObjectId(author),
+    tweet: ObjectId(tweet),
   });
-
-  if (favorite) {
-    await Favorite.findByIdAndRemove(favorite._id);
-
-    await tweetController.updateTweetDetails(tweet, {
-      $inc: { "public_metrics.like_count": -1 },
-    });
-
-    await userController.updateUserDetails(author, {
-      $inc: { favourites_count: -1 },
-    });
-  }
 
   return true;
 };
@@ -67,15 +60,9 @@ exports.getFavorites = async function (user, page) {
 };
 
 exports.createFavorite = async function (favoriteData) {
-  await Favorite.create(favoriteData);
+  const favorite = new Favorite(favoriteData);
 
-  await userController.updateUserDetails(favoriteData.author, {
-    $inc: { favourites_count: 1 },
-  });
-
-  await tweetController.updateTweetDetails(favoriteData.tweet, {
-    $inc: { "public_metrics.like_count": 1 },
-  });
+  await favorite.save();
 
   return true;
 };

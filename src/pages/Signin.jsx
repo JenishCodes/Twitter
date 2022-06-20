@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
@@ -6,32 +6,27 @@ import Modal from "../components/Modal";
 import { AuthContext } from "../context";
 import { signin } from "../services/user";
 
-export default function Signin() {
+export default function Signin({ setToast }) {
   const [credential, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSignin = () => {
     if (!credential || !password) {
-      setError("Please fill all fields");
+      setToast({message: "Please fill all fields", type: "danger"});
       return;
     }
     setLoading(true);
     signin(credential, password)
       .then((user) => {
         setUser(user);
-        navigate("/home")
+        navigate("/home");
       })
-      .catch((err) => setError(err.code))
+      .catch((err) => setToast({message: err.response.data, type: "danger"}))
       .finally(() => setLoading(false));
   };
-
-  useEffect(() => {
-    if (error) setTimeout(() => setError(""), 5000);
-  }, [error]);
 
   return (
     <div className="signin py-3">
@@ -56,23 +51,6 @@ export default function Signin() {
           />
         </Modal>
       ) : null}
-      {error ? (
-        <div
-          className="text-white bg-danger rounded-3 p-2 position-absolute"
-          style={{ width: "300px", left: "50%", transform: "translateX(-50%)" }}
-        >
-          <div className="d-flex align-items-center justify-content-between">
-            <div className="d-flex align-items-center">
-              <i className="bi bi-exclamation-circle fs-2"></i>
-              <div className="ms-2">{error}</div>
-            </div>
-            <div
-              onClick={() => setError("")}
-              className="btn-close pointer btn-close-white me-2 m-auto"
-            ></div>
-          </div>
-        </div>
-      ) : null}
       <div
         className="p-3 pt-0 d-flex justify-content-center"
         style={{ fontSize: "30px" }}
@@ -95,7 +73,7 @@ export default function Signin() {
               onChange={(e) => setEmail(e.currentTarget.value)}
               autoComplete="off"
             />
-            <label htmlFor="email-input">Email</label>
+            <label htmlFor="email-input">Account Name / Email</label>
           </div>
           <div className="form-floating mb-1">
             <input

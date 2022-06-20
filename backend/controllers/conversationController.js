@@ -45,16 +45,18 @@ exports.getConversation = async function (conversation_id, user_id) {
 };
 
 exports.updateConversationDetails = async function (condition, data) {
-  await Conversation.findOneAndUpdate(condition, data, {
-    upsert: true,
-  });
+  await Conversation.findOneAndUpdate(
+    condition,
+    { ...data, condition },
+    {
+      upsert: true,
+    }
+  );
   return true;
 };
 
 exports.deleteConversation = async function (conversation_id) {
-  await messageController.destroyMessages(conversation_id);
-
-  await Conversation.findOneAndDelete({
+  await Conversation.findOneAndRemove({
     conversationId: conversation_id,
   });
 

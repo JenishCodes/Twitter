@@ -1,3 +1,4 @@
+const { Conversation } = require("../models/conversation");
 const { Favorite } = require("../models/favorite");
 const { Friendship } = require("../models/friendship");
 const { History } = require("../models/history");
@@ -8,7 +9,7 @@ const tweetController = require("./tweetController");
 const { ObjectId } = require("mongoose").Types;
 
 exports.updateUserDetails = async function (user_id, newData) {
-  await User.findByIdAndUpdate(user_id, newData);
+  return await User.findByIdAndUpdate(user_id, newData);
 };
 
 exports.signinAnonymously = function () {
@@ -247,6 +248,7 @@ exports.createUser = async function (userData) {
     user_id: user._id,
     username: user.account_name,
   });
+
   await settings.save();
 
   const token = user.generateAuthToken();
@@ -461,8 +463,28 @@ exports.getUserFeed = async function (user_id, page) {
 };
 
 exports.deleteUser = async function (user_id) {
-  await User.deleteOne({ _id: user_id });
-  await Tweet.deleteMany({ author: user_id });
-  await Favorite.deleteMany({ author: user_id });
-  await Friendship.deleteMany({ followed_by: user_id });
+  await User.findOneAndRemove({ _id: ObjectId(user_id) });
+
+  const tweeets = await Tweet.find({ author: ObjectId(user_id) });
+  await Promise.all(
+    tweeets.map(async (tweet) => {
+      await tweetController.deleteTweet(tweet._id);
+    })
+  );
+
+  const friendships = await Friendship.find({
+    friendship_id: { $regex: new RegExp(user_id) },
+  });
+  await Promise.all(
+    friendships.map(async (friendship) => {
+      await Friendship.findOneAndRemove({ _id: friendship._id });
+    })
+  );
+
+  const favorites = await Favorite.find({ author: ObjectId(user_id) });
+  await Promise.all(
+    favorites.map(async (favorite) => {
+      await Favorite.findOneAndRemove({ _id: favorite._id });
+    })
+  );
 };

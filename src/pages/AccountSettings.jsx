@@ -5,12 +5,12 @@ import {
   updateAccountName,
   updateUserEmail,
 } from "../services/user";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Loading from "../components/Loading";
 import { AuthContext } from "../context";
 
-export default function AccountSettings({ settingType }) {
+export default function AccountSettings() {
   const [accountName, setAccountName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -19,9 +19,17 @@ export default function AccountSettings({ settingType }) {
   const [toast, setToast] = useState("");
   const [password, setPassword] = useState("");
   const { user, setUser } = useContext(AuthContext);
+  const { setting_type } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (
+      setting_type !== "account-name" &&
+      setting_type !== "email" &&
+      setting_type !== "password"
+    ) {
+      navigate("/settings");
+    }
     setAccountName(user.account_name);
     setEmail(user.email);
   }, []);
@@ -29,11 +37,11 @@ export default function AccountSettings({ settingType }) {
   const handleSubmit = () => {
     setLoading(true);
 
-    (settingType === "account"
+    (setting_type === "account-name"
       ? updateAccountName(accountName, password).then(() =>
           setUser({ ...user, account_name: accountName })
         )
-      : settingType === "email"
+      : setting_type === "email"
       ? updateUserEmail(email, password).then(() => setUser({ ...user, email }))
       : resetPassword(password, newPassword)
     )
@@ -50,9 +58,9 @@ export default function AccountSettings({ settingType }) {
     <div>
       <Helmet>
         <title>
-          {settingType === "accountName"
+          {setting_type === "account-name"
             ? "Change account name "
-            : settingType === "email"
+            : setting_type === "email"
             ? "Change email "
             : "Update password "}
           / Twitter
@@ -60,9 +68,9 @@ export default function AccountSettings({ settingType }) {
       </Helmet>
       <Header
         title={
-          settingType === "accountName"
+          setting_type === "account-name"
             ? "Change account name "
-            : settingType === "email"
+            : setting_type === "email"
             ? "Change email "
             : "Update password "
         }
@@ -106,34 +114,34 @@ export default function AccountSettings({ settingType }) {
         </div>
         <div className="form-floating my-3">
           <input
-            type={settingType === "accountName" ? "text" : settingType}
+            type={setting_type === "account-name" ? "text" : setting_type}
             className="form-control rounded-5"
             style={{ backgroundColor: "transparent" }}
             disabled={loading}
             value={
-              settingType === "password"
+              setting_type === "password"
                 ? newPassword
-                : settingType === "email"
+                : setting_type === "email"
                 ? email
                 : accountName
             }
             onChange={(e) =>
-              (settingType === "email"
+              (setting_type === "email"
                 ? setEmail
-                : settingType === "password"
+                : setting_type === "password"
                 ? setNewPassword
                 : setAccountName)(e.currentTarget.value)
             }
           />
           <label htmlFor="account-name-input">
-            {settingType === "email"
+            {setting_type === "email"
               ? "Email"
-              : settingType === "password"
+              : setting_type === "password"
               ? "New Password"
               : "Account Name"}
           </label>
         </div>
-        {settingType === "password" && (
+        {setting_type === "password" && (
           <div className="form-floating my-3">
             <input
               type="password"
@@ -152,10 +160,10 @@ export default function AccountSettings({ settingType }) {
         className={`rounded-0 py-2 btn w-100 hover d-flex justify-content-center ${
           loading ||
           !password ||
-          (settingType === "password" &&
+          (setting_type === "password" &&
             (!password || !confirmPassword || password !== confirmPassword)) ||
-          (settingType === "email" && (!email || email === user.email)) ||
-          (settingType === "accountName" &&
+          (setting_type === "email" && (!email || email === user.email)) ||
+          (setting_type === "account-name" &&
             (!accountName || accountName === user.account_name))
             ? "disabled"
             : ""
@@ -167,9 +175,9 @@ export default function AccountSettings({ settingType }) {
           className="me-3"
           style={{ width: "20px", height: "20px" }}
         />
-        {settingType === "email"
+        {setting_type === "email"
           ? "Update email"
-          : settingType === "password"
+          : setting_type === "password"
           ? "Update password"
           : "Update account name"}
       </div>

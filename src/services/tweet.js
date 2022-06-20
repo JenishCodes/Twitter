@@ -1,4 +1,9 @@
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  deleteObject,
+} from "firebase/storage";
 import { storage } from "../firebase";
 import { extractEntities } from "../utils";
 import api from "./api";
@@ -14,15 +19,17 @@ export async function postTweet(tweet) {
     });
 
     if (tweet.media) {
-      const mediaRef = ref(storage, `/tweet_images/${res.data.id}`);
+      const mediaRef = ref(storage, `/tweet_images/${res.data}`);
 
       await uploadBytes(mediaRef, tweet.media);
       const media = await getDownloadURL(mediaRef);
 
-      await api.put(`/tweet/update?id=${res.data.id}`, {
+      await api.put(`/tweet/update?id=${res.data}`, {
         media,
       });
     }
+
+    return res.data;
   } catch (err) {
     throw err;
   }
@@ -55,9 +62,16 @@ export async function getRetweeters(tweet_id, page) {
   }
 }
 
-export async function deleteTweet(tweet_id) {
+export async function deleteTweet(tweet_id, isRetweet=false) {
   try {
-    await api.delete(`/tweet/${tweet_id}`);
+    await api.delete(`/tweet/${tweet_id}?isRetweet=${isRetweet}`);
+
+    const mediaRef = ref(storage, `/tweet_images/${tweet_id}`);
+
+    getDownloadURL(mediaRef)
+      .then(async (media) => await deleteObject(mediaRef))
+      .catch(() => { });
+    
   } catch (err) {
     throw err;
   }
@@ -65,9 +79,7 @@ export async function deleteTweet(tweet_id) {
 
 export async function getTweetReplies(tweet_id, page) {
   try {
-    const replies = await api.get(
-      `/tweet/${tweet_id}/replies?page=${page}`
-    );
+    const replies = await api.get(`/tweet/${tweet_id}/replies?page=${page}`);
     return replies.data;
   } catch (err) {
     throw err;

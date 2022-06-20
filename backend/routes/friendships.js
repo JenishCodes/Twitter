@@ -6,6 +6,7 @@ const {
   deleteFriendship,
   getRelationship,
 } = require("../controllers/friendshipController");
+const { auth } = require("../middlewares/auth");
 
 const router = express.Router();
 
@@ -42,7 +43,7 @@ router.get("/", async function (req, res) {
   }
 });
 
-router.post("/", async function (req, res) {
+router.post("/", auth, async function (req, res) {
   try {
     const data = await createFriendship(req.body);
 
@@ -53,7 +54,7 @@ router.post("/", async function (req, res) {
   }
 });
 
-router.delete("/", async function (req, res) {
+router.delete("/", auth, async function (req, res) {
   try {
     const data = await deleteFriendship(
       req.query.source_id,

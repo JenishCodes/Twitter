@@ -42,7 +42,7 @@ export default function Settings() {
           }}
           className="hover pointer"
           onClick={() =>
-            navigate("account_name", {
+            navigate("account-name", {
               state: { account_name: user.account_name },
             })
           }

@@ -73,12 +73,7 @@ code {
 }
 .hover:hover {
   background-color: var(--hover) !important;
-}
-.hover:hover {
   color: currentColor;
-}
-.hovered {
-  background-color: var(--hover) !important;
 }
 .btn:focus {
   box-shadow: none !important;
@@ -217,8 +212,11 @@ a {
   z-index: 2;
   top: 0%;
 }
-.square{
+.square {
   aspect-ratio: 1 !important;
+}
+.white-space-pre-line {
+  white-space: pre-line !important;
 }
 @media screen and (max-width: 575px) {
   .bottom-sm-0 {
@@ -232,6 +230,15 @@ a {
   }
   .w-sm-100 {
     width: 100% !important;
+  }
+  .hover-underline:hover {
+    text-decoration: none;
+  }
+  .hover:hover {
+    background-color: transparent !important;
+  }
+  .filter:hover {
+    filter: brightness(1);
   }
 }
 @media screen and (min-width: 576px) {

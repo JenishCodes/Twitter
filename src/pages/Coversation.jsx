@@ -99,7 +99,7 @@ export default function Chat() {
 
   useEffect(() => {
     if (socket.current) {
-      socket.current.on("receive-msg", setLastMessage);
+      socket.current.on("message-received", setLastMessage);
     }
   }, [socket.current]);
 
@@ -159,7 +159,7 @@ export default function Chat() {
 
     sendMessage(message)
       .then((res) => {
-        socket.current.emit("send-msg", res);
+        socket.current.emit("messae-sent", res);
         handleNewMessage(res);
         setText("");
       })

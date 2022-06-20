@@ -1,8 +1,7 @@
-const { Setting } = require("../models/setting");
+const { Favorite } = require("../models/favorite");
+const { Notification } = require("../models/notification");
 const { Tweet } = require("../models/tweet");
-const favoriteController = require("./favoriteController");
-const hashtagController = require("./hashtagController");
-const notificationController = require("./notificationController");
+const { User } = require("../models/user");
 const userController = require("./userController");
 const { ObjectId } = require("mongoose").Types;
 
@@ -24,44 +23,35 @@ exports.searchTweets = async function (query, page) {
 };
 
 exports.deleteTweet = async function (tweet_id, author_id) {
-  var tweet;
-
   if (author_id) {
-    tweet = await Tweet.findOne({
+    await Tweet.findOneAndRemove({
       author: ObjectId(author_id),
       "referenced_tweet.type": "retweet_of",
       "referenced_tweet.id": tweet_id,
     });
+    return;
   } else {
-    tweet = await Tweet.findById(tweet_id);
+    await Tweet.findOneAndRemove({ _id: ObjectId(tweet_id) });
   }
 
-  if (tweet.referenced_tweet) {
-    if (tweet.referenced_tweet.type === "replied_to") {
-      await Tweet.findByIdAndUpdate(tweet_id, {
-        $inc: { "public_metrics.reply_count": -1 },
-      });
-    } else {
-      await Tweet.findByIdAndUpdate(tweet_id, {
-        $inc: { "public_metrics.retweet_count": -1 },
-      });
-    }
-  }
-
-  await Tweet.deleteMany({
+  const retweets = await Tweet.find({
     "referenced_tweet.type": "retweet_of",
-    "referenced_tweet.id": ObjectId(tweet._id),
+    "referenced_tweet.id": tweet_id,
   });
-
-  await favoriteController.destoryFavorites(tweet._id);
-
   await Promise.all(
-    tweet.entities.hashtags.map(async (hashtag) => {
-      await hashtagController.removeTweetFromHashtag(hashtag.tag, tweet._id);
+    retweets.map(async (retweet) => {
+      await Tweet.findOneAndRemove({ _id: retweet._id });
     })
   );
 
-  await Tweet.findByIdAndRemove(tweet._id);
+  const favorites = await Favorite.find({
+    tweet: tweet_id,
+  });
+  await Promise.all(
+    favorites.map(async (favorite) => {
+      await Favorite.findOneAndRemove({ _id: favorite._id });
+    })
+  );
 
   return true;
 };
@@ -73,68 +63,48 @@ exports.createTweet = async function (tweetData) {
 
   await tweet.save();
 
-  if (tweet.entities.hashtags.length > 0) {
-    await Promise.all(
-      tweet.entities.hashtags.map(async (hashtag) => {
-        await hashtagController.addTweetToHashtag(hashtag.tag, tweet._id);
-      })
-    );
-  }
+  const { account_name } = await User.findById(tweet.author, "account_name");
 
-  const author = await userController.getUser(
-    "id",
-    data.author,
-    "account_name"
-  );
+  var reference_tweet;
+  if (tweet.referenced_tweet.length > 0) {
+    reference_tweet = tweet.referenced_tweet[tweet.referenced_tweet.length - 1];
+
+    if (reference_tweet.type === "replied_to") {
+      await Tweet.findByIdAndUpdate(reference_tweet.id, {
+        $inc: { "public_metrics.reply_count": 1 },
+      });
+
+      const replyNotification = new Notification({
+        message: `${account_name} replied to your tweet`,
+        user: replyTo,
+        action: "/" + account_name + "/status/" + tweet._id,
+      });
+
+      await replyNotification.save({ validateBeforeSave: false });
+    } else {
+      await Tweet.findByIdAndUpdate(reference_tweet.id, {
+        $inc: { "public_metrics.retweet_count": 1 },
+      });
+
+      return tweet._id;
+    }
+  }
 
   if (tweet.entities.mentions.length > 0) {
     await Promise.all(
       tweet.entities.mentions.map(async (mention) => {
-        const user = await Setting.findOne({
-          username: mention.account_name,
+        const mentionNotification = new Notification({
+          message: `${account_name} mentioned you in a tweet`,
+          user: mention.account_name,
+          action: "/" + account_name + "/status/" + tweet._id,
         });
 
-        if (user && user.mentionNotification) {
-          notificationController.createNotification({
-            message: `${author.account_name} mentioned you in a tweet`,
-            user: user.user_id,
-            action: "/" + author.account_name + "/status/" + tweet._id,
-          });
-        }
+        await mentionNotification.save({ validateBeforeSave: false });
       })
     );
   }
 
-  if (tweet.referenced_tweet) {
-    const referenced_tweet =
-      tweet.referenced_tweet[tweet.referenced_tweet.length - 1];
-
-    if (referenced_tweet.type === "replied_to") {
-      await Tweet.findByIdAndUpdate(referenced_tweet.id, {
-        $inc: { "public_metrics.reply_count": 1 },
-      });
-
-      const user = await Setting.findOne({ username: replyTo });
-
-      if (user && user.replyNotification) {
-        notificationController.createNotification({
-          message: `${author.account_name} replied to your tweet`,
-          user: user.userId,
-          action: "/" + author.account_name + "/status/" + tweet._id,
-        });
-      }
-    } else {
-      await Tweet.findByIdAndUpdate(referenced_tweet.id, {
-        $inc: { "public_metrics.retweet_count": 1 },
-      });
-    }
-  }
-
-  await userController.updateUserDetails(data.author, {
-    $inc: { tweets_count: 1 },
-  });
-
-  return tweet.id;
+  return tweet._id;
 };
 
 exports.getTweetReplies = async function (tweet_id, user_id, page) {

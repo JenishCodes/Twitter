@@ -15,16 +15,19 @@ exports.auth = function (req, res, next) {
 };
 
 exports.optionalAuth = function (req, res, next) {
-  const token = req.header("x-auth-token");
-  if (!token) {
-    next();
-  } else {
-    try {
+  try {
+    const token = req.header("x-auth-token");
+
+    if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = decoded._id;
-      next();
-    } catch (err) {
-      return res.status(400).send("Invalid token.");
+
+      if (decoded._id !== "anonymous") {
+        req.user = decoded._id;
+      }
     }
+    
+    next();
+  } catch (err) {
+    return res.status(400).send("Invalid token.");
   }
 };

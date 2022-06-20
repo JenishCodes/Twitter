@@ -8,7 +8,7 @@ import { Helmet } from "react-helmet-async";
 
 export default function EditProfile() {
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [website, setWebsite] = useState("");
@@ -40,7 +40,10 @@ export default function EditProfile() {
       profile_image_url: image,
       banner_image_url: banner,
     })
-      .then(() => navigate(`/${user.account_name}`, { replace: true }))
+      .then((res) => {
+        setUser(res);
+        navigate(`/${user.account_name}`, { replace: true });
+      })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   };
@@ -142,6 +145,10 @@ export default function EditProfile() {
             style={{ backgroundColor: "transparent", height: "200%" }}
             maxLength={256}
             value={description}
+            onLoad={(e) =>
+              (e.currentTarget.style.height =
+                e.currentTarget.scrollHeight + "px")
+            }
             onChange={(e) => {
               setDescription(e.currentTarget.value);
               e.currentTarget.style.height =
@@ -153,6 +160,7 @@ export default function EditProfile() {
         <div className="form-floating mx-4 my-4">
           <input
             type="text"
+            maxLength={64}
             className="form-control rounded-5"
             style={{ backgroundColor: "transparent" }}
             onChange={(e) => setLocation(e.currentTarget.value)}
@@ -162,7 +170,7 @@ export default function EditProfile() {
         </div>
         <div className="form-floating mx-4 my-4">
           <input
-            type="text"
+            type="url"
             className="form-control rounded-5"
             style={{ backgroundColor: "transparent" }}
             onChange={(e) => setWebsite(e.currentTarget.value)}

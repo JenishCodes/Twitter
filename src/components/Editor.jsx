@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context";
 import { searchHashtags } from "../services/hashtag";
 import { postTweet } from "../services/tweet";
@@ -12,7 +12,7 @@ import Modal from "./Modal";
 export default function Editor({
   show,
   reference_tweet,
-  referenced_tweets,
+  referenced_tweet,
   setShow,
 }) {
   const { user } = useContext(AuthContext);
@@ -23,6 +23,7 @@ export default function Editor({
   const [image, setImage] = useState();
   const [replySetting, setReplySetting] = useState("everyone");
   const [imageUrl, setImageUrl] = useState();
+  const navigate = useNavigate();
   const tweet = useRef();
 
   const setTweetInnerHTML = (newText) => {
@@ -78,15 +79,16 @@ export default function Editor({
         author: user._id,
         reply_settings: replySetting,
         media: image,
-        replyTo: reference_tweet.author.account_name,
-        referenced_tweets: [
-          ...referenced_tweets,
+        replyTo: reference_tweet.author._id,
+        referenced_tweet: [
+          ...referenced_tweet,
           { type: "replied_to", id: reference_tweet._id },
         ],
       })
-        .then(() => {
+        .then((res) => {
           setText("");
           tweet.current.innerHTML = "";
+          navigate(`/${user.account_name}/status/${res}`);
         })
         .catch((err) => console.log(err))
         .finally(() => {
@@ -101,9 +103,10 @@ export default function Editor({
         reply_settings: replySetting,
         author: user._id,
       })
-        .then(() => {
+        .then((res) => {
           setText("");
           tweet.current.innerHTML = "";
+          navigate(`/${user.account_name}/status/${res}`);
         })
         .catch((err) => console.log(err))
         .finally(() => {

@@ -3,9 +3,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
 import { AuthContext } from "../context";
+import { deleteUser } from "../services/user";
 
 export default function DeleteAccount() {
-  const { user } = useContext(AuthContext);
+  const { setUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -53,6 +54,13 @@ export default function DeleteAccount() {
               className="btn bg-secondary text-secondary filter pointer w-100 fw-bold rounded-pill mt-2 mb-1"
               onClick={() => {
                 setLoading(true);
+                deleteUser()
+                  .then(() => setUser(null))
+                  .catch((err) => console.log(err))
+                  .finally(() => {
+                    setLoading(false)
+                    navigate("/")
+                  });
               }}
             >
               Delete Account

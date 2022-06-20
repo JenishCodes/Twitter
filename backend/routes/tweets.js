@@ -38,7 +38,10 @@ router.get("/:tweet_id", async function (req, res) {
 
 router.delete("/:tweet_id", auth, async function (req, res) {
   try {
-    const data = await deleteTweet(req.params.tweet_id, req.user);
+    const data = await deleteTweet(
+      req.params.tweet_id,
+      req.query.isRetweet === "true" ? req.user : null
+    );
 
     res.send(data);
   } catch (err) {
@@ -73,7 +76,11 @@ router.put("/:tweet_id", async function (req, res) {
 
 router.get("/:tweet_id/replies", optionalAuth, async function (req, res) {
   try {
-    const data = await getTweetReplies(req.params.tweet_id, req.user, req.query.page);
+    const data = await getTweetReplies(
+      req.params.tweet_id,
+      req.user,
+      req.query.page
+    );
 
     res.send(data);
   } catch (err) {

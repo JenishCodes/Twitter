@@ -158,45 +158,39 @@ export async function editProfile(user_id, data) {
       data = { ...data, banner_image_url };
     }
 
-    api.put(`/user`, data);
+    const res = await api.put(`/user`, data);
+
+    return res.data;
   } catch (err) {
     throw err;
   }
 }
 
 export async function signup(name, email, password, account_name) {
-  try {
-    const res = await api.post("/user", {
-      name,
-      email,
-      password,
-      account_name,
-    });
+  const res = await api.post("/user", {
+    name,
+    email,
+    password,
+    account_name,
+  });
 
-    api.defaults.headers.common["x-auth-token"] = res.headers["x-auth-token"];
+  api.defaults.headers.common["x-auth-token"] = res.headers["x-auth-token"];
 
-    localStorage.setItem("token", res.headers["x-auth-token"]);
+  localStorage.setItem("token", res.headers["x-auth-token"]);
 
-    return res.data;
-  } catch (err) {
-    throw err;
-  }
+  return res.data;
 }
 
 export async function signin(credential, password) {
-  try {
-    const res = await api.post("/user/signin", {
-      credential,
-      password,
-    });
+  const res = await api.post("/user/signin", {
+    credential,
+    password,
+  });
 
-    api.defaults.headers.common["x-auth-token"] = res.headers["x-auth-token"];
+  api.defaults.headers.common["x-auth-token"] = res.headers["x-auth-token"];
 
-    localStorage.setItem("token", res.headers["x-auth-token"]);
-    return res.data;
-  } catch (err) {
-    throw err;
-  }
+  localStorage.setItem("token", res.headers["x-auth-token"]);
+  return res.data;
 }
 
 export function logout() {
@@ -247,4 +241,16 @@ export function getJwt() {
 
 export function isAuthenticated() {
   return getJwt() ? jwtDecode(getJwt()) : false;
+}
+
+export async function deleteUser() {
+  try {
+    await api.delete("/user");
+
+    logout();
+
+    return true;
+  } catch (err) {
+    throw err;
+  }
 }

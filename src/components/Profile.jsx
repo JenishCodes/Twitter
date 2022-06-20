@@ -73,17 +73,19 @@ export default function Profile(props) {
           />
         </div>
         <div className="btns pt-2">
-          <div
-            className="btn text-primary rounded-circle hover border px-2 py-1 mx-2"
-            data-title={"Message @" + props.user.account_name}
-            onClick={() =>
-              navigate("/messages/" + props.user._id, {
-                state: { user: props.user },
-              })
-            }
-          >
-            <i className="bi bi-envelope fs-3"></i>
-          </div>
+          {user.isAnonymous ? null : (
+            <div
+              className="btn text-primary rounded-circle hover border px-2 py-1 mx-2"
+              data-title={"Message @" + props.user.account_name}
+              onClick={() =>
+                navigate("/messages/" + props.user._id, {
+                  state: { user: props.user },
+                })
+              }
+            >
+              <i className="bi bi-envelope fs-3"></i>
+            </div>
+          )}
           <div
             className={`btn border hover fw-bold ${
               freindshipStatus === "Follow" ? "bg-app text-white" : ""
@@ -99,24 +101,26 @@ export default function Profile(props) {
           <div className="fs-3 fw-bold">{props.user.name}</div>
           <div className="text-muted">@{props.user.account_name}</div>
         </div>
-        <div className="description my-2">
+        <div className="description white-space-pre-line my-2">
           <p>{props.user.description}</p>
         </div>
-        <div className="info d-flex my-2">
+        <div className="info d-flex my-2 flex-wrap">
           {props.user.location ? (
-            <div className="text-muted me-4">
+            <div className="text-muted me-4 my-1">
               <i className="bi bi-geo-alt-fill fs-4 me-2"></i>
               <span>{props.user.location}</span>
             </div>
           ) : null}
-          <div className="text-muted me-4">
+          <div className="text-muted me-4 my-1">
             <i className="bi bi-calendar-fill me-2 fs-4"></i>
             <span>Joined {new Date(props.user.createdAt).toDateString()}</span>
           </div>
           {props.user.url ? (
-            <div className="text-muted me-4">
+            <div className="text-muted me-4 my-1">
               <i className="bi bi-link me-2 fs-4"></i>
-              <span>{props.user.url}</span>
+              <Link to={props.user.url} target="_blank">
+                {props.user.url}
+              </Link>
             </div>
           ) : null}
         </div>

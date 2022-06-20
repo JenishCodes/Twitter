@@ -41,7 +41,7 @@ export default function Status() {
   const [hasMoreReplies, setHasMoreReplies] = useState(true);
   const [menuVisisble, setMenuVisisble] = useState(false);
   const [relation, setRelation] = useState("strangers");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [loadedRefs, setLoadedRefs] = useState(false);
   const navigate = useNavigate();
 
@@ -55,7 +55,6 @@ export default function Status() {
     setRetweeted(false);
     setHasMoreReplies(true);
     setRelation("strangers");
-    setLoading(true);
 
     getTweet(status_id)
       .then((res) => {
@@ -69,7 +68,6 @@ export default function Status() {
 
         setTextEntities(getTweetEntities(res.text));
 
-        setLoading(false);
         if (res.author._id !== user._id) {
           updatePrivateMetrics(status_id, {
             $inc: { "private_metrics.detail_expands": 1 },
@@ -158,7 +156,7 @@ export default function Status() {
     }
     if (retweeted) {
       setRetweeted(false);
-      setRetweeted({
+      setTweet({
         ...tweet,
         public_metrics: {
           ...tweet.public_metrics,
@@ -166,10 +164,10 @@ export default function Status() {
         },
       });
 
-      deleteTweet(tweet._id, user._id);
+      deleteTweet(tweet._id, true);
     } else {
       setRetweeted(true);
-      setRetweeted({
+      setTweet({
         ...tweet,
         public_metrics: {
           ...tweet.public_metrics,
@@ -388,7 +386,7 @@ export default function Status() {
           : null}
       </div>
 
-      {!loadedRefs ? (
+      {!loadedRefs && tweet ? (
         <div
           style={{ marginLeft: "40px", width: "2px", height: "10px" }}
           className="border"
@@ -518,7 +516,9 @@ export default function Status() {
                       {entity.content}
                     </span>
                   ) : (
-                    <span key={index}>{entity.content}</span>
+                    <span className="white-space-pre-line" key={index}>
+                      {entity.content}
+                    </span>
                   )
                 )}
               </div>
@@ -650,17 +650,17 @@ export default function Status() {
       <Editor
         show={show}
         setShow={setShow}
-        referenced_tweets={tweet ? tweet.referenced_tweet : []}
+        referenced_tweet={tweet ? tweet.referenced_tweet : []}
         reference_tweet={tweet}
       />
 
-      {replies.length > 0 ? (
-        replies.map((reply) => (
-          <Tweet key={reply._id} tweet={reply} reply_to={account_name} />
-        ))
-      ) : (
-        <div className="text-muted mt-5 text-center">No replies yet</div>
-      )}
+      {replies.length > 0
+        ? replies.map((reply) => (
+            <Tweet key={reply._id} tweet={reply} reply_to={account_name} />
+          ))
+        : !loading && (
+            <div className="text-muted mt-5 text-center">No replies yet</div>
+          )}
 
       {loading ? (
         <Loading

@@ -101,7 +101,7 @@ export default function Tweet(props) {
         },
       });
 
-      deleteTweet(data._id, user._id);
+      deleteTweet(data._id, true);
     } else {
       setRetweeted(true);
       setData({
@@ -307,7 +307,9 @@ export default function Tweet(props) {
                     {entity.content}
                   </span>
                 ) : (
-                  <span key={index}>{entity.content}</span>
+                  <span className="white-space-pre-line" key={index}>
+                    {entity.content}
+                  </span>
                 )
               )}
             </div>

@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { Setting } = require("./setting");
+const { Conversation } = require("./conversation");
+const { History } = require("./history");
+const { Notification } = require("./notification");
 
 const { ObjectId } = mongoose.SchemaTypes;
 
@@ -70,15 +74,35 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", function (next) {
   const user = this;
-  if (user.isModified("password")) {
-    bcrypt.hash(user.password, 10, function (err, hash) {
+  if (!user.isModified("password")) return next();
+
+  bcrypt.genSalt(10, (err, salt) => {
+    if (err) return next(err);
+
+    bcrypt.hash(user.password, salt, (err, hash) => {
       if (err) return next(err);
+
       user.password = hash;
       next();
     });
-  } else {
-    next();
-  }
+  });
+});
+
+userSchema.post("findOneAndRemove", async function (doc) {
+  await Setting.findOneAndRemove({ user_id: doc._id });
+
+  await History.deleteMany({ user_id: doc._id });
+
+  await Notification.deleteMany({ user: doc._id });
+
+  const conversations = await Conversation.find({
+    conversationId: { $regex: new RegExp(doc._id) },
+  });
+  await Promise.all(
+    conversations.map(async (conversation) => {
+      await Conversation.findOneAndRemove({ _id: conversation._id });
+    })
+  );
 });
 
 userSchema.statics.generateAnonymousAuthToken = function () {

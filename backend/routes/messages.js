@@ -4,10 +4,11 @@ const {
   deleteMessage,
   createMessage,
 } = require("../controllers/messageController");
+const { auth } = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.get("/:conversationId", async (req, res) => {
+router.get("/:conversationId", auth, async (req, res) => {
   try {
     const data = await getConversationMessages(
       req.params.conversationId,
@@ -21,7 +22,7 @@ router.get("/:conversationId", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   try {
     const data = await createMessage(req.body);
 
@@ -32,7 +33,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.delete("/:message_id", async (req, res) => {
+router.delete("/:message_id", auth, async (req, res) => {
   try {
     const data = await deleteMessage(req.params.message_id);
 

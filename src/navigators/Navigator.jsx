@@ -3,7 +3,6 @@ import { io } from "socket.io-client";
 import { AuthContext } from "../context";
 import AppNavigator from "./AppNavigator";
 import AuthNavigator from "./AuthNavigator";
-import AnonymousNavigator from "./AnonymousNavigator";
 import {
   getUserFromId,
   getUserSettings,
@@ -46,9 +45,9 @@ export default function Navigator() {
   useEffect(() => {
     if (user && !user.isAnonymous) {
       socket.current = io(
-        process.env.REACT_APP_SERVER_API || "http://127.0.0.1:3001"
+        /*process.env.REACT_APP_SERVER_API ||*/ "http://127.0.0.1:3001"
       );
-      socket.current.emit("add-user", user._id);
+      socket.current.emit("user-added", user._id);
     }
   }, [user]);
 
@@ -57,11 +56,7 @@ export default function Navigator() {
       <i className="bi bi-twitter fs-0 text-app"></i>
     </div>
   ) : user ? (
-    user.isAnonymous ? (
-      <AnonymousNavigator />
-    ) : (
-      <AppNavigator />
-    )
+    <AppNavigator isAnonymous={user.isAnonymous} />
   ) : (
     <AuthNavigator />
   );

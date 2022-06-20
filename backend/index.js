@@ -49,14 +49,14 @@ const io = socket(server, {
 global.onlineUsers = new Map();
 
 io.on("connection", (socket) => {
-  socket.on("add-user", (userId) => {
+  socket.on("user-added", (userId) => {
     onlineUsers.set(userId, socket.id);
   });
 
-  socket.on("send-msg", (data) => {
+  socket.on("message-sent", (data) => {
     const receiverId = onlineUsers.get(data.receiver);
     if (receiverId) {
-      socket.to(receiverId).emit("receive-msg", data);
+      socket.to(receiverId).emit("message-received", data);
     }
   });
 });

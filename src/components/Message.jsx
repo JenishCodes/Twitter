@@ -42,7 +42,7 @@ export default function Message(props) {
                 ? "0 20px 20px 20px"
                 : "0 20px 20px 0",
           }}
-          className={`text-white bg-${align === "end" ? "app" : "muted"}`}
+          className={`text-white white-space-pre-line bg-${align === "end" ? "app" : "muted"}`}
         >
           {message.text}
         </div>

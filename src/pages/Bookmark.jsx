@@ -10,7 +10,7 @@ export default function Bookmark() {
   const [tweets, setTweets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
-  const { user, scrollY } = useContext(AuthContext);
+  const { scrollY } = useContext(AuthContext);
 
   useEffect(() => {
     if (
@@ -21,7 +21,6 @@ export default function Bookmark() {
       setLoading(true);
       getBookmarkedTweets(tweets.length)
         .then((res) => {
-          console.log(res);
           setHasMore(res.hasMore);
           setTweets([...tweets, ...res.data]);
         })
