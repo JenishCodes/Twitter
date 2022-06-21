@@ -114,8 +114,15 @@ exports.getTweetReplies = async function (tweet_id, user_id, page) {
   if (page === 0 || user_id) {
     userReplies = await Tweet.find({
       author: ObjectId(user_id),
-      "referenced_tweet.type": "replied_to",
-      $eq: [{ $last: "referenced_tweet.id"}, ObjectId(tweet_id)],
+      $expr: {
+        $eq: [{ $arrayElemAt: ["$referenced_tweet.type", -1] }, "replied_to"],
+      },
+      $expr: {
+        $eq: [
+          { $arrayElemAt: ["$referenced_tweet.id", -1] },
+          ObjectId(tweet_id),
+        ],
+      },
     })
       .sort({ createdAt: -1 })
       .populate("author", "name account_name auth_id profile_image_url");
@@ -123,8 +130,15 @@ exports.getTweetReplies = async function (tweet_id, user_id, page) {
 
   const replies = await Tweet.find({
     author: { $ne: user_id ? ObjectId(user_id) : null },
-    "referenced_tweet.type": "replied_to",
-    "referenced_tweet.id": ObjectId(tweet_id),
+    $expr: {
+      $eq: [{ $arrayElemAt: ["$referenced_tweet.type", -1] }, "replied_to"],
+    },
+    $expr: {
+      $eq: [
+        { $arrayElemAt: ["$referenced_tweet.id", -1] },
+        ObjectId(tweet_id),
+      ],
+    },
   })
     .sort({ createdAt: -1 })
     .skip(page)
@@ -207,8 +221,9 @@ exports.getTweets = async function (condition, page, fields) {
         if (restRef.type === "replied_to") {
           return {
             ...tweet,
-            message: "Repling to" +( ref_user ? "@" + ref_user.account_name : ""),
-            referenced_tweet: [],
+            message:
+              "Repling to " + (ref_user ? "@" + ref_user.account_name : ""),
+            referenced_tweet: tweet.referenced_tweet,
           };
         } else {
           return {

@@ -61,6 +61,7 @@ export default function User() {
       setLoading(true);
       getUserTweets(user._id, data.length, profile)
         .then((res) => {
+          console.log(res.data)
           setHasMore(res.hasMore);
           setData([...data, ...res.data]);
         })
@@ -147,11 +148,7 @@ export default function User() {
             {profile_type === "replies"
               ? replies.length > 0
                 ? replies.map((reply) => (
-                    <Tweet
-                      key={reply._id}
-                      upperlink={reply.referenced_tweet.length}
-                      tweet={reply}
-                    />
+                    <Tweet key={reply._id} tweet={reply} />
                   ))
                 : !loading && (
                     <div className="text-center text-muted mt-5">
@@ -171,20 +168,7 @@ export default function User() {
               : profile_type === "likes"
               ? favorites.length > 0
                 ? favorites.map((favorite) => (
-                    <div key={favorite._id}>
-                      {favorite.referenced_tweet?.map((referencedTweet, i) => (
-                        <Tweet
-                          key={referencedTweet._id}
-                          tweet={referencedTweet}
-                          upperlink={i !== 0}
-                          lowerlink
-                        />
-                      ))}
-                      <Tweet
-                        upperlink={favorite.referenced_tweet.length}
-                        tweet={favorite}
-                      />
-                    </div>
+                    <Tweet key={favorite._id} tweet={favorite} />
                   ))
                 : !loading && (
                     <div className="text-center text-muted mt-5">No Likes</div>
@@ -192,20 +176,7 @@ export default function User() {
               : profile_type === "mentions"
               ? mentions.length > 0
                 ? mentions.map((mention) => (
-                    <div key={mention._id}>
-                      {mention.referenced_tweet?.map((referencedTweet, i) => (
-                        <Tweet
-                          key={referencedTweet._id}
-                          tweet={referencedTweet}
-                          upperlink={i !== 0}
-                          lowerlink
-                        />
-                      ))}
-                      <Tweet
-                        upperlink={mention.referenced_tweet.length}
-                        tweet={mention}
-                      />
-                    </div>
+                    <Tweet key={mention._id} tweet={mention} />
                   ))
                 : !loading && (
                     <div className="text-center text-muted mt-5">
@@ -214,11 +185,13 @@ export default function User() {
                   )
               : tweets.length > 0
               ? tweets.map((tweet) => (
-                  <Tweet key={tweet._id} mode="tweet" tweet={tweet} />
+                  <Tweet key={tweet._id} tweet={tweet} showPinned />
                 ))
               : !loading && (
                   <div className="text-center text-muted mt-5">No Tweets</div>
                 )}
+
+            <Loading show={loading} className="my-5 text-app" />
           </Tabbar>
         </div>
       ) : (
@@ -226,8 +199,6 @@ export default function User() {
           <div className="text-center text-muted mt-5">User not found</div>
         )
       )}
-
-      <Loading show={loading} className="my-5 text-app" />
     </div>
   );
 }

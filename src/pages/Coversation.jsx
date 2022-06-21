@@ -141,7 +141,7 @@ export default function Chat() {
 
   const handleDelete = (messageId) => {
     setMessages(messages.filter((message) => message._id !== messageId));
-    deleteMessage(messageId, [user._id, user_id].sort().join("~"));
+    deleteMessage(messageId);
   };
 
   const handleSubmit = (e) => {

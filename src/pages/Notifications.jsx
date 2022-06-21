@@ -50,9 +50,9 @@ export default function Notifications() {
                   <div className="text-primary px-2">
                     <i
                       className={`bi bi-${
-                        notification.message.includes("mentioned")
+                        notification.message.includes("mentioned you")
                           ? "at"
-                          : notification.message.includes("followed")
+                          : notification.message.includes("following you")
                           ? "person-plus-fill"
                           : "reply-all-fill"
                       } fs-1`}

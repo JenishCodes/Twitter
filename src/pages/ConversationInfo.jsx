@@ -101,7 +101,7 @@ export default function ConversationInfo() {
               }}
             />
           )}
-          {user && (
+          {user && conversationUser.account_name !== user.account_name && (
             <List
               className="hover pointer"
               onClick={() => navigate("/" + user.account_name)}

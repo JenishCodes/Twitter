@@ -43,7 +43,7 @@ export async function updatePrivateMetrics(tweet_id, newData) {
   }
 }
 
-export async function isRetweeter(tweet_id, user_id) {
+export async function isRetweeter(tweet_id) {
   try {
     const res = await api.get(`/tweet/${tweet_id}/isRetweeter`);
 

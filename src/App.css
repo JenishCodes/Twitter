@@ -1,32 +1,32 @@
-.conersation .header {
+.conversation .header {
   backface-visibility: hidden;
   backdrop-filter: blur(12px);
   position: sticky;
   top: 0%;
   width: 100%;
 }
-.conersation .text-box {
+.conversation .text-box {
   top: calc(100% - 55px);
 }
-.conersation .text-input {
+.conversation .text-input {
   outline: none;
   border: 0px;
   border-bottom: solid 2px var(--border);
   background-color: transparent;
   transition: border-color 0.1s ease-in-out;
 }
-.conersation .text-input:focus {
+.conversation .text-input:focus {
   border-color: var(--app-color);
 }
-.conersation .content {
+.conversation .content {
   height: calc(100vh - 55px);
   overflow-y: scroll;
   padding-top: 57px;
 }
-.conersation .content::-webkit-scrollbar {
+.conversation .content::-webkit-scrollbar {
   width: 5px;
 }
-.conersation .content::-webkit-scrollbar-thumb {
+.conversation .content::-webkit-scrollbar-thumb {
   background: var(--text-muted);
 }
 
@@ -253,7 +253,7 @@
   width: calc(100% - 1rem - 48px);
 }
 
-.conersation .profile-image {
+.conversation .profile-image {
   width: 30px;
   height: 30px;
 }
@@ -320,10 +320,10 @@
 .status .upperlink{
   height: 10px;
   width: 2px;
-  margin-left: 40px;
+  margin-left: 39px;
 }
 .tweet .lowerlink {
-  margin-bottom: 6px;
+  margin-top: 6px;
 }
 .tweet .upperlink {
   width: 48px;

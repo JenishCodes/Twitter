@@ -9,7 +9,7 @@ import { getTweetFavoriters } from "../services/favorite";
 import { getRetweeters } from "../services/tweet";
 
 export default function Reactions() {
-  const { account_name, status_id, reaction_type } = useParams();
+  const { status_id, reaction_type } = useParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);

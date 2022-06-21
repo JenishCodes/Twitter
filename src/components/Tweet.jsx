@@ -36,7 +36,7 @@ export default function Tweet(props) {
     setImageLoaded(user.settings.autoLoadImages);
 
     isFavoriter(props.tweet._id).then((res) => setLiked(res));
-    isRetweeter(props.tweet._id, user._id).then((res) => setRetweeted(res));
+    isRetweeter(props.tweet._id).then((res) => setRetweeted(res));
 
     setBookmarked(user.bookmarks.includes(props.tweet._id));
   }, [props.tweet, user]);
@@ -137,11 +137,16 @@ export default function Tweet(props) {
       editProfile({ $pull: { bookmarks: data._id } }).catch((err) =>
         console.log(err)
       );
+      setUser({
+        ...user,
+        bookmarks: user.bookmarks.filter((bookmark) => bookmark !== data._id),
+      });
       setBookmarked(false);
     } else {
       editProfile({ $push: { bookmarks: data._id } }).catch((err) =>
         console.log(err)
       );
+      setUser({ ...user, bookmarks: [...user.bookmarks, data._id] });
       setBookmarked(true);
     }
   };
@@ -163,7 +168,7 @@ export default function Tweet(props) {
           </div>
         )}
 
-        {user.pinned_tweet_id === data._id && (
+        {user.pinned_tweet === data._id && props.showPinned && (
           <div className="ms-5 fs-6 ps-3 text-muted fst-italic">
             <i className="bi bi-pin-angle-fill me-1"></i>
             <span>Pinned Tweet</span>
@@ -238,21 +243,23 @@ export default function Tweet(props) {
                   aria-labelledby="tweet-menu"
                 >
                   {data.author._id === user._id ? (
-                    <div
-                      className="d-flex align-items-center text-primary dropdown-item py-2 px-3 hover btn"
-                      onClick={handlePinTweet}
-                    >
-                      <i
-                        className={`bi bi-pin-angle${
-                          user.pinned_tweet_id === data._id ? "-fill" : ""
-                        } me-3 fs-3`}
-                      ></i>
-                      <div>
-                        {user.pinned_tweet_id === data._id
-                          ? "Unpin Tweet"
-                          : "Pin Tweet"}
+                    props.tweet.referenced_tweet?.length === 0 && (
+                      <div
+                        className="d-flex align-items-center text-primary dropdown-item py-2 px-3 hover btn"
+                        onClick={handlePinTweet}
+                      >
+                        <i
+                          className={`bi bi-pin-angle${
+                            user.pinned_tweet_id === data._id ? "-fill" : ""
+                          } me-3 fs-3`}
+                        ></i>
+                        <div>
+                          {user.pinned_tweet_id === data._id
+                            ? "Unpin Tweet"
+                            : "Pin Tweet"}
+                        </div>
                       </div>
-                    </div>
+                    )
                   ) : (
                     <div
                       className="d-flex align-items-center text-primary dropdown-item py-2 px-3 hover btn"

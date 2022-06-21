@@ -10,8 +10,16 @@ import {
 } from "../services/user";
 
 export default function Navigator() {
-  const { user, loading, setScrollY, setUser, setLoading, socket, toast, setToast } =
-    useContext(AuthContext);
+  const {
+    user,
+    loading,
+    setScrollY,
+    setUser,
+    setLoading,
+    socket,
+    toast,
+    setToast,
+  } = useContext(AuthContext);
 
   useEffect(() => {
     window.addEventListener("scroll", () => setScrollY(window.scrollY));

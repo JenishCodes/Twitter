@@ -153,24 +153,26 @@ export async function updateAccountName(account_name, password) {
   }
 }
 
-export async function editProfile(user_id, data) {
+export async function editProfile(data, user_id = null) {
   try {
-    if (data.profile_image_url) {
-      const profileImageRef = ref(storage, `/profile_images/${user_id}`);
+    if (user_id) {
+      if (data.profile_image_url) {
+        const profileImageRef = ref(storage, `/profile_images/${user_id}`);
 
-      await uploadBytes(profileImageRef, data.profile_image_url);
-      const profile_image_url = await getDownloadURL(profileImageRef);
+        await uploadBytes(profileImageRef, data.profile_image_url);
+        const profile_image_url = await getDownloadURL(profileImageRef);
 
-      data = { ...data, profile_image_url };
-    }
+        data = { ...data, profile_image_url };
+      }
 
-    if (data.banner_image_url) {
-      const bannerImageRef = ref(storage, `/banner_images/${user_id}`);
+      if (data.banner_image_url) {
+        const bannerImageRef = ref(storage, `/banner_images/${user_id}`);
 
-      await uploadBytes(bannerImageRef, data.banner_image_url);
-      const banner_image_url = await getDownloadURL(bannerImageRef);
+        await uploadBytes(bannerImageRef, data.banner_image_url);
+        const banner_image_url = await getDownloadURL(bannerImageRef);
 
-      data = { ...data, banner_image_url };
+        data = { ...data, banner_image_url };
+      }
     }
 
     const res = await api.put(`/user`, data);

@@ -191,11 +191,31 @@ exports.updatePassword = async function (user_id, oldPassword, newPassword) {
 };
 
 exports.getUserTweets = async function (user_id, page) {
+  var pinned_tweet;
+  if (page == 0) {
+    const user = await User.findById(user_id)
+      .populate("pinned_tweet name account_name profile_image_url _id")
+      .select("pinned_tweet");
+
+    pinned_tweet = {
+      ...user.pinned_tweet._doc,
+      author: { ...user._doc, pinned_tweet: null },
+    };
+  }
+
   const data = await tweetController.getTweets(
-    { author: ObjectId(user_id), referenced_tweet: { $size: 0 } },
+    {
+      _id: { $ne: ObjectId(pinned_tweet?._id) },
+      author: ObjectId(user_id),
+      referenced_tweet: { $size: 0 },
+    },
     page,
     "name account_name profile_image_url auth_id"
   );
+
+  if (pinned_tweet) {
+    return { data: [pinned_tweet, ...data], hasMore: data.length === 10 };
+  }
 
   return { data, hasMore: data.length === 10 };
 };
@@ -294,7 +314,7 @@ exports.getUserFeed = async function (user_id, page) {
   const tweets = await Tweet.find(
     {
       author: { $in: following_ids },
-      referenced_tweet: [],
+      referenced_tweet: { $size: 0 },
     },
     "createdAt"
   ).transform(function (docs) {

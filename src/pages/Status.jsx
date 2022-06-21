@@ -26,7 +26,7 @@ import { Helmet } from "react-helmet-async";
 import { getRelationship } from "../services/friendship";
 
 export default function Status() {
-  const { user, scrollY } = useContext(AuthContext);
+  const { user, scrollY, setUser } = useContext(AuthContext);
   const { account_name, status_id } = useParams();
   const [tweet, setTweet] = useState();
   const [textEntities, setTextEntities] = useState([]);
@@ -81,7 +81,7 @@ export default function Status() {
           .then((res) => setLiked(res))
           .catch((err) => console.log(err));
 
-        isRetweeter(status_id, user._id)
+        isRetweeter(status_id)
           .then((res) => setRetweeted(res))
           .catch((err) => console.log(err));
 
@@ -99,10 +99,7 @@ export default function Status() {
   useEffect(() => {
     if (!loadedRefs && scrollY === 1 && tweet) {
       getTweetReferences(status_id)
-        .then((res) => {
-          console.log(res);
-          setReferences(res);
-        })
+        .then((res) => setReferences(res))
         .catch((err) => console.log(err))
         .finally(() => setLoadedRefs(true));
     }
@@ -146,8 +143,10 @@ export default function Status() {
     }
     if (user.pinned_tweet_id === tweet._id) {
       editProfile({ pinned_tweet: null }).catch((err) => console.log(err));
+      setUser({ ...user, pinned_tweet_id: "" });
     } else {
       editProfile({ pinned_tweet: tweet._id }).catch((err) => console.log(err));
+      setUser({ ...user, pinned_tweet_id: tweet._id });
     }
     setMenuVisisble(!menuVisisble);
   };
@@ -201,11 +200,16 @@ export default function Status() {
       editProfile({ $pull: { bookmarks: status_id } }).catch((err) =>
         console.log(err)
       );
+      setUser({
+        ...user,
+        bookmarks: user.bookmarks.filter((bookmark) => bookmark !== status_id),
+      });
       setBookmarked(false);
     } else {
       editProfile({ $push: { bookmarks: status_id } }).catch((err) =>
         console.log(err)
       );
+      setUser({ ...user, bookmarks: [...user.bookmarks, status_id] });
       setBookmarked(true);
     }
   };
@@ -427,21 +431,25 @@ export default function Status() {
                   >
                     {!user.isAnonymous && account_name === user.account_name ? (
                       <div>
-                        <div
-                          className="d-flex align-items-center text-start text-primary py-2 px-3 hover btn"
-                          onClick={handlePinTweet}
-                        >
-                          <i
-                            className={`bi bi-pin-angle${
-                              user.pinned_tweet_id === status_id ? "-fill" : ""
-                            } me-3 fs-3`}
-                          ></i>
-                          <div>
-                            {user.pinned_tweet_id === status_id
-                              ? "Unpin Tweet"
-                              : "Pin Tweet"}
+                        {tweet.referenced_tweet.length === 0 && (
+                          <div
+                            className="d-flex align-items-center text-start text-primary py-2 px-3 hover btn"
+                            onClick={handlePinTweet}
+                          >
+                            <i
+                              className={`bi bi-pin-angle${
+                                user.pinned_tweet_id === status_id
+                                  ? "-fill"
+                                  : ""
+                              } me-3 fs-3`}
+                            ></i>
+                            <div>
+                              {user.pinned_tweet_id === status_id
+                                ? "Unpin Tweet"
+                                : "Pin Tweet"}
+                            </div>
                           </div>
-                        </div>
+                        )}
                         <div
                           className="d-flex align-items-center text-start text-danger py-2 px-3 hover btn"
                           onClick={handleDelete}

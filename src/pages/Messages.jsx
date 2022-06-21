@@ -33,33 +33,33 @@ export default function Messages() {
       />
 
       {conversations.length > 0
-        ? conversations.map((chat, index) => (
+        ? conversations.map((conversation, index) => (
             <List
               key={index}
               className="hover pointer"
               onClick={() =>
-                navigate("/messages/" + chat.user._id, {
-                  state: { user: chat.user },
+                navigate("/messages/" + conversation.user._id, {
+                  state: { user: conversation.user },
                 })
               }
               data={{
-                image_url: chat.user.profile_image_url,
-                title: chat.user.name,
-                subtitle: chat.lastMessage,
+                image_url: conversation.user.profile_image_url,
+                title: conversation.user.name,
+                subtitle: conversation.lastMessage,
               }}
               actionButton={
                 <div className="text-muted oneline">
-                  {timeFormatter(chat.updatedAt, "Ago")}
+                  {timeFormatter(conversation.updatedAt, "Ago")}
                 </div>
               }
             />
           ))
         : !loading && (
             <div className="text-center text-muted mt-5">No messages yet</div>
-        )}
-      
+          )}
+
       <Loading show={loading} className="my-5 text-app" />
-      
+
       {conversations.length > 0 && <div className="h-50-vh"></div>}
     </div>
   );
