@@ -42,7 +42,7 @@ export function RecommendationsBox() {
 
   return (
     <div className="py-3 px-4">
-      <div className="bg-muted" style={{ borderRadius: "15px" }}>
+      <div className="bg-muted radius">
         <div className="py-1">
           <div className="fs-3 py-2 px-3 fw-bold">Who to follow</div>
         </div>
@@ -70,7 +70,6 @@ export function RecommendationsBox() {
           <Loading
             show={loading}
             className={`${page === 0 ? "my-5" : "my-2"} text-app`}
-            style={{ width: "1.5rem", height: "1.5rem" }}
           />
         )}
         {data.length > 0 && !loading && (

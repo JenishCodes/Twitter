@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import List from "../components/List";
 import Loading from "../components/Loading";
+import { AuthContext } from "../context";
 import {
   getNotifications,
   markNotificationAsRead,
@@ -14,16 +15,23 @@ export default function Notifications() {
   const [hasMoreNotifications, setHasMoreNotifications] = useState(true);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { scrollY } = useContext(AuthContext);
 
   useEffect(() => {
-    getNotifications(notifications.length)
-      .then((res) => {
-        setHasMoreNotifications(res.hasMore);
-        setNotifications(res.data)
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
-  }, []);
+    if (
+      hasMoreNotifications &&
+      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+        notifications.length === 0)
+    ) {
+      getNotifications(notifications.length)
+        .then((res) => {
+          setHasMoreNotifications(res.hasMore);
+          setNotifications(res.data);
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setLoading(false));
+    }
+  }, [scrollY]);
 
   return (
     <div className="notifications">
@@ -63,11 +71,7 @@ export default function Notifications() {
             <div className="text-center text-muted mt-5">No Notifications</div>
           )}
 
-      <Loading
-        show={loading}
-        className="my-5 text-app"
-        style={{ width: "1.5rem", height: "1.5rem" }}
-      />
+      <Loading show={loading} className="my-5 text-app" />
 
       {notifications.length > 0 ? <div className="h-50-vh"></div> : null}
     </div>

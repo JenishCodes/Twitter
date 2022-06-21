@@ -74,7 +74,7 @@ export default function Search() {
   };
 
   useEffect(() => {
-    const q = query.trim()
+    const q = query.trim();
 
     if (search_type === "hashtags") {
       helper(
@@ -172,11 +172,7 @@ export default function Search() {
               )
           : null}
 
-        <Loading
-          show={loading}
-          className="my-5 text-app"
-          style={{ width: "1.5rem", height: "1.5rem" }}
-        />
+        <Loading show={loading} className="my-5 text-app" />
       </Tabbar>
     </div>
   );

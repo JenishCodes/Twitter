@@ -29,8 +29,8 @@ export default function Sidebar() {
   return user ? (
     <header
       role="banner"
-      className={`sidebar ps-sm-0 ps-lg-0 d-flex justify-content-end position-relative d-sm-block ${
-        user.isAnonymous ? "d-none" : show ? "d-none" : ""
+      className={`sidebar ps-sm-0 ps-lg-0 d-flex justify-content-end position-relative d-sm-block${
+        user.isAnonymous ? " d-none" : show ? " d-none" : ""
       }`}
     >
       <div className="position-relative">
@@ -61,8 +61,8 @@ export default function Sidebar() {
                       ></i>
                     </div>
                     <span
-                      className={`nav-title d-xl-block d-none ${
-                        pathname === "/home" ? "fw-bold" : ""
+                      className={`nav-title d-xl-block d-none${
+                        pathname === "/home" ? " fw-bold" : ""
                       }`}
                     >
                       Home
@@ -77,13 +77,15 @@ export default function Sidebar() {
                   title="Explore"
                 >
                   <div className="nav-icon">
-                    <i className={`bi bi-search ${
-                      pathname==="/explore" ? "fw-bold" : ""
-                    }`}></i>
+                    <i
+                      className={`bi bi-search${
+                        pathname === "/explore" ? " fw-bold" : ""
+                      }`}
+                    ></i>
                   </div>
                   <span
-                    className={`nav-title d-xl-block d-none ${
-                      pathname === "/explore" ? "fw-bold" : ""
+                    className={`nav-title d-xl-block d-none${
+                      pathname === "/explore" ? " fw-bold" : ""
                     }`}
                   >
                     Explore
@@ -101,8 +103,8 @@ export default function Sidebar() {
                       <i className="bi bi-brush"></i>
                     </div>
                     <span
-                      className={`nav-title d-xl-block d-none ${
-                        pathname === "/settings/display" ? "fw-bold" : ""
+                      className={`nav-title d-xl-block d-none${
+                        pathname === "/settings/display" ? " fw-bold" : ""
                       }`}
                     >
                       Display
@@ -140,21 +142,18 @@ export default function Sidebar() {
                           pathname === "/notifications" ? "-fill" : ""
                         }`}
                       ></i>
-                      {notificationCount > 0 ? (
-                        <span
-                          style={{ top: "-10%" }}
-                          className="position-absolute px-2 fs-7 py-1 start-50 badge rounded-pill bg-app"
-                        >
+                      {notificationCount > 0 && (
+                        <span className="unread-tag position-absolute px-2 fs-7 py-1 start-50 badge rounded-pill bg-app">
                           {notificationCount > 9 ? "9+" : notificationCount}
                           <span className="visually-hidden">
                             unread messages
                           </span>
                         </span>
-                      ) : null}
+                      )}
                     </div>
                     <span
-                      className={`nav-title d-xl-block d-none ${
-                        pathname === "/notifications" ? "fw-bold" : ""
+                      className={`nav-title d-xl-block d-none${
+                        pathname === "/notifications" ? " fw-bold" : ""
                       }`}
                     >
                       Notifications
@@ -176,8 +175,8 @@ export default function Sidebar() {
                       ></i>
                     </div>
                     <span
-                      className={`nav-title d-xl-block d-none ${
-                        pathname.startsWith("/messages") ? "fw-bold" : ""
+                      className={`nav-title d-xl-block d-none${
+                        pathname.startsWith("/messages") ? " fw-bold" : ""
                       }`}
                     >
                       Messages
@@ -199,8 +198,8 @@ export default function Sidebar() {
                       ></i>
                     </div>
                     <span
-                      className={`nav-title d-xl-block d-none ${
-                        pathname === "/bookmarks" ? "fw-bold" : ""
+                      className={`nav-title d-xl-block d-none${
+                        pathname === "/bookmarks" ? " fw-bold" : ""
                       }`}
                     >
                       Bookmarks
@@ -224,9 +223,9 @@ export default function Sidebar() {
                       ></i>
                     </div>
                     <span
-                      className={`nav-title d-xl-block d-none ${
+                      className={`nav-title d-xl-block d-none${
                         pathname.startsWith("/" + user.account_name)
-                          ? "fw-bold"
+                          ? " fw-bold"
                           : ""
                       }`}
                     >
@@ -249,8 +248,8 @@ export default function Sidebar() {
                       ></i>
                     </div>
                     <span
-                      className={`nav-title d-xl-block d-none ${
-                        pathname.startsWith("/settings") ? "fw-bold" : ""
+                      className={`nav-title d-xl-block d-none${
+                        pathname.startsWith("/settings") ? " fw-bold" : ""
                       }`}
                     >
                       Settings

@@ -189,14 +189,14 @@ export default function Searchbar() {
             autoComplete="off"
           />
         </form>
-        {query ? (
+        {query && (
           <div className="btn hover rounded-circle py-1 px-2">
             <i
               className="bi bi-x-circle fs-4 text-muted"
               onClick={() => setQuery("")}
             ></i>
           </div>
-        ) : null}
+        )}
       </div>
       <div
         className="dropdown-menu dropdown-menu-end bg-muted pb-2 pt-0 rounded-3 w-100 text-primary"
@@ -204,7 +204,7 @@ export default function Searchbar() {
       >
         <div className="d-flex px-3 py-2 justify-content-between">
           <div className="fs-3">{query ? "Results" : "Recent"}</div>
-          {query ? null : (
+          {!query && (
             <div
               className="fs-6 btn hover rounded-pill"
               onClick={handleClearAll}
@@ -216,8 +216,8 @@ export default function Searchbar() {
         {results.length > 0
           ? results.map((result, index) => (
               <List
-                className="hover pointer"
                 key={index}
+                className="hover pointer"
                 data={
                   result.type === "user"
                     ? {
@@ -237,8 +237,9 @@ export default function Searchbar() {
                       }
                     : {
                         ...result,
-                        image: !result.image_url ? (
-                          result.subtitle ? (
+                        image:
+                          !result.image_url &&
+                          (result.subtitle ? (
                             <div className="text-primary rounded-circle border px-2">
                               <i className="bi bi-hash fs-1"></i>
                             </div>
@@ -246,8 +247,7 @@ export default function Searchbar() {
                             <div className="text-primary rounded-circle border p-2">
                               <i className="bi bi-search fs-3 mx-1"></i>
                             </div>
-                          )
-                        ) : null,
+                          )),
                       }
                 }
                 onClick={() => handleClick(result)}
@@ -271,12 +271,9 @@ export default function Searchbar() {
               <div className="text-center text-muted fw-bold mb-4 mt-2">
                 {query ? "No Search Results" : "No Search History"}
               </div>
-            )}
-        <Loading
-          show={loading}
-          className="my-4 text-app"
-          style={{ width: "1.5rem", height: "1.5rem" }}
-        />
+          )}
+        
+        <Loading show={loading} className="my-4 text-app" />
       </div>
     </div>
   );

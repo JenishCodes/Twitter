@@ -232,7 +232,7 @@ export default function Status() {
   };
 
   return (
-    <div className="h-100">
+    <div className="h-100 status">
       <Helmet>
         <title>
           {tweet
@@ -252,7 +252,7 @@ export default function Status() {
       <Header title="Tweet" backArrow="full" />
 
       {mediaModalShow ? (
-        <Modal style={{ width: "100%", height: "100%" }}>
+        <Modal className="w-100 h-100">
           <div className="position-absolute p-3">
             <div
               className="btn hover px-2 py-0 rounded-circle"
@@ -265,13 +265,7 @@ export default function Status() {
             </div>
           </div>
           <div className="d-flex flex-column align-items-center h-100 justify-content-center">
-            <div
-              className="w-100"
-              style={{
-                maxHeight: "400px",
-                maxWidth: "90%",
-              }}
-            >
+            <div className="w-100 media-model-image">
               <img
                 className="h-100 w-100"
                 src={tweet.media}
@@ -283,7 +277,7 @@ export default function Status() {
       ) : null}
 
       {analyticsModalShow ? (
-        <Modal style={{ width: "100%", height: "100%" }}>
+        <Modal className="h-100 w-100">
           <div className="compose bg-primary w-100 h-100 overflow-y-auto">
             <div className="w-100 position-sticky top-0 p-2">
               <div className="d-flex align-items-center">
@@ -300,7 +294,7 @@ export default function Status() {
               </div>
             </div>
             <div className="px-3 py-2">
-              <div className="border p-2" style={{ borderRadius: "16px" }}>
+              <div className="border p-2 radius">
                 <div className="d-flex mx-1 mt-1">
                   <img
                     className="rounded-circle small-profile-image"
@@ -317,7 +311,7 @@ export default function Status() {
               </div>
             </div>
             <div className="px-3 py-2">
-              <div className="border p-3" style={{ borderRadius: "16px" }}>
+              <div className="border p-3 radius">
                 <div className="d-flex justify-content-around">
                   <div className="text-center">
                     <i className="bi bi-heart fs-3 text-muted"></i>
@@ -361,41 +355,30 @@ export default function Status() {
       ) : null}
 
       <div className="reference-list">
-        {references
-          ? references.map((reference, index) =>
-              reference ? (
-                <Tweet
-                  key={index}
-                  tweet={reference}
-                  upperlink={index !== 0}
-                  lowerlink
-                  reply_to={
-                    index !== 0
-                      ? references[index - 1].author.account_name
-                      : null
-                  }
-                />
-              ) : (
-                <div className="px-3 py-2">
-                  <div
-                    key={index}
-                    className="bg-muted text-muted p-3"
-                    style={{ borderRadius: "1rem" }}
-                  >
-                    This Tweet was deleted by the Tweet author.
-                  </div>
-                </div>
-              )
-            )
-          : null}
+        {references?.map((reference, index) =>
+          reference ? (
+            <Tweet
+              key={index}
+              tweet={reference}
+              upperlink={index !== 0}
+              lowerlink
+              reply_to={
+                index !== 0 ? references[index - 1].author.account_name : null
+              }
+            />
+          ) : (
+            <div className="px-3 py-2">
+              <div key={index} className="bg-muted text-muted p-3 radius">
+                This Tweet was deleted by the Tweet author.
+              </div>
+            </div>
+          )
+        )}
       </div>
 
-      {tweet && (!loadedRefs || references.length > 0) > 0 ? (
-        <div
-          style={{ marginLeft: "40px", width: "2px", height: "10px" }}
-          className="border"
-        ></div>
-      ) : null}
+      {tweet && (!loadedRefs || references.length > 0) > 0 && (
+        <div className="border upperlink"></div>
+      )}
 
       {tweet ? (
         <div className="status">
@@ -493,7 +476,7 @@ export default function Status() {
               </div>
             </div>
           </div>
-          {references.length > 0 ? (
+          {references.length > 0 && (
             <div className="px-3 pt-2 my-1 text-muted">
               Replying to{" "}
               {references[references.length - 1] && (
@@ -507,9 +490,9 @@ export default function Status() {
                 </Link>
               )}
             </div>
-          ) : null}
+          )}
           <div className="px-3">
-            {tweet.text ? (
+            {tweet.text && (
               <div className="fs-2 mt-2">
                 {textEntities.map((entity, index) =>
                   entity.type !== "normal" ? (
@@ -530,13 +513,12 @@ export default function Status() {
                   )
                 )}
               </div>
-            ) : null}
-            {tweet.media ? (
+            )}
+            {tweet.media && (
               <div className="media my-2">
                 <div className="media-body">
                   <img
-                    className="w-100 h-auto border pointer"
-                    style={{ borderRadius: "16px" }}
+                    className="w-100 h-auto border pointer radius"
                     src={tweet.media}
                     onClick={() => {
                       document.body.style.overflowY = "hidden";
@@ -546,15 +528,15 @@ export default function Status() {
                   />
                 </div>
               </div>
-            ) : null}
-            {tweet.createdAt ? (
+            )}
+            {tweet.createdAt && (
               <div className="text-muted mt-2 fs-5">
                 {timeFormatter(tweet.createdAt, "Status")}
               </div>
-            ) : null}
+            )}
             <hr className="mt-3 mb-2" />
 
-            {tweet.public_metrics ? (
+            {tweet.public_metrics && (
               <div className="d-flex p-1">
                 <div className="me-3 text-muted">
                   <span className="text-primary fw-bold">
@@ -579,7 +561,7 @@ export default function Status() {
                   </Link>
                 </div>
               </div>
-            ) : null}
+            )}
             <hr className="mt-2 mb-1" />
             <div className="d-flex">
               <div className="flex-grow-1 text-center">
@@ -635,7 +617,7 @@ export default function Status() {
                   <i className="bi fs-3 bi-share"></i>
                 </div>
               </div>
-              {!user.isAnonymous && account_name === user.account_name ? (
+              {!user.isAnonymous && account_name === user.account_name && (
                 <div className="flex-grow-1 text-center">
                   <div
                     onClick={() => {
@@ -648,7 +630,7 @@ export default function Status() {
                     <i className="bi fs-3 bi-clipboard2-data"></i>
                   </div>
                 </div>
-              ) : null}
+              )}
             </div>
           </div>
           <hr className="mb-0 mt-1" />
@@ -671,11 +653,7 @@ export default function Status() {
           )}
 
       {loading ? (
-        <Loading
-          show={true}
-          className="my-5 text-app"
-          style={{ width: "1.5rem", height: "1.5rem" }}
-        />
+        <Loading show className="my-5 text-app" />
       ) : (
         hasMoreReplies && (
           <div className="d-flex justify-content-center">

@@ -76,10 +76,9 @@ export default function AccountSettings() {
         <div className="form-floating my-3">
           <input
             type="password"
-            className="form-control rounded-5"
+            className="form-control rounded-5 bg-transparent"
             id="password"
             disabled={loading}
-            style={{ backgroundColor: "transparent" }}
             value={password}
             onChange={(e) => setPassword(e.currentTarget.value)}
           />
@@ -88,9 +87,8 @@ export default function AccountSettings() {
         <div className="form-floating my-3">
           <input
             type={setting_type === "account-name" ? "text" : setting_type}
-            className="form-control rounded-5"
+            className="form-control rounded-5 bg-transparent"
             id="field-input"
-            style={{ backgroundColor: "transparent" }}
             disabled={loading}
             value={
               setting_type === "password"
@@ -119,10 +117,9 @@ export default function AccountSettings() {
           <div className="form-floating my-3">
             <input
               type="password"
-              className="form-control rounded-5"
+              className="form-control rounded-5 bg-transparent"
               id="confirm-password"
               disabled={loading}
-              style={{ backgroundColor: "transparent" }}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.currentTarget.value)}
             />
@@ -145,11 +142,8 @@ export default function AccountSettings() {
         }`}
         onClick={handleSubmit}
       >
-        <Loading
-          show={loading}
-          className="me-3"
-          style={{ width: "20px", height: "20px" }}
-        />
+        <Loading show={loading} className="me-3" size="medium" />
+        
         {setting_type === "email"
           ? "Update email"
           : setting_type === "password"

@@ -29,24 +29,20 @@ export default function Signin() {
       <Helmet>
         <title>Signin to Twitter / Twitter</title>
       </Helmet>
-      {loading ? (
+      {loading && (
         <Modal
+          className="position-absolute"
           style={{
             right: document.body.scrollWidth > 973 ? 0 : "none",
-            position: "absolute",
             width:
               document.body.scrollWidth > 973
                 ? (document.body.scrollWidth * 5) / 12
                 : "100%",
           }}
         >
-          <Loading
-            show={true}
-            className="my-5 text-app"
-            style={{ width: "1.5rem", height: "1.5rem" }}
-          />
+          <Loading show className="my-5 text-app" />
         </Modal>
-      ) : null}
+      )}
       <div
         className="p-3 pt-0 d-flex justify-content-center"
         style={{ fontSize: "30px" }}
@@ -58,13 +54,12 @@ export default function Signin() {
         </Link>
         <div className="fw-bold">Sign in to Twitter</div>
       </div>
-      <div className="m-auto mt-4" style={{ width: "300px" }}>
+      <div className="m-auto mt-4 auth-form">
         <div className="mb-5">
           <div className="form-floating mt-2 mb-3">
             <input
               type="text"
-              className="form-control rounded-5 border"
-              style={{ backgroundColor: "transparent" }}
+              className="form-control rounded-5 border bg-transparent"
               id="credential-input"
               value={credential}
               onChange={(e) => setEmail(e.currentTarget.value)}
@@ -75,9 +70,8 @@ export default function Signin() {
           <div className="form-floating mb-1">
             <input
               type="password"
-              className="form-control rounded-5 border"
+              className="form-control rounded-5 border bg-transparent"
               id="password-input"
-              style={{ backgroundColor: "transparent" }}
               value={password}
               onChange={(e) => setPassword(e.currentTarget.value)}
               autoComplete="off"
@@ -92,7 +86,7 @@ export default function Signin() {
           <div
             onClick={handleSignin}
             className={`btn hover my-4 py-1 w-100 rounded-pill border${
-              credential && password.length < 8 ? " disabled": ""
+              credential && password.length < 8 ? " disabled" : ""
             }`}
           >
             Sign in

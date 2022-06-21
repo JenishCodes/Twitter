@@ -26,12 +26,12 @@ export default function DeleteAccount() {
         setUser(null);
         navigate("/");
       })
-      .catch((err) => {
+      .catch((err) =>
         setToast({
           type: "danger",
           message: err.response.data,
-        });
-      })
+        })
+      )
       .finally(() => setLoading(false));
   };
 
@@ -39,28 +39,13 @@ export default function DeleteAccount() {
     <Modal>
       {loading ? (
         <div>
-          <Loading
-            show
-            style={{ width: "1.5rem", height: "1.5rem" }}
-            className="text-app"
-          />
+          <Loading show className="text-app" />
           <div className="text-muted fw-bold mt-3">Deleting Account...</div>
         </div>
       ) : (
-        <div
-          className="modal-body bg-primary p-4"
-          style={{
-            width: "320px",
-            borderRadius: "20px",
-            maxWidth: "80vw",
-            height: "auto",
-          }}
-        >
+        <div className="modal-body bg-primary p-4">
           <div className="text-center">
-            <i
-              className="bi bi-twitter text-app"
-              style={{ fontSize: "3rem" }}
-            ></i>
+            <i className="bi bi-twitter text-app"></i>
           </div>
           <div className="fs-3 fw-bold">Deactivate Account?</div>
           <div className="text-muted py-2">
@@ -70,8 +55,7 @@ export default function DeleteAccount() {
           <div className="form-floating my-3">
             <input
               type="password"
-              className="form-control rounded-5"
-              style={{ backgroundColor: "transparent" }}
+              className="form-control rounded-5 bg-transparent"
               value={password}
               onChange={(e) => setPassword(e.currentTarget.value)}
             />

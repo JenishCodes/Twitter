@@ -11,35 +11,29 @@ export default function Forgot() {
   const { setToast } = useContext(AuthContext);
 
   const handleSubmit = () => {
-    if (!credential) {
-      setToast({ message: "Please fill all fields", type: "danger" });
-      return;
-    }
+    setLoading(true);
+    setToast({ message: "This service is not yet implemented.", type: "info" });
+    setLoading(false);
   };
 
   return (
-    <div className="signup py-3">
+    <div className="forgot py-3">
       <Helmet>
         <title>Reset Password / Twitter</title>
       </Helmet>
-      {loading ? (
+      {loading && (
         <Modal
+          className="end-0 position-absolute"
           style={{
-            right: 0,
-            position: "absolute",
             width:
               window.screen.width > 991
                 ? (window.screen.width * 5) / 12
                 : "100%",
           }}
         >
-          <Loading
-            show={true}
-            className="my-5 text-app"
-            style={{ width: "1.5rem", height: "1.5rem" }}
-          />
+          <Loading show className="my-5 text-app" />
         </Modal>
-      ) : null}
+      )}
       <div
         className="p-3 pt-0 d-flex justify-content-center"
         style={{ fontSize: "30px" }}
@@ -51,14 +45,13 @@ export default function Forgot() {
         </Link>
         <div className="fw-bold">Reset Password</div>
       </div>
-      <div className="m-auto mt-4" style={{ width: "300px" }}>
+      <div className="m-auto mt-4 auth-form">
         <div className="mb-5">
           <div className="form-floating mb-1">
             <input
               type="text"
-              className="form-control rounded-5 border"
+              className="form-control rounded-5 border bg-transparent"
               id="credential-input"
-              style={{ backgroundColor: "transparent" }}
               onChange={(e) => setCredential(e.currentTarget.value)}
               value={credential}
             />

@@ -135,15 +135,13 @@ export default function Network() {
                 <div className="text-center text-muted mt-5">No followers</div>
               )
           : null}
-        <Loading
-          show={loading}
-          style={{ width: "1.5rem", height: "1.5rem" }}
-          className="mt-5 text-app"
-        />
+
+        <Loading show={loading} className="mt-5 text-app" />
+
         {(friendship_type === "following" && following.length > 0) ||
-        (friendship_type === "followers" && followers.length > 0) ? (
-          <div className="h-50-vh"></div>
-        ) : null}
+          (friendship_type === "followers" && followers.length > 0 && (
+            <div className="h-50-vh"></div>
+          ))}
       </Tabbar>
     </div>
   );

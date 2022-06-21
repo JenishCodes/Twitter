@@ -37,34 +37,19 @@ export default function ConversationInfo() {
       <Helmet>
         <title>Conversation Info / Twitter</title>
       </Helmet>
-      {showModal ? (
+      {showModal && (
         <Modal>
           {modalLoading ? (
             <div>
-              <Loading
-                show
-                style={{ width: "1.5rem", height: "1.5rem" }}
-                className="text-app"
-              />
+              <Loading show className="text-app" />
               <div className="text-muted fw-bold mt-3">
                 Leaving conversation...
               </div>
             </div>
           ) : (
-            <div
-              className="modal-body bg-primary p-4"
-              style={{
-                width: "320px",
-                borderRadius: "20px",
-                maxWidth: "80vw",
-                height: "auto",
-              }}
-            >
+            <div className="modal-body bg-primary p-4">
               <div className="text-center">
-                <i
-                  className="bi bi-twitter text-app"
-                  style={{ fontSize: "3rem" }}
-                ></i>
+                <i className="bi bi-twitter text-app"></i>
               </div>
               <div className="fs-3 fw-bold">Leave this conversation?</div>
               <div className="text-muted py-2">
@@ -97,18 +82,14 @@ export default function ConversationInfo() {
             </div>
           )}
         </Modal>
-      ) : null}
+      )}
       <hr className="my-0" />
       {loading ? (
-        <Loading
-          show
-          style={{ width: "1.5rem", height: "1.5rem" }}
-          className="text-app mt-5"
-        />
+        <Loading show className="text-app mt-5" />
       ) : (
         <div>
           <div className="text-muted px-3 fw-bold fs-6 my-2">Users</div>
-          {conversationUser ? (
+          {conversationUser && (
             <List
               className="hover pointer"
               onClick={() => navigate("/" + conversationUser.account_name)}
@@ -119,8 +100,8 @@ export default function ConversationInfo() {
                 image_url: conversationUser.profile_image_url,
               }}
             />
-          ) : null}
-          {user ? (
+          )}
+          {user && (
             <List
               className="hover pointer"
               onClick={() => navigate("/" + user.account_name)}
@@ -131,7 +112,7 @@ export default function ConversationInfo() {
                 image_url: user.profile_image_url,
               }}
             />
-          ) : null}
+          )}
           <hr className="mb-0" />
           <div className="px-3 py-2">
             <div className="text-muted fs-6 fw-bold mb-2">Started on</div>

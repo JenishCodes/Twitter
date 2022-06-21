@@ -1,32 +1,32 @@
-.chat .header {
+.conersation .header {
   backface-visibility: hidden;
   backdrop-filter: blur(12px);
   position: sticky;
   top: 0%;
   width: 100%;
 }
-.chat .text-box {
+.conersation .text-box {
   top: calc(100% - 55px);
 }
-.chat .text-input {
+.conersation .text-input {
   outline: none;
   border: 0px;
   border-bottom: solid 2px var(--border);
   background-color: transparent;
   transition: border-color 0.1s ease-in-out;
 }
-.chat .text-input:focus {
+.conersation .text-input:focus {
   border-color: var(--app-color);
 }
-.chat .content {
+.conersation .content {
   height: calc(100vh - 55px);
   overflow-y: scroll;
   padding-top: 57px;
 }
-.chat .content::-webkit-scrollbar {
+.conersation .content::-webkit-scrollbar {
   width: 5px;
 }
-.chat .content::-webkit-scrollbar-thumb {
+.conersation .content::-webkit-scrollbar-thumb {
   background: var(--text-muted);
 }
 
@@ -44,6 +44,9 @@
 }
 .edit-profile .photo {
   margin-top: -12.5%;
+}
+.edit-profile .spinner-border {
+  margin: 0 9.5px;
 }
 .edit-profile .photo img {
   border: solid 5px var(--bg-primary) !important;
@@ -69,11 +72,17 @@
   width: calc(100% - 10px);
   height: calc(100% - 10px);
 }
+.editor {
+  margin-top: 6px;
+}
 .editor textarea {
   outline: none;
   resize: none;
   background: transparent;
   color: inherit;
+}
+.editor .link {
+  margin-top: 6px;
 }
 .editor .profile-image {
   width: 48px;
@@ -91,6 +100,9 @@
 }
 .editor .text-field:empty:before {
   content: attr(placeholder);
+}
+.editor .spinner-border {
+  margin: 0 13px;
 }
 .compose .editor {
   border-bottom: solid 1px var(--border);
@@ -241,17 +253,26 @@
   width: calc(100% - 1rem - 48px);
 }
 
-.chat .profile-image {
+.conersation .profile-image {
   width: 30px;
   height: 30px;
 }
 
 .text-message-container .message-delete {
   display: none;
+  height: fit-content;
 }
-
 .text-message-container:hover .message-delete {
   display: block;
+}
+.text-message-container .message-text {
+  width: fit-content;
+  max-width: 80%;
+  line-height: 1;
+  padding: 12px 16px;
+}
+.sidebar .unread-tag {
+  top: 10%;
 }
 .modal .profile {
   height: min(100vw, 75vh);
@@ -265,7 +286,53 @@
     rgb(217 217 217 / 25%) 0px 1px 4px 1px;
   animation: drawer-trasition 0.3s ease;
 }
-
+.spinner-border {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.modal-body {
+  width: 320px;
+  border-radius: 20px;
+  max-width: 80vw;
+  height: auto;
+}
+.modal-body .bi-twitter {
+  font-size: 3rem;
+}
+.conversation .to-bottom {
+  bottom: 5rem;
+  right: 1rem;
+}
+.conversation .to-bottom > div {
+  top: -0.5rem;
+  right: -0.25rem;
+}
+.display .bi-twitter {
+  font-size: 1.75rem;
+}
+.auth-form {
+  width: 300px;
+}
+.status .media-model-image {
+  max-width: 90%;
+  max-height: 400px;
+}
+.status .upperlink{
+  height: 10px;
+  width: 2px;
+  margin-left: 40px;
+}
+.tweet .lowerlink {
+  margin-bottom: 6px;
+}
+.tweet .upperlink {
+  width: 48px;
+  margin-bottom: 6px;
+}
+.tweet .upperlink > div {
+  width: 2px;
+  height: 12px;
+}
 @keyframes drawer-trasition {
   0% {
     transform: translateX(-100%);

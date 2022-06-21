@@ -41,12 +41,12 @@ export default function Settings() {
             ),
           }}
           className="hover pointer"
+          actionButton={<i className="bi bi-chevron-right text-muted"></i>}
           onClick={() =>
             navigate("account-name", {
               state: { account_name: user.account_name },
             })
           }
-          actionButton={<i className="bi bi-chevron-right text-muted"></i>}
         ></List>
         <List
           data={{
@@ -192,9 +192,7 @@ export default function Settings() {
         />
       </div>
       <div className="border-top">
-        <div className="text-muted my-2 py-1 fw-bold px-3">
-          Data Usage
-        </div>
+        <div className="text-muted my-2 py-1 fw-bold px-3">Data Usage</div>
         <List
           data={{
             title: "Auto-Load Tweet Images",
@@ -215,7 +213,7 @@ export default function Settings() {
           }
         />
       </div>
-      
+
       <div className="border-top">
         <div className="text-muted my-2 py-1 fw-bold px-3">
           Display Settings

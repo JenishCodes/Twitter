@@ -153,34 +153,31 @@ export default function Tweet(props) {
       }
     >
       <div
-        className={`tweet hover pointer border-0 px-3 ${
-          props.upperlink ? "py-0" : "pt-2"
-        } ${props.lowerlink ? "" : "border-bottom"} w-100 text-start`}
+        className={`tweet hover pointer border-0 px-3${
+          props.upperlink ? " py-0" : " pt-2"
+        }${props.lowerlink ? "" : " border-bottom"} w-100 text-start`}
       >
-        {props.upperlink ? (
-          <div style={{ width: "48px", marginBottom: "6px" }}>
-            <div
-              style={{ height: "12px", width: "2px" }}
-              className="border bg-secondary m-auto"
-            ></div>
+        {props.upperlink && (
+          <div className="upperlink">
+            <div className="border bg-secondary m-auto"></div>
           </div>
-        ) : null}
+        )}
 
-        {user.pinned_tweet_id === data._id ? (
+        {user.pinned_tweet_id === data._id && (
           <div className="ms-5 fs-6 ps-3 text-muted fst-italic">
             <i className="bi bi-pin-angle-fill me-1"></i>
             <span>Pinned Tweet</span>
           </div>
-        ) : null}
+        )}
 
-        {data.message ? (
+        {data.message && (
           <div className="ms-5 fs-6 ps-3 text-muted fst-italic">
             {data.message}
           </div>
-        ) : null}
+        )}
 
         <div className="d-flex justify-content-between">
-          {data.author.profile_image_url ? (
+          {data.author.profile_image_url && (
             <div className="d-flex flex-column align-items-center">
               <div className="profile-image">
                 <img
@@ -189,14 +186,11 @@ export default function Tweet(props) {
                   alt=""
                 />
               </div>
-              {props.lowerlink ? (
-                <div
-                  style={{ marginTop: "6px" }}
-                  className="flex-grow-1 border bg-secondary"
-                ></div>
-              ) : null}
+              {props.lowerlink && (
+                <div className="flex-grow-1 border bg-secondary lowerlink"></div>
+              )}
             </div>
-          ) : null}
+          )}
           <div
             className={
               data.author.profile_image_url ? "details" : "details w-100"
@@ -317,12 +311,12 @@ export default function Tweet(props) {
               )}
             </div>
 
-            {data.media ? (
+            {data.media && (
               <div className="media mb-2 mt-3 bg-muted rounded-3">
                 {imageLoaded ? (
                   <img
                     className="w-100 h-auto rounded-3"
-                    src={imageLoaded ? data.media : null}
+                    src={imageLoaded && data.media}
                     alt=""
                   />
                 ) : (
@@ -339,7 +333,7 @@ export default function Tweet(props) {
                   </div>
                 )}
               </div>
-            ) : null}
+            )}
             <div className="mt-3 mb-2">
               <div className="d-flex">
                 <div className="col-3">

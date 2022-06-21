@@ -50,8 +50,7 @@ export default function Home() {
                   <div className="px-3 py-1">
                     <div
                       key={index + "." + i}
-                      className="bg-muted text-muted p-3"
-                      style={{ borderRadius: "1rem" }}
+                      className="bg-muted text-muted p-3 radius"
                     >
                       This Tweet was deleted by the Tweet author.
                     </div>
@@ -65,12 +64,9 @@ export default function Home() {
             <div className="text-center text-muted mt-5">No tweets yet</div>
           )}
 
-      <Loading
-        show={loading}
-        style={{ width: "1.5rem", height: "1.5rem" }}
-        className="mt-5 text-app"
-      />
-      {feed.length ? <div className="h-50-vh"></div> : null}
+      <Loading show={loading} className="mt-5 text-app" />
+
+      {feed.length > 0 && <div className="h-50-vh"></div>}
     </div>
   );
 }

@@ -167,7 +167,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="chat h-100">
+    <div className="conversation h-100">
       <Helmet>
         <title>
           {conversationUser
@@ -191,13 +191,12 @@ export default function Chat() {
           />
           <div className="flex-grow-1">
             <Link
-              className="fw-bold hover-underline fs-4"
+              className="fw-bold hover-underline fs-4 line-height-1"
               to={"/" + conversationUser?.account_name}
-              style={{ lineHeight: 1 }}
             >
               {conversationUser?.name}
             </Link>
-            <div className="text-muted fs-6" style={{ lineHeight: 1 }}>
+            <div className="text-muted fs-6 line-height-1">
               {messages.length} Messages
             </div>
           </div>
@@ -211,60 +210,48 @@ export default function Chat() {
       </div>
       <div className="content" ref={contentRef}>
         <div className="messages-container px-3">
-          <Loading
-            show={loading}
-            className="my-5 text-app"
-            style={{ width: "1.5rem", height: "1.5rem" }}
-          />
-          {messages.length > 0
-            ? messages.map((message, index) =>
-                message ? (
-                  <Message
-                    key={index}
-                    message={message}
-                    align={message.sender === user._id ? "end" : "start"}
-                    handleDelete={handleDelete}
-                    shape={
-                      index === 0 || messages[index - 1].date
-                        ? message.date
-                          ? "single"
-                          : "first"
-                        : message.date
-                        ? "last"
-                        : "middle"
-                    }
-                  />
-                ) : null
+          <Loading show={loading} className="my-5 text-app" />
+          {messages?.map(
+            (message, index) =>
+              message && (
+                <Message
+                  key={index}
+                  message={message}
+                  align={message.sender === user._id ? "end" : "start"}
+                  handleDelete={handleDelete}
+                  shape={
+                    index === 0 || messages[index - 1].date
+                      ? message.date
+                        ? "single"
+                        : "first"
+                      : message.date
+                      ? "last"
+                      : "middle"
+                  }
+                />
               )
-            : null}
+          )}
         </div>
       </div>
       <div
-        className="btn rounded-circle bg-muted filter position-absolute"
-        style={{
-          bottom: "5rem",
-          right: "1rem",
-          display:
-            contentRef.current &&
-            scrollY <
-              contentRef.current.scrollHeight -
-                contentRef.current.clientHeight -
-                200
-              ? "block"
-              : "none",
-        }}
+        className={`btn to-bottom rounded-circle bg-muted filter position-absolute d-${
+          contentRef.current &&
+          scrollY <
+            contentRef.current.scrollHeight -
+              contentRef.current.clientHeight -
+              200
+            ? "block"
+            : "none"
+        }`}
         onClick={() => {
           setTag(0);
           contentRef.current.scroll(0, contentRef.current.scrollHeight);
         }}
       >
         <div
-          className="bg-app rounded-pill text-white position-absolute px-1"
-          style={{
-            top: "-0.5rem",
-            right: "-0.25rem",
-            display: tag > 0 ? "block" : "none",
-          }}
+          className={`bg-app rounded-pill text-white position-absolute px-1 d-${
+            tag > 0 ? "block" : "none"
+          }`}
         >
           {tag}
         </div>

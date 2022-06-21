@@ -101,6 +101,9 @@ a {
   text-decoration: none;
   color: var(--text-primary) !important;
 }
+.bg-transparent {
+  background-color: transparent !important;
+}
 .bg-primary {
   background-color: var(--bg-primary) !important;
 }
@@ -217,6 +220,15 @@ a {
 }
 .white-space-pre-line {
   white-space: pre-line !important;
+}
+.radius {
+  border-radius: 16px !important;
+}
+.line-height-1 {
+  line-height: 1;
+}
+.h-200 {
+  height: 200% !important;
 }
 @media screen and (max-width: 575px) {
   .bottom-sm-0 {

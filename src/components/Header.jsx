@@ -50,9 +50,9 @@ export default function Header(props) {
         {props.title ? (
           <div className="title-container flex-grow-1 ms-2">
             <div className="title fs-3 fw-bold">{props.title}</div>
-            {props.subtitle ? (
+            {props.subtitle && (
               <div className="subtitle fs-7 text-muted">{props.subtitle}</div>
-            ) : null}
+            )}
           </div>
         ) : (
           <div className="flex-grow-1">
@@ -61,9 +61,9 @@ export default function Header(props) {
         )}
         <div className="end">{props.endButton}</div>
       </div>
-      {props.extraTitle ? (
+      {props.extraTitle && (
         <div className="mt-2 py-1 fs-3 fw-bold px-2">{props.extraTitle}</div>
-      ) : null}
+      )}
     </div>
   );
 }

@@ -52,11 +52,11 @@ export default function Explore() {
 
   return (
     <div>
-      {location.pathname === "/explore" ? (
+      {location.pathname === "/explore" && (
         <Helmet>
           <title>Explore / Twitter</title>
         </Helmet>
-      ) : null}
+      )}
 
       <Header extraTitle="Trending" />
 

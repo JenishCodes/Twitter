@@ -44,7 +44,7 @@ export default function Profile(props) {
   return (
     <div className="profile">
       <div className="poster overflow-hidden bg-muted">
-        {props.user.banner_image_url ? (
+        {props.user.banner_image_url && (
           <img
             className="pointer w-100 h-100"
             src={props.user.banner_image_url}
@@ -56,7 +56,7 @@ export default function Profile(props) {
               setShow(true);
             }}
           />
-        ) : null}
+        )}
       </div>
       <div className="photo-btn d-flex justify-content-between px-3">
         <div className="photo w-25">
@@ -73,10 +73,10 @@ export default function Profile(props) {
           />
         </div>
         <div className="btns pt-2">
-          {user.isAnonymous ? null : (
+          {!user.isAnonymous && (
             <div
               className="btn text-primary rounded-circle hover border px-2 py-1 mx-2"
-              data-title={"Message @" + props.user.account_name}
+              data-title={`Message @${props.user.account_name}`}
               onClick={() =>
                 navigate("/messages/" + props.user._id, {
                   state: { user: props.user },
@@ -105,24 +105,24 @@ export default function Profile(props) {
           <p>{props.user.description}</p>
         </div>
         <div className="info d-flex my-2 flex-wrap">
-          {props.user.location ? (
+          {props.user.location && (
             <div className="text-muted me-4 my-1">
               <i className="bi bi-geo-alt-fill fs-4 me-2"></i>
               <span>{props.user.location}</span>
             </div>
-          ) : null}
+          )}
           <div className="text-muted me-4 my-1">
             <i className="bi bi-calendar-fill me-2 fs-4"></i>
             <span>Joined {new Date(props.user.createdAt).toDateString()}</span>
           </div>
-          {props.user.url ? (
+          {props.user.url && (
             <div className="text-muted me-4 my-1">
               <i className="bi bi-link me-2 fs-4"></i>
               <Link to={props.user.url} target="_blank">
                 {props.user.url}
               </Link>
             </div>
-          ) : null}
+          )}
         </div>
         <div className="statics d-flex mt-3 mb-2">
           <Link
@@ -147,8 +147,8 @@ export default function Profile(props) {
           </Link>
         </div>
       </div>
-      {show ? (
-        <Modal style={{ width: "100%", height: "100%" }}>
+      {show && (
+        <Modal className="w-100 h-100">
           <div className="position-absolute p-3">
             <div
               className="btn hover px-2 py-0 rounded-circle"
@@ -178,7 +178,7 @@ export default function Profile(props) {
             </div>
           </div>
         </Modal>
-      ) : null}
+      )}
     </div>
   );
 }

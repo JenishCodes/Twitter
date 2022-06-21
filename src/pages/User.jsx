@@ -149,9 +149,9 @@ export default function User() {
                 ? replies.map((reply) => (
                     <Tweet
                       key={reply._id}
-                        upperlink={reply.referenced_tweet.length}
-                        tweet={reply}
-                      />
+                      upperlink={reply.referenced_tweet.length}
+                      tweet={reply}
+                    />
                   ))
                 : !loading && (
                     <div className="text-center text-muted mt-5">
@@ -227,11 +227,7 @@ export default function User() {
         )
       )}
 
-      <Loading
-        show={loading}
-        style={{ width: "1.5rem", height: "1.5rem" }}
-        className="my-5 text-app"
-      />
+      <Loading show={loading} className="my-5 text-app" />
     </div>
   );
 }

@@ -9,22 +9,20 @@ export default function Message(props) {
       <div
         className={`d-flex text-message align-items-center justify-content-${align}`}
       >
-        {align === "end" ? (
+        {align === "end" && (
           <div
             className="message-delete btn hover me-2 py-1 px-2"
             onClick={() => handleDelete(message._id)}
             data-title="Delete"
-            style={{ height: "fit-content" }}
           >
             <i className="bi bi-trash text-muted fs-6"></i>
           </div>
-        ) : null}
+        )}
         <div
+          className={`message-text text-white white-space-pre-line bg-${
+            align === "end" ? "app" : "muted"
+          }`}
           style={{
-            width: "fit-content",
-            maxWidth: "80%",
-            lineHeight: 1,
-            padding: "12px 16px",
             borderRadius:
               align === "end"
                 ? shape === "single"
@@ -42,16 +40,15 @@ export default function Message(props) {
                 ? "0 20px 20px 20px"
                 : "0 20px 20px 0",
           }}
-          className={`text-white white-space-pre-line bg-${align === "end" ? "app" : "muted"}`}
         >
           {message.text}
         </div>
       </div>
-      {message.date ? (
+      {message.date && (
         <div className={`message-time text-muted text-${align} fs-7 mb-3 mt-1`}>
           {timeFormatter(message.createdAt, "Message")}
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

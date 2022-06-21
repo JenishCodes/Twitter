@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import List from "../components/List";
 import Loading from "../components/Loading";
+import { AuthContext } from "../context";
 import { getTweetFavoriters } from "../services/favorite";
 import { getRetweeters } from "../services/tweet";
 
@@ -12,8 +13,8 @@ export default function Reactions() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
-  const [scrollY, setScrollY] = useState(0);
   const navigate = useNavigate();
+  const { scrollY } = useContext(AuthContext);
 
   useEffect(() => {
     if (
@@ -33,12 +34,6 @@ export default function Reactions() {
         .finally(() => setLoading(false));
     }
   }, [scrollY]);
-
-  useEffect(() => {
-    window.addEventListener("scroll", () => setScrollY(window.scrollY));
-    return () =>
-      window.removeEventListener("scroll", () => setScrollY(window.scrollY));
-  }, []);
 
   return (
     <div>
@@ -72,13 +67,9 @@ export default function Reactions() {
             </div>
           )}
 
-      <Loading
-        show={loading}
-        className="my-5 text-app"
-        style={{ width: "1.5rem", height: "1.5rem" }}
-      />
+      <Loading show={loading} className="my-5 text-app" />
 
-      {data.length > 0 ? <div className="h-50-vh"></div> : null}
+      {data.length > 0 && <div className="h-50-vh"></div>}
     </div>
   );
 }

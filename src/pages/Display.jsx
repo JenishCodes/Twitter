@@ -36,12 +36,7 @@ export default function Display() {
           <div className="d-flex justify-content-between">
             <div className="d-flex flex-column align-items-center">
               <div className="profile-image blue px-2 py-1 rounded-circle">
-                <i
-                  className="bi bi-twitter px-1 text-white"
-                  style={{
-                    fontSize: "1.75rem",
-                  }}
-                ></i>
+                <i className="bi bi-twitter px-1 text-white"></i>
                 <img className="w-100 h-auto rounded-circle" src="" alt="" />
               </div>
             </div>
@@ -95,9 +90,9 @@ export default function Display() {
                   value="blue"
                   type="radio"
                 />
-                {color === "blue" ? (
+                {color === "blue" && (
                   <i className="bi fs-1 text-white bi-check"></i>
-                ) : null}
+                )}
               </label>
             </div>
             <div className="col-4">
@@ -111,9 +106,9 @@ export default function Display() {
                   value="green"
                   type="radio"
                 />
-                {color === "green" ? (
+                {color === "green" && (
                   <i className="bi fs-1 text-white bi-check"></i>
-                ) : null}
+                )}
               </label>
             </div>
             <div className="col-4">
@@ -127,9 +122,9 @@ export default function Display() {
                   value="yellow"
                   type="radio"
                 />
-                {color === "yellow" ? (
+                {color === "yellow" && (
                   <i className="bi fs-1 text-white bi-check"></i>
-                ) : null}
+                )}
               </label>
             </div>
           </div>
@@ -145,9 +140,9 @@ export default function Display() {
                   value="purple"
                   type="radio"
                 />
-                {color === "purple" ? (
+                {color === "purple" && (
                   <i className="bi fs-1 text-white bi-check"></i>
-                ) : null}
+                )}
               </label>
             </div>
             <div className="col-4">
@@ -161,9 +156,9 @@ export default function Display() {
                   value="pink"
                   type="radio"
                 />
-                {color === "pink" ? (
+                {color === "pink" && (
                   <i className="bi fs-1 text-white bi-check"></i>
-                ) : null}
+                )}
               </label>
             </div>
             <div className="col-4">
@@ -177,9 +172,9 @@ export default function Display() {
                   value="orange"
                   type="radio"
                 />
-                {color === "orange" ? (
+                {color === "orange" && (
                   <i className="bi fs-1 text-white bi-check"></i>
-                ) : null}
+                )}
               </label>
             </div>
           </div>

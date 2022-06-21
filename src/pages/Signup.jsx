@@ -36,24 +36,20 @@ export default function Signup() {
       <Helmet>
         <title>Signup for Twitter / Twitter</title>
       </Helmet>
-      {loading ? (
+      {loading && (
         <Modal
+          className="position-absolute"
           style={{
-            right: 0,
-            position: "absolute",
+            right: document.body.scrollWidth > 973 ? 0 : "none",
             width:
               window.screen.width > 991
                 ? (window.screen.width * 5) / 12
                 : "100%",
           }}
         >
-          <Loading
-            show={true}
-            className="my-5 text-app"
-            style={{ width: "1.5rem", height: "1.5rem" }}
-          />
+          <Loading show className="my-5 text-app" />
         </Modal>
-      ) : null}
+      )}
       <div
         className="p-3 pt-0 d-flex justify-content-center"
         style={{ fontSize: "30px" }}
@@ -65,14 +61,13 @@ export default function Signup() {
         </Link>
         <div className="fw-bold">Create your account</div>
       </div>
-      <div className="m-auto mt-4" style={{ width: "300px" }}>
+      <div className="m-auto mt-4 auth-form">
         <div className="mb-5">
           <div className="form-floating mb-3">
             <input
               type="text"
-              className="form-control rounded-5 border"
+              className="form-control rounded-5 border bg-transparent"
               id="name-input"
-              style={{ backgroundColor: "transparent" }}
               onChange={(e) => setName(e.currentTarget.value)}
               value={name}
               autoComplete="off"
@@ -82,9 +77,8 @@ export default function Signup() {
           <div className="form-floating mb-3">
             <input
               type="text"
-              className="form-control rounded-5 border"
+              className="form-control rounded-5 border bg-transparent"
               id="account-input"
-              style={{ backgroundColor: "transparent" }}
               onChange={(e) => setUsername(e.currentTarget.value)}
               value={username}
               autoComplete="off"
@@ -94,9 +88,8 @@ export default function Signup() {
           <div className="form-floating mb-3">
             <input
               type="email"
-              className="form-control rounded-5 border"
+              className="form-control rounded-5 border bg-transparent"
               id="email-input"
-              style={{ backgroundColor: "transparent" }}
               onChange={(e) => setEmail(e.currentTarget.value)}
               value={email}
               autoComplete="off"
@@ -106,9 +99,8 @@ export default function Signup() {
           <div className="form-floating mb-3">
             <input
               type="password"
-              className="form-control rounded-5 border"
+              className="form-control rounded-5 border bg-transparent"
               id="password-input"
-              style={{ backgroundColor: "transparent" }}
               onChange={(e) => setPassword(e.currentTarget.value)}
               value={password}
               autoComplete="off"

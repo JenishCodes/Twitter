@@ -46,21 +46,8 @@ export default function Messages() {
                 image_url: chat.user.profile_image_url,
                 title: chat.user.name,
                 subtitle: chat.lastMessage,
-                // subtitle: chat.lastMessage._id
-                //   ? chat.lastMessage.text
-                //     ? chat.lastMessage.text
-                //     : "This Message has been deleted"
-                //   : "",
               }}
               actionButton={
-                // chat.lastMessage._id && (
-                //   <div className="text-muted oneline">
-                //     {timeFormatter(
-                //       chat.lastMessage.createdAt.seconds * 1000,
-                //       "Ago"
-                //     )}
-                //   </div>
-                // )
                 <div className="text-muted oneline">
                   {timeFormatter(chat.updatedAt, "Ago")}
                 </div>
@@ -69,13 +56,11 @@ export default function Messages() {
           ))
         : !loading && (
             <div className="text-center text-muted mt-5">No messages yet</div>
-          )}
-      <Loading
-        show={loading}
-        className="my-5 text-app"
-        style={{ width: "1.5rem", height: "1.5rem" }}
-      />
-      {conversations.length > 0 ? <div className="h-50-vh"></div> : null}
+        )}
+      
+      <Loading show={loading} className="my-5 text-app" />
+      
+      {conversations.length > 0 && <div className="h-50-vh"></div>}
     </div>
   );
 }

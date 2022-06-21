@@ -6,24 +6,13 @@ import { logout } from "../services/user";
 
 export default function Logout() {
   const navigate = useNavigate();
-  const {setUser} = useContext(AuthContext);
+  const { setUser } = useContext(AuthContext);
 
   return (
     <Modal>
-      <div
-        className="modal-body bg-primary p-4"
-        style={{
-          width: "320px",
-          borderRadius: "20px",
-          maxWidth: "80vw",
-          height: "auto",
-        }}
-      >
+      <div className="modal-body bg-primary p-4">
         <div className="text-center">
-          <i
-            className="bi bi-twitter text-app"
-            style={{ fontSize: "3rem" }}
-          ></i>
+          <i className="bi bi-twitter text-app"></i>
         </div>
         <div className="fs-3 fw-bold">Log out of Twitter?</div>
         <div className="text-muted py-2">

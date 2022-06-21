@@ -7,9 +7,16 @@ export default function Drawer() {
   const { user, setShow, show } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const handleClick = (to = null) => {
+    document.body.style.overflowY = "scroll";
+    setShow(false);
+
+    if (to) navigate(to);
+  };
+
   return show ? (
     <div className="d-sm-none">
-      <Modal style={{ height: "100%", width: "100%" }}>
+      <Modal className="w-100 h-100">
         <div id="drawer" className="drawer position-fixed bg-primary h-100">
           <div className="drawer-header d-flex justify-content-between align-items-center px-3 pt-3">
             <div className="drawer-header-title fs-4 fw-bold">
@@ -17,16 +24,13 @@ export default function Drawer() {
             </div>
             <div
               className="drawer-header-icon hover rounded-circle px-2 py-0 btn"
-              onClick={() => {
-                document.body.style.overflowY = "scroll";
-                setShow(false);
-              }}
+              onClick={() => handleClick()}
             >
               <i className="bi bi-x fs-2"></i>
             </div>
           </div>
 
-          {!user.isAnonymous ? (
+          {!user.isAnonymous && (
             <div className="drawer-header p-3">
               <div className="profile-image mb-1">
                 <img
@@ -48,23 +52,15 @@ export default function Drawer() {
                 </div>
               </div>
             </div>
-          ) : null}
-
-          {user.isAnonymous ? (
-            <hr className="mb-0 mt-3" />
-          ) : (
-            <hr className="my-0" />
           )}
+
+          <hr className={user.isAnonymous ? "mb-0 mt-3" : "my-0"} />
 
           {user.isAnonymous ? (
             <div className="drawer-body py-1">
               <div
-                className="drawer-item d-flex btn py-2 px-3 rounded-0 align-items-center hover"
-                onClick={() => {
-                  document.body.style.overflowY = "scroll";
-                  setShow(false);
-                  navigate("/explore");
-                }}
+                className="drawer-item d-flex btn py-2 px-3 align-items-center hover"
+                onClick={() => handleClick("/explore")}
               >
                 <div className="drawer-item-icon fs-3 me-3">
                   <i className="bi bi-hash"></i>
@@ -72,12 +68,8 @@ export default function Drawer() {
                 <div className="drawer-item-text fs-4">Explore</div>
               </div>
               <div
-                className="drawer-item d-flex btn py-2 px-3 rounded-0 align-items-center hover"
-                onClick={() => {
-                  document.body.style.overflowY = "scroll";
-                  setShow(false);
-                  navigate("/settings/display");
-                }}
+                className="drawer-item d-flex btn py-2 px-3 align-items-center hover"
+                onClick={() => handleClick("/settings/display")}
               >
                 <div className="drawer-item-icon fs-3 me-3">
                   <i className="bi bi-brush"></i>
@@ -88,12 +80,8 @@ export default function Drawer() {
           ) : (
             <div className="drawer-body py-1">
               <div
-                className="drawer-item d-flex btn py-2 px-3 rounded-0 align-items-center hover"
-                onClick={() => {
-                  document.body.style.overflowY = "scroll";
-                  setShow(false);
-                  navigate("/" + user.account_name);
-                }}
+                className="drawer-item d-flex btn py-2 px-3 align-items-center hover"
+                onClick={() => handleClick("/" + user.account_name)}
               >
                 <div className="drawer-item-icon fs-3 me-3">
                   <i className="bi bi-person"></i>
@@ -101,12 +89,8 @@ export default function Drawer() {
                 <div className="drawer-item-text fs-4">Profile</div>
               </div>
               <div
-                className="drawer-item d-flex btn py-2 px-3 rounded-0 align-items-center hover"
-                onClick={() => {
-                  document.body.style.overflowY = "scroll";
-                  setShow(false);
-                  navigate("/bookmarks");
-                }}
+                className="drawer-item d-flex btn py-2 px-3 align-items-center hover"
+                onClick={() => handleClick("/bookmarks")}
               >
                 <div className="drawer-item-icon fs-3 me-3">
                   <i className="bi bi-bookmark"></i>
@@ -114,12 +98,8 @@ export default function Drawer() {
                 <div className="drawer-item-text fs-4">Bookmark</div>
               </div>
               <div
-                className="drawer-item d-flex btn py-2 px-3 rounded-0 align-items-center hover"
-                onClick={() => {
-                  document.body.style.overflowY = "scroll";
-                  setShow(false);
-                  navigate("/settings/display");
-                }}
+                className="drawer-item d-flex btn py-2 px-3 align-items-center hover"
+                onClick={() => handleClick("/settings/display")}
               >
                 <div className="drawer-item-icon fs-3 me-3">
                   <i className="bi bi-brush"></i>
@@ -127,12 +107,8 @@ export default function Drawer() {
                 <div className="drawer-item-text fs-4">Display</div>
               </div>
               <div
-                className="drawer-item d-flex btn py-2 px-3 rounded-0 align-items-center hover"
-                onClick={() => {
-                  document.body.style.overflowY = "scroll";
-                  setShow(false);
-                  navigate("/settings");
-                }}
+                className="drawer-item d-flex btn py-2 px-3 align-items-center hover"
+                onClick={() => handleClick("/settings")}
               >
                 <div className="drawer-item-icon fs-3 me-3">
                   <i className="bi bi-gear"></i>
@@ -144,12 +120,8 @@ export default function Drawer() {
           <hr className="my-1" />
           <div className="drawer-footer">
             <div
-              className="drawer-item rounded-0 text-danger d-flex btn py-2 px-3 align-items-center hover"
-              onClick={() => {
-                document.body.style.overflowY = "scroll";
-                setShow(false);
-                navigate("/logout");
-              }}
+              className="drawer-item text-danger d-flex btn py-2 px-3 align-items-center hover"
+              onClick={() => handleClick("/logout")}
             >
               <div className="drawer-item-icon fs-3 me-3">
                 <i className="bi bi-box-arrow-right"></i>

@@ -7,6 +7,7 @@ import { signinAnonymously } from "../services/user";
 export default function Main() {
   const { setLoading, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
+
   return (
     <div className="main-page py-3 text-primary">
       <Helmet>
@@ -21,7 +22,7 @@ export default function Main() {
         </div>
         <div className="fw-bold">Happening now</div>
       </div>
-      <div className="m-auto" style={{ width: "300px" }}>
+      <div className="m-auto auth-form">
         <div className="fs-1 text-center mb-4">Join Twitter today.</div>
         <Link to="signup">
           <div className="btn hover d-flex px-5 my-1 py-2 justify-content-center align-items-center rounded-pill border">

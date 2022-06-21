@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context";
 import { editProfile } from "../services/user";
@@ -18,6 +18,7 @@ export default function EditProfile() {
   const [imageUrl, setImageUrl] = useState("");
   const [bannerUrl, setBannerUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const descRef = useRef();
 
   useEffect(() => {
     if (user) {
@@ -29,6 +30,10 @@ export default function EditProfile() {
       setBannerUrl(user.banner_image_url);
     }
   }, [user]);
+
+  useEffect(() => {
+    descRef.current.style.height = descRef.current.scrollHeight + 2 + "px";
+  }, [description]);
 
   const handleClick = () => {
     setLoading(true);
@@ -66,9 +71,7 @@ export default function EditProfile() {
           <div className="backdrop-banner position-absolute w-100 h-100 top-0 left-0"></div>
           <div
             className="camera-plus rounded-circle btn bg-primary filter"
-            onClick={(e) => {
-              e.currentTarget.firstChild.click();
-            }}
+            onClick={(e) => e.currentTarget.firstChild.click()}
           >
             <input
               type="file"
@@ -91,9 +94,7 @@ export default function EditProfile() {
             <div className="backdrop-image rounded-circle position-absolute"></div>
             <div
               className="camera-plus rounded-circle btn bg-primary filter"
-              onClick={(e) => {
-                e.currentTarget.firstChild.click();
-              }}
+              onClick={(e) => e.currentTarget.firstChild.click()}
             >
               <input
                 type="file"
@@ -114,15 +115,7 @@ export default function EditProfile() {
               }`}
             >
               {loading ? (
-                <Loading
-                  show={true}
-                  style={{
-                    width: "1rem",
-                    height: "1rem",
-                    margin: "0 9.5px",
-                  }}
-                  className="text-white"
-                />
+                <Loading show size="small" className="text-white" />
               ) : (
                 "Save"
               )}
@@ -132,8 +125,7 @@ export default function EditProfile() {
         <div className="form-floating mx-4 my-4">
           <input
             type="text"
-            className="form-control rounded-5"
-            style={{ backgroundColor: "transparent" }}
+            className="form-control rounded-5 bg-transparent"
             onChange={(e) => setName(e.currentTarget.value)}
             value={name}
           />
@@ -141,19 +133,11 @@ export default function EditProfile() {
         </div>
         <div className="form-floating mx-4 my-4">
           <textarea
-            className="form-control rounded-5"
-            style={{ backgroundColor: "transparent", height: "200%" }}
+            className="form-control rounded-5 bg-transparent"
+            ref={descRef}
             maxLength={256}
             value={description}
-            onLoad={(e) =>
-              (e.currentTarget.style.height =
-                e.currentTarget.scrollHeight + "px")
-            }
-            onChange={(e) => {
-              setDescription(e.currentTarget.value);
-              e.currentTarget.style.height =
-                e.currentTarget.scrollHeight + 2 + "px";
-            }}
+            onChange={(e) => setDescription(e.currentTarget.value)}
           ></textarea>
           <label htmlFor="email-input">Description</label>
         </div>
@@ -161,8 +145,7 @@ export default function EditProfile() {
           <input
             type="text"
             maxLength={64}
-            className="form-control rounded-5"
-            style={{ backgroundColor: "transparent" }}
+            className="form-control rounded-5 bg-transparent"
             onChange={(e) => setLocation(e.currentTarget.value)}
             value={location}
           />
@@ -171,8 +154,7 @@ export default function EditProfile() {
         <div className="form-floating mx-4 my-4">
           <input
             type="url"
-            className="form-control rounded-5"
-            style={{ backgroundColor: "transparent" }}
+            className="form-control rounded-5 bg-transparent"
             onChange={(e) => setWebsite(e.currentTarget.value)}
             value={website}
           />
