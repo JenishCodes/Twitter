@@ -10,7 +10,11 @@ export default function Header(props) {
   return (
     <div
       className={`header px-2 position-sticky ${
-        props.backArrow ? "py-1" : "py-2"
+        props.backArrow === "full"
+          ? "py-1"
+          : props.backArrow === "half"
+          ? "py-sm-2"
+          : "py-2"
       }`}
     >
       <div className="d-flex align-items-center">

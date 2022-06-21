@@ -23,15 +23,16 @@ exports.searchTweets = async function (query, page) {
 };
 
 exports.deleteTweet = async function (tweet_id, author_id) {
+  var tweet;
   if (author_id) {
-    await Tweet.findOneAndRemove({
+    tweet = await Tweet.findOneAndRemove({
       author: ObjectId(author_id),
       "referenced_tweet.type": "retweet_of",
       "referenced_tweet.id": tweet_id,
     });
     return;
   } else {
-    await Tweet.findOneAndRemove({ _id: ObjectId(tweet_id) });
+    tweet = await Tweet.findOneAndRemove({ _id: ObjectId(tweet_id) });
   }
 
   const retweets = await Tweet.find({
@@ -53,7 +54,7 @@ exports.deleteTweet = async function (tweet_id, author_id) {
     })
   );
 
-  return true;
+  return tweet.media;
 };
 
 exports.createTweet = async function (tweetData) {
@@ -114,7 +115,7 @@ exports.getTweetReplies = async function (tweet_id, user_id, page) {
     userReplies = await Tweet.find({
       author: ObjectId(user_id),
       "referenced_tweet.type": "replied_to",
-      "referenced_tweet.id": ObjectId(tweet_id),
+      $eq: [{ $last: "referenced_tweet.id"}, ObjectId(tweet_id)],
     })
       .sort({ createdAt: -1 })
       .populate("author", "name account_name auth_id profile_image_url");
@@ -139,14 +140,14 @@ exports.getTweetReferences = async function (tweet_id) {
     .transform(function (doc) {
       const { referenced_tweet } = doc._doc;
       const newRefTweets = referenced_tweet.map((ref) => {
-        return { type: ref.type, ...ref.id._doc };
+        return { type: ref.type, ...ref.id?._doc };
       });
       return newRefTweets;
     });
 
   const data = await Promise.all(
     referenced_tweets.map(async (reference) => {
-      if (reference.author) {
+      if (reference?.author) {
         const ref_tweet_author = await userController.getUser(
           "_id",
           reference.author,
@@ -182,7 +183,7 @@ exports.getTweets = async function (condition, page, fields) {
       return docs.map((doc) => {
         const { referenced_tweet, ...restDoc } = doc._doc;
         const newRefTweets = referenced_tweet.map((ref) => {
-          return { type: ref.type, ...ref.id._doc };
+          return { type: ref.type, ...ref.id?._doc };
         });
         return {
           ...restDoc,
@@ -206,7 +207,8 @@ exports.getTweets = async function (condition, page, fields) {
         if (restRef.type === "replied_to") {
           return {
             ...tweet,
-            referenced_tweet: [refTweet],
+            message: "Repling to" +( ref_user ? "@" + ref_user.account_name : ""),
+            referenced_tweet: [],
           };
         } else {
           return {

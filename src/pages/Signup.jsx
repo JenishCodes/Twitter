@@ -6,28 +6,28 @@ import Modal from "../components/Modal";
 import { AuthContext } from "../context";
 import { signup } from "../services/user";
 
-export default function Signup({setToast}) {
+export default function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
-  const { setUser } = useContext(AuthContext)
-  const navigate = useNavigate()
+  const { setUser, setToast } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSignup = () => {
     if (!email || !password || !name || !username) {
-      setToast({message: "Please fill all fields", type: "danger"});
+      setToast({ message: "Please fill all fields", type: "danger" });
       return;
     }
 
     setLoading(true);
     signup(name, email, password, username)
       .then((user) => {
-        setUser(user)
-        navigate("/home")
-    })
-      .catch((err) => setToast({message: err.response.data, type: "danger"}))
+        setUser(user);
+        navigate("/home");
+      })
+      .catch((err) => setToast({ message: err.response.data, type: "danger" }))
       .finally(() => setLoading(false));
   };
 
@@ -81,7 +81,7 @@ export default function Signup({setToast}) {
           </div>
           <div className="form-floating mb-3">
             <input
-              type="account"
+              type="text"
               className="form-control rounded-5 border"
               id="account-input"
               style={{ backgroundColor: "transparent" }}
@@ -117,7 +117,11 @@ export default function Signup({setToast}) {
           </div>
           <div
             onClick={handleSignup}
-            className="btn hover d-flex px-5 my-4 py-1 justify-content-center align-items-center rounded-pill border"
+            className={`btn hover my-4 py-1 w-100 rounded-pill border${
+              name && email && username && password.length < 8
+                ? " disabled"
+                : ""
+            }`}
           >
             Sign up
           </div>

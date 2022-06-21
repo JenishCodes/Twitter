@@ -38,14 +38,26 @@ export default function Home() {
       {feed.length > 0
         ? feed.map((tweet, index) => (
             <div key={index}>
-              {tweet.referenced_tweet?.map((referencedTweet, i) => (
-                <Tweet
-                  key={index + "." + i}
-                  tweet={referencedTweet}
-                  upperlink={i !== 0}
-                  lowerlink
-                />
-              ))}
+              {tweet.referenced_tweet?.map((referencedTweet, i) =>
+                referencedTweet ? (
+                  <Tweet
+                    key={index + "." + i}
+                    tweet={referencedTweet}
+                    upperlink={i !== 0}
+                    lowerlink
+                  />
+                ) : (
+                  <div className="px-3 py-1">
+                    <div
+                      key={index + "." + i}
+                      className="bg-muted text-muted p-3"
+                      style={{ borderRadius: "1rem" }}
+                    >
+                      This Tweet was deleted by the Tweet author.
+                    </div>
+                  </div>
+                )
+              )}
               <Tweet upperlink={tweet.referenced_tweet} tweet={tweet} />
             </div>
           ))

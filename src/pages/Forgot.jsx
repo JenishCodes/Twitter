@@ -1,25 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
+import { AuthContext } from "../context";
 
 export default function Forgot() {
-  const [email, setEmail] = useState("");
+  const [credential, setCredential] = useState("");
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState(null);
+  const { setToast } = useContext(AuthContext);
 
   const handleSubmit = () => {
-    if (!email) {
-      setToast("Please fill all fields");
+    if (!credential) {
+      setToast({ message: "Please fill all fields", type: "danger" });
       return;
     }
-    setLoading(true);
   };
-
-  useEffect(() => {
-    if (toast) setTimeout(() => setToast(null), 5000);
-  }, [toast]);
 
   return (
     <div className="signup py-3">
@@ -44,25 +40,6 @@ export default function Forgot() {
           />
         </Modal>
       ) : null}
-      {toast ? (
-        <div
-          className={`text-white bg-${
-            toast.error ? "danger" : "success"
-          } rounded-3 p-2 position-absolute`}
-          style={{ width: "300px", left: "50%", transform: "translateX(-50%)" }}
-        >
-          <div className="d-flex align-items-center justify-content-between">
-            <div className="d-flex align-items-center">
-              <i className="bi bi-exclamation-circle fs-2"></i>
-              <div className="ms-2">{toast.message}</div>
-            </div>
-            <div
-              onClick={() => setToast("")}
-              className="btn-close pointer btn-close-white me-2 m-auto"
-            ></div>
-          </div>
-        </div>
-      ) : null}
       <div
         className="p-3 pt-0 d-flex justify-content-center"
         style={{ fontSize: "30px" }}
@@ -78,14 +55,14 @@ export default function Forgot() {
         <div className="mb-5">
           <div className="form-floating mb-1">
             <input
-              type="email"
+              type="text"
               className="form-control rounded-5 border"
-              id="email-input"
+              id="credential-input"
               style={{ backgroundColor: "transparent" }}
-              onChange={(e) => setEmail(e.currentTarget.value)}
-              value={email}
+              onChange={(e) => setCredential(e.currentTarget.value)}
+              value={credential}
             />
-            <label htmlFor="email-input">Email</label>
+            <label htmlFor="credential-input">Account Name / Email</label>
           </div>
           <div className="text-end">
             <Link className="hover-underline" to="/signin">
@@ -94,7 +71,9 @@ export default function Forgot() {
           </div>
           <div
             onClick={handleSubmit}
-            className="btn hover d-flex px-5 my-4 py-1 justify-content-center align-items-center rounded-pill border"
+            className={`btn hover my-4 py-1 w-100 rounded-pill border${
+              !credential ? " disabled" : ""
+            }`}
           >
             Get Password Reset Link
           </div>

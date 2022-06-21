@@ -193,6 +193,31 @@ export default function Settings() {
       </div>
       <div className="border-top">
         <div className="text-muted my-2 py-1 fw-bold px-3">
+          Data Usage
+        </div>
+        <List
+          data={{
+            title: "Auto-Load Tweet Images",
+            image: (
+              <div className="text-primary py-2">
+                <i className="bi bi-bar-chart-line fs-2 mx-2"></i>
+              </div>
+            ),
+          }}
+          className="hover pointer"
+          onClick={(e) => handleClick(e, "autoLoadImages")}
+          actionButton={
+            <input
+              type="checkbox"
+              onChange={() => {}}
+              checked={user.settings.autoLoadImages}
+            />
+          }
+        />
+      </div>
+      
+      <div className="border-top">
+        <div className="text-muted my-2 py-1 fw-bold px-3">
           Display Settings
         </div>
         <List

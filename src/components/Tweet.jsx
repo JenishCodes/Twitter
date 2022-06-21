@@ -21,6 +21,7 @@ export default function Tweet(props) {
   const [retweeted, setRetweeted] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [menuVisisble, setMenuVisisble] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const [data, setData] = useState();
   const [textEntities, setTextEntities] = useState([]);
   const navigate = useNavigate();
@@ -31,6 +32,8 @@ export default function Tweet(props) {
     setTextEntities(getTweetEntities(props.tweet.text));
 
     if (user.isAnonymous) return;
+
+    setImageLoaded(user.settings.autoLoadImages);
 
     isFavoriter(props.tweet._id).then((res) => setLiked(res));
     isRetweeter(props.tweet._id, user._id).then((res) => setRetweeted(res));
@@ -315,13 +318,26 @@ export default function Tweet(props) {
             </div>
 
             {data.media ? (
-              <div className="media my-2">
-                <img
-                  className="w-100 h-auto border"
-                  style={{ borderRadius: "16px" }}
-                  src={data.media}
-                  alt=""
-                />
+              <div className="media mb-2 mt-3 bg-muted rounded-3">
+                {imageLoaded ? (
+                  <img
+                    className="w-100 h-auto rounded-3"
+                    src={imageLoaded ? data.media : null}
+                    alt=""
+                  />
+                ) : (
+                  <div className="w-100 text-center py-5">
+                    <div
+                      className="btn rounded-pill hover bg-primary fs-7 py-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setImageLoaded(true);
+                      }}
+                    >
+                      Load Image
+                    </div>
+                  </div>
+                )}
               </div>
             ) : null}
             <div className="mt-3 mb-2">

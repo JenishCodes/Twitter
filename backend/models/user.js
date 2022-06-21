@@ -18,6 +18,8 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      select: false,
+      minlength: 8,
     },
     account_name: {
       type: String,
@@ -88,7 +90,7 @@ userSchema.pre("save", function (next) {
   });
 });
 
-userSchema.post("findOneAndRemove", async function (doc) {
+userSchema.post("remove", async function (doc) {
   await Setting.findOneAndRemove({ user_id: doc._id });
 
   await History.deleteMany({ user_id: doc._id });

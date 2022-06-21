@@ -60,7 +60,16 @@ exports.getFavorites = async function (user, page) {
 };
 
 exports.createFavorite = async function (favoriteData) {
-  const favorite = new Favorite(favoriteData);
+  var favorite = await Favorite.findOne({
+    author: ObjectId(favoriteData.author),
+    tweet: ObjectId(favoriteData.tweet),
+  });
+
+  if (favorite) {
+    return true;
+  }
+
+  favorite = new Favorite(favoriteData);
 
   await favorite.save();
 

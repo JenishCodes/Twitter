@@ -10,7 +10,7 @@ import {
 } from "../services/user";
 
 export default function Navigator() {
-  const { user, loading, setScrollY, setUser, setLoading, socket } =
+  const { user, loading, setScrollY, setUser, setLoading, socket, toast, setToast } =
     useContext(AuthContext);
 
   useEffect(() => {
@@ -55,9 +55,36 @@ export default function Navigator() {
     <div className="d-flex justify-content-center align-items-center h-100-vh">
       <i className="bi bi-twitter fs-0 text-app"></i>
     </div>
-  ) : user ? (
-    <AppNavigator isAnonymous={user.isAnonymous} />
   ) : (
-    <AuthNavigator />
+    <div>
+      {toast && (
+        <div
+          className={`text-white bg-${toast.type} rounded-3 p-2 position-fixed`}
+          style={{
+            width: "300px",
+            left: "50%",
+            top: "5%",
+            transform: "translateX(-50%)",
+            zIndex: 5,
+          }}
+        >
+          <div className="d-flex align-items-center justify-content-between">
+            <div className="d-flex align-items-center">
+              <i className="bi bi-exclamation-circle fs-2"></i>
+              <div className="ms-2">{toast.message}</div>
+            </div>
+            <div
+              onClick={() => setToast(null)}
+              className="btn-close pointer btn-close-white me-2 m-auto"
+            ></div>
+          </div>
+        </div>
+      )}
+      {user ? (
+        <AppNavigator isAnonymous={user.isAnonymous} />
+      ) : (
+        <AuthNavigator />
+      )}
+    </div>
   );
 }

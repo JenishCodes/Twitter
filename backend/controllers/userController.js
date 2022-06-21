@@ -1,4 +1,3 @@
-const { Conversation } = require("../models/conversation");
 const { Favorite } = require("../models/favorite");
 const { Friendship } = require("../models/friendship");
 const { History } = require("../models/history");
@@ -17,9 +16,11 @@ exports.signinAnonymously = function () {
 };
 
 exports.signin = async function (credential, password) {
-  var user = await User.findOne({ account_name: credential });
+  var user = await User.findOne({ account_name: credential }).select(
+    "+password"
+  );
   if (!user) {
-    user = await User.findOne({ email: credential });
+    user = await User.findOne({ email: credential }).select("+password");
 
     if (!user) {
       throw new Error("Invalid credentials");
@@ -34,7 +35,7 @@ exports.signin = async function (credential, password) {
   const settings = await Setting.findOne({ user_id: user._id });
 
   const token = user.generateAuthToken();
-  return { user: { ...user._doc, settings }, token };
+  return { user: { ...user._doc, settings, password: null }, token };
 };
 
 exports.getUser = async function (key, value, fields, include = null) {
@@ -136,13 +137,17 @@ exports.updateAccountName = async function (user_id, account_name, password) {
     throw new Error("Account name already taken");
   }
 
-  user = await User.findById(user_id);
-  if (!user.verifyPassword(password)) {
+  user = await User.findById(user_id).select("+password");
+
+  const isPasswordValid = await user.verifyPassword(password);
+  if (!isPasswordValid) {
     throw new Error("Invalid password");
   }
 
   user.account_name = account_name;
   await user.save();
+
+  await Setting.findByIdAndUpdate(user_id, { username: account_name });
 
   return true;
 };
@@ -158,8 +163,10 @@ exports.updateEmail = async function (user_id, email, password) {
     throw new Error("Email is already in use");
   }
 
-  user = await User.findById(user_id);
-  if (!user.verifyPassword(password)) {
+  user = await User.findById(user_id).select("+password");
+
+  const isPasswordValid = await user.verifyPassword(password);
+  if (!isPasswordValid) {
     throw new Error("Invalid password");
   }
 
@@ -170,8 +177,10 @@ exports.updateEmail = async function (user_id, email, password) {
 };
 
 exports.updatePassword = async function (user_id, oldPassword, newPassword) {
-  var user = await User.findById(user_id);
-  if (!user.verifyPassword(oldPassword)) {
+  var user = await User.findById(user_id).select("+password");
+
+  const isPasswordValid = await user.verifyPassword(oldPassword);
+  if (!isPasswordValid) {
     throw new Error("Invalid password");
   }
 
@@ -299,11 +308,12 @@ exports.getUserFeed = async function (user_id, page) {
       author: { $in: following_ids },
       "referenced_tweet.type": "retweet_of",
     },
-    "createdAt referenced_tweet author"
+    "createdAt referenced_tweet author -_id"
   ).transform(function (docs) {
     return docs.map((doc) => {
       const { referenced_tweet, author, ...restDoc } = doc._doc;
       const ref = referenced_tweet[referenced_tweet.length - 1];
+
       return {
         _id: ref.id,
         ...restDoc,
@@ -462,8 +472,15 @@ exports.getUserFeed = async function (user_id, page) {
   return { data, hasMore: data.length === 10 };
 };
 
-exports.deleteUser = async function (user_id) {
-  await User.findOneAndRemove({ _id: ObjectId(user_id) });
+exports.deleteUser = async function (user_id, password) {
+  const user = await User.findById(user_id).select("+password");
+
+  const isPasswordValid = await user.verifyPassword(password);
+  if (!isPasswordValid) {
+    throw new Error("Invalid password");
+  }
+
+  await user.remove();
 
   const tweeets = await Tweet.find({ author: ObjectId(user_id) });
   await Promise.all(
@@ -487,4 +504,73 @@ exports.deleteUser = async function (user_id) {
       await Favorite.findOneAndRemove({ _id: favorite._id });
     })
   );
+
+  return {
+    _id: user._id,
+    banner_image_url: user.banner_image_url !== "",
+    profile_image_url: !user.profile_image_url.includes(
+      "default_profile_image.jpg"
+    ),
+  };
+};
+
+exports.getUserRecommendations = async function (user_id) {
+  const map = new Map();
+
+  const followings = await Friendship.find({
+    followed_by: ObjectId(user_id),
+  }).select("following -_id");
+
+  const following_ids = followings.map((following) =>
+    following.following.toString()
+  );
+
+  await Promise.all(
+    following_ids.map(async (following_id) => {
+      const second_followings = await Friendship.find({
+        followed_by: ObjectId(following_id),
+      }).select("following -_id");
+
+      second_followings.forEach((s) => {
+        if (
+          !following_ids.includes(s.following.toString()) &&
+          s.following.toString() !== user_id
+        ) {
+          if (map.has(s.following.toString())) {
+            map.set(
+              s.following.toString(),
+              map.get(s.following.toString()) + 1
+            );
+          } else {
+            map.set(s.following.toString(), 1);
+          }
+        }
+      });
+    })
+  );
+
+  if (map.size > 12) {
+    const recommeandations = new Map([...map].sort((a, b) => b[1] - a[1]));
+    return [...recommeandations.keys()].slice(0, 12);
+  }
+
+  const famous = await Friendship.aggregate([
+    { $group: { _id: "$following", count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    {
+      $match: {
+        $and: [
+          { _id: { $ne: ObjectId(user_id) } },
+          { _id: { $nin: following_ids.map((id) => ObjectId(id)) } },
+          { _id: { $nin: Array.from(map.keys()).map((key) => ObjectId(key)) } },
+          { count: { $gt: 0 } },
+        ],
+      },
+    },
+    { $limit: 10 - map.size },
+  ]);
+
+  famous.forEach((f) => map.set(f._id.toString(), f.count));
+
+  return Array.from(map.keys());
 };

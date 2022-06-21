@@ -6,25 +6,21 @@ import Modal from "../components/Modal";
 import { AuthContext } from "../context";
 import { signin } from "../services/user";
 
-export default function Signin({ setToast }) {
+export default function Signin() {
   const [credential, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { setUser } = useContext(AuthContext);
+  const { setUser, setToast } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSignin = () => {
-    if (!credential || !password) {
-      setToast({message: "Please fill all fields", type: "danger"});
-      return;
-    }
     setLoading(true);
     signin(credential, password)
       .then((user) => {
         setUser(user);
         navigate("/home");
       })
-      .catch((err) => setToast({message: err.response.data, type: "danger"}))
+      .catch((err) => setToast({ message: err.response.data, type: "danger" }))
       .finally(() => setLoading(false));
   };
 
@@ -69,11 +65,12 @@ export default function Signin({ setToast }) {
               type="text"
               className="form-control rounded-5 border"
               style={{ backgroundColor: "transparent" }}
+              id="credential-input"
               value={credential}
               onChange={(e) => setEmail(e.currentTarget.value)}
               autoComplete="off"
             />
-            <label htmlFor="email-input">Account Name / Email</label>
+            <label htmlFor="credential-input">Account Name / Email</label>
           </div>
           <div className="form-floating mb-1">
             <input
@@ -94,7 +91,9 @@ export default function Signin({ setToast }) {
           </div>
           <div
             onClick={handleSignin}
-            className="btn hover d-flex px-5 my-4 py-1 justify-content-center align-items-center rounded-pill border"
+            className={`btn hover my-4 py-1 w-100 rounded-pill border${
+              credential && password.length < 8 ? " disabled": ""
+            }`}
           >
             Sign in
           </div>

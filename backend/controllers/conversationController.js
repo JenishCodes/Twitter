@@ -1,7 +1,5 @@
 const { Conversation } = require("../models/conversation");
 const userController = require("./userController");
-const messageController = require("./messageController");
-const { ObjectId } = require("mongoose").Types;
 
 exports.getUserConversations = async function (user_id) {
   const conversations = await Conversation.find({

@@ -22,6 +22,7 @@ const {
   updatePassword,
   signin,
   signinAnonymously,
+  getUserRecommendations,
 } = require("../controllers/userController");
 const { auth } = require("../middlewares/auth");
 
@@ -124,7 +125,6 @@ router.put("/updateAccountName", auth, async function (req, res) {
 
     res.send(data);
   } catch (err) {
-    console.log(err);
     res.status(400).send(err.message);
   }
 });
@@ -135,7 +135,6 @@ router.put("/updateEmail", auth, async function (req, res) {
 
     res.send(data);
   } catch (err) {
-    console.log(err);
     res.status(400).send(err.message);
   }
 });
@@ -150,7 +149,6 @@ router.put("/updatePassword", auth, async function (req, res) {
 
     res.send(data);
   } catch (err) {
-    console.log(err);
     res.status(400).send(err.message);
   }
 });
@@ -272,7 +270,18 @@ router.put("/", auth, async function (req, res) {
 
 router.delete("/", auth, async function (req, res) {
   try {
-    const data = await deleteUser(req.user);
+    const data = await deleteUser(req.user, req.body.password);
+
+    res.send(data);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err.message);
+  }
+});
+
+router.get("/recommendations", auth, async function (req, res) {
+  try {
+    const data = await getUserRecommendations(req.user, req.query.page);
 
     res.send(data);
   } catch (err) {

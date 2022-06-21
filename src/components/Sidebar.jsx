@@ -77,7 +77,9 @@ export default function Sidebar() {
                   title="Explore"
                 >
                   <div className="nav-icon">
-                    <i className="bi bi-hash"></i>
+                    <i className={`bi bi-search ${
+                      pathname==="/explore" ? "fw-bold" : ""
+                    }`}></i>
                   </div>
                   <span
                     className={`nav-title d-xl-block d-none ${

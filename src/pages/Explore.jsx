@@ -60,7 +60,7 @@ export default function Explore() {
 
       <Header extraTitle="Trending" />
 
-      <div className="mb-5 pb-5">
+      <div>
         {trends.map((tag) => (
           <List
             key={tag.name}

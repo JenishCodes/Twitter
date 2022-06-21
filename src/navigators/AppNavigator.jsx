@@ -17,13 +17,13 @@ import Display from "../pages/Display";
 import Notifications from "../pages/Notifications";
 import Drawer from "../components/Drawer";
 import Explore from "../pages/Explore";
-import { Followbox } from "../components/Followbox";
 import Messages from "../pages/Messages";
 import ConversationInfo from "../pages/ConversationInfo";
 import AccountSettings from "../pages/AccountSettings";
 import DeleteAccount from "../pages/DeleteAccount";
 import { Authbox } from "../components/Authbox";
 import { isAuthenticated } from "../services/user";
+import { RecommendationsBox } from "../components/RecommendationsBox";
 
 export default function AppNavigator({ isAnonymous }) {
   const { _id: user } = isAuthenticated();
@@ -108,7 +108,7 @@ export default function AppNavigator({ isAnonymous }) {
             <Routes>
               <Route
                 path="/explore"
-                element={isAnonymous ? <Authbox /> : <Followbox />}
+                element={isAnonymous ? <Authbox /> : <RecommendationsBox />}
               />
               <Route path="*" element={<Explore />} />
             </Routes>

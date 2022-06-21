@@ -13,6 +13,10 @@ const Setting = mongoose.model(
       type: Boolean,
       default: true,
     },
+    autoLoadImages: {
+      type: Boolean,
+      default: true,
+    },
     followNotification: {
       type: Boolean,
       default: true,

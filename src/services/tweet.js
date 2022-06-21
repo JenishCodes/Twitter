@@ -24,7 +24,7 @@ export async function postTweet(tweet) {
       await uploadBytes(mediaRef, tweet.media);
       const media = await getDownloadURL(mediaRef);
 
-      await api.put(`/tweet/update?id=${res.data}`, {
+      await api.put(`/tweet/${res.data}`, {
         media,
       });
     }
@@ -62,16 +62,14 @@ export async function getRetweeters(tweet_id, page) {
   }
 }
 
-export async function deleteTweet(tweet_id, isRetweet=false) {
+export async function deleteTweet(tweet_id, isRetweet = false) {
   try {
-    await api.delete(`/tweet/${tweet_id}?isRetweet=${isRetweet}`);
-
-    const mediaRef = ref(storage, `/tweet_images/${tweet_id}`);
-
-    getDownloadURL(mediaRef)
-      .then(async (media) => await deleteObject(mediaRef))
-      .catch(() => { });
-    
+    const res = await api.delete(`/tweet/${tweet_id}?isRetweet=${isRetweet}`);
+    console.log(res.data);
+    if (res.data) {
+      const mediaRef = ref(storage, `/tweet_images/${tweet_id}`);
+      await deleteObject(mediaRef);
+    }
   } catch (err) {
     throw err;
   }

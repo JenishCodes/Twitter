@@ -6,8 +6,9 @@ import { AuthContext } from "../context";
 import { deleteUser } from "../services/user";
 
 export default function DeleteAccount() {
-  const { setUser } = useContext(AuthContext);
+  const { setUser, setToast } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
   const { state } = useLocation();
   const navigate = useNavigate();
 
@@ -16,6 +17,23 @@ export default function DeleteAccount() {
       navigate("/", { replace: true, state: null });
     }
   }, []);
+
+  const handleDeactivate = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    deleteUser(password)
+      .then(() => {
+        setUser(null);
+        navigate("/");
+      })
+      .catch((err) => {
+        setToast({
+          type: "danger",
+          message: err.response.data,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
 
   return state?.requestFrom === "settings" ? (
     <Modal>
@@ -44,29 +62,32 @@ export default function DeleteAccount() {
               style={{ fontSize: "3rem" }}
             ></i>
           </div>
-          <div className="fs-3 fw-bold">Delete Account?</div>
+          <div className="fs-3 fw-bold">Deactivate Account?</div>
           <div className="text-muted py-2">
-            You can always log back in at any time. If you just want to switch
-            accounts, you can do that by adding an existing account.
+            After deactivating your account, your display name, @username, and
+            public profile will no longer be viewable on Twitter.com.
           </div>
-          <div className="text-center">
+          <div className="form-floating my-3">
+            <input
+              type="password"
+              className="form-control rounded-5"
+              style={{ backgroundColor: "transparent" }}
+              value={password}
+              onChange={(e) => setPassword(e.currentTarget.value)}
+            />
+            <label htmlFor="account-name-input">Confirm Password</label>
+          </div>
+          <div className="text-center d-flex">
             <div
-              className="btn bg-secondary text-secondary filter pointer w-100 fw-bold rounded-pill mt-2 mb-1"
-              onClick={() => {
-                setLoading(true);
-                deleteUser()
-                  .then(() => setUser(null))
-                  .catch((err) => console.log(err))
-                  .finally(() => {
-                    setLoading(false)
-                    navigate("/")
-                  });
-              }}
+              className={`btn bg-danger text-white filter pointer w-100 fw-bold rounded-pill me-1${
+                password.length < 8 ? " disabled" : ""
+              }`}
+              onClick={handleDeactivate}
             >
-              Delete Account
+              Deactivate
             </div>
             <div
-              className="btn hover w-100 border fw-bold rounded-pill mt-1 mb-2"
+              className="btn hover w-100 border fw-bold rounded-pill ms-1"
               onClick={() => navigate(-1, { replace: true, state: null })}
             >
               Cancle

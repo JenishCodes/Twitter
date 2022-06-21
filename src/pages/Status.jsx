@@ -55,6 +55,7 @@ export default function Status() {
     setRetweeted(false);
     setHasMoreReplies(true);
     setRelation("strangers");
+    setLoadedRefs(false);
 
     getTweet(status_id)
       .then((res) => {
@@ -98,7 +99,10 @@ export default function Status() {
   useEffect(() => {
     if (!loadedRefs && scrollY === 1 && tweet) {
       getTweetReferences(status_id)
-        .then((res) => setReferences(res))
+        .then((res) => {
+          console.log(res);
+          setReferences(res);
+        })
         .catch((err) => console.log(err))
         .finally(() => setLoadedRefs(true));
     }
@@ -206,7 +210,7 @@ export default function Status() {
     }
   };
 
-  const handleDelete = (e) => {
+  const handleDelete = () => {
     deleteTweet(status_id)
       .then(() => navigate("/"))
       .catch((err) => console.log(err));
@@ -237,7 +241,7 @@ export default function Status() {
               '"' +
               (references.length > 0
                 ? "@" +
-                  references[references.length - 1].author.account_name +
+                  references[references.length - 1]?.author.account_name +
                   " "
                 : "") +
               tweet.text +
@@ -372,7 +376,7 @@ export default function Status() {
                   }
                 />
               ) : (
-                <div className="px-3">
+                <div className="px-3 py-2">
                   <div
                     key={index}
                     className="bg-muted text-muted p-3"
@@ -386,7 +390,7 @@ export default function Status() {
           : null}
       </div>
 
-      {!loadedRefs && tweet ? (
+      {tweet && (!loadedRefs || references.length > 0) > 0 ? (
         <div
           style={{ marginLeft: "40px", width: "2px", height: "10px" }}
           className="border"
@@ -492,12 +496,16 @@ export default function Status() {
           {references.length > 0 ? (
             <div className="px-3 pt-2 my-1 text-muted">
               Replying to{" "}
-              <Link
-                className="hover-underline text-app"
-                to={"/" + references[references.length - 1].author.account_name}
-              >
-                @{references[references.length - 1].author.account_name}
-              </Link>
+              {references[references.length - 1] && (
+                <Link
+                  className="hover-underline text-app"
+                  to={
+                    "/" + references[references.length - 1].author.account_name
+                  }
+                >
+                  @{references[references.length - 1].author.account_name}
+                </Link>
+              )}
             </div>
           ) : null}
           <div className="px-3">

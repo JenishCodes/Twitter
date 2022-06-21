@@ -147,20 +147,11 @@ export default function User() {
             {profile_type === "replies"
               ? replies.length > 0
                 ? replies.map((reply) => (
-                    <div key={reply._id}>
-                      {reply.referenced_tweet?.map((referencedTweet, i) => (
-                        <Tweet
-                          key={referencedTweet._id}
-                          tweet={referencedTweet}
-                          upperlink={i !== 0}
-                          lowerlink
-                        />
-                      ))}
-                      <Tweet
+                    <Tweet
+                      key={reply._id}
                         upperlink={reply.referenced_tweet.length}
                         tweet={reply}
                       />
-                    </div>
                   ))
                 : !loading && (
                     <div className="text-center text-muted mt-5">

@@ -1,5 +1,10 @@
 import { storage } from "../firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { getUserFavorites } from "./favorite";
 import jwtDecode from "jwt-decode";
 import api from "./api";
@@ -9,6 +14,16 @@ export async function searchUser(name_query, deep_search, page, limit) {
     const res = await api.get(
       `/user/search?query=${name_query}&deep_search=${deep_search}&page=${page}&limit=${limit}`
     );
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export async function getUserRecommendations() {
+  try {
+    const res = await api.get("/user/recommendations");
+
     return res.data;
   } catch (err) {
     console.log(err);
@@ -243,9 +258,19 @@ export function isAuthenticated() {
   return getJwt() ? jwtDecode(getJwt()) : false;
 }
 
-export async function deleteUser() {
+export async function deleteUser(password) {
   try {
-    await api.delete("/user");
+    const res = await api.delete("/user", { data: { password } });
+
+    if (res.data.banner_image_url) {
+      const mediaRef = ref(storage, `/banner_images/${res.data._id}`);
+      await deleteObject(mediaRef);
+    }
+
+    if (res.data.profile_image_url) {
+      const mediaRef = ref(storage, `/profile_images/${res.data._id}`);
+      await deleteObject(mediaRef);
+    }
 
     logout();
 

@@ -43,7 +43,16 @@ exports.getFollowings = async function (account_name, page) {
 };
 
 exports.createFriendship = async function (friendshipData) {
-  const friendship = new Friendship(friendshipData);
+  var friendship = await Friendship.findOne({
+    followed_by: ObjectId(friendshipData.followed_by),
+    followed: ObjectId(friendshipData.followed),
+  });
+
+  if (friendship) {
+    return true;
+  }
+
+  friendship = new Friendship(friendshipData);
 
   await friendship.save();
 
