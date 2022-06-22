@@ -129,24 +129,20 @@ export default function Profile(props) {
         </div>
         <div className="statics d-flex mt-3 mb-2">
           <Link
-            className="hover-underline"
+            className="hover-underline me-4"
             to={`/${props.user.account_name}/network/following`}
             state={props.user}
           >
-            <div className="d-flex me-4">
-              <span>{props.user.following_count}</span>
-              <span className="text-muted ms-1">Following</span>
-            </div>
+            {props.user.following_count}{" "}
+            <span className="text-muted">Following</span>
           </Link>
           <Link
             className="hover-underline"
             to={`/${props.user.account_name}/network/followers`}
             state={props.user}
           >
-            <div className="d-flex">
-              <span>{props.user.followers_count}</span>
-              <span className="text-muted ms-1">Followers</span>
-            </div>
+            {props.user.followers_count}{" "}
+            <span className="text-muted">Followers</span>
           </Link>
         </div>
       </div>

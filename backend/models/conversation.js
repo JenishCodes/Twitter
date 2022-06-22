@@ -21,7 +21,7 @@ const conversationSchema = new mongoose.Schema(
 conversationSchema.post("findOneAndRemove", async function (doc) {
   await Message.deleteMany({
     conversationId: doc.conversationId,
-  })
+  });
 });
 
 const Conversation = mongoose.model("Conversation", conversationSchema);

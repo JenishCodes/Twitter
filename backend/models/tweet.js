@@ -105,7 +105,7 @@ tweetSchema.post("findOneAndRemove", async function (doc) {
   await User.findByIdAndUpdate(doc.author, {
     $inc: { tweets_count: -1 },
   });
-  
+
   if (doc.referenced_tweet?.length > 0) {
     const reference = doc.referenced_tweet[doc.referenced_tweet.length - 1];
 
@@ -129,7 +129,7 @@ tweetSchema.post("findOneAndRemove", async function (doc) {
     );
   }
 
-  return doc._id
+  return doc._id;
 });
 
 const Tweet = mongoose.model("Tweet", tweetSchema);

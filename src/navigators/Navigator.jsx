@@ -8,26 +8,13 @@ import {
   getUserSettings,
   isAuthenticated,
 } from "../services/user";
+import Toast from "../components/Toast";
 
 export default function Navigator() {
-  const {
-    user,
-    loading,
-    setScrollY,
-    setUser,
-    setLoading,
-    socket,
-    toast,
-    setToast,
-  } = useContext(AuthContext);
+  const { user, loading, setScrollY, setUser, setLoading, socket } =
+    useContext(AuthContext);
 
-  useEffect(() => {
-    window.addEventListener("scroll", () => setScrollY(window.scrollY));
-    return () =>
-      window.removeEventListener("scroll", () => setScrollY(window.scrollY));
-  }, []);
-
-  useEffect(async () => {
+  const fetchUser = async () => {
     const { _id: userId } = isAuthenticated();
 
     if (userId) {
@@ -47,7 +34,16 @@ export default function Navigator() {
     } else {
       setUser(null);
     }
-    setLoading(false);
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", () => setScrollY(window.scrollY));
+    return () =>
+      window.removeEventListener("scroll", () => setScrollY(window.scrollY));
+  }, []);
+
+  useEffect(() => {
+    fetchUser().then(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -65,38 +61,8 @@ export default function Navigator() {
     </div>
   ) : (
     <div>
-      {toast && (
-        <div
-          className={`text-white bg-${toast.type} rounded-3 p-2 position-fixed`}
-          style={{
-            width: "310px",
-            left: "50%",
-            top: "5%",
-            transform: "translateX(-50%)",
-            zIndex: 5,
-          }}
-        >
-          <div className="d-flex">
-            <i
-              className={`bi bi-${
-                toast.type === "danger" ? "exclamation" : "info"
-              }-circle fs-2 mx-1`}
-            ></i>
-            <div className="mx-2 align-self-center flex-grow-1">
-              {toast.message}
-            </div>
-            <div
-              onClick={() => setToast(null)}
-              className="btn-close pointer btn-close-white m-1"
-            ></div>
-          </div>
-        </div>
-      )}
-      {user ? (
-        <AppNavigator isAnonymous={user.isAnonymous} />
-      ) : (
-        <AuthNavigator />
-      )}
+      <Toast />
+      {user ? <AppNavigator /> : <AuthNavigator />}
     </div>
   );
 }

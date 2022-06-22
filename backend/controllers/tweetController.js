@@ -134,10 +134,7 @@ exports.getTweetReplies = async function (tweet_id, user_id, page) {
       $eq: [{ $arrayElemAt: ["$referenced_tweet.type", -1] }, "replied_to"],
     },
     $expr: {
-      $eq: [
-        { $arrayElemAt: ["$referenced_tweet.id", -1] },
-        ObjectId(tweet_id),
-      ],
+      $eq: [{ $arrayElemAt: ["$referenced_tweet.id", -1] }, ObjectId(tweet_id)],
     },
   })
     .sort({ createdAt: -1 })

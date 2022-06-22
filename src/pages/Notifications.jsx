@@ -73,7 +73,7 @@ export default function Notifications() {
 
       <Loading show={loading} className="my-5 text-app" />
 
-      {notifications.length > 0 ? <div className="h-50-vh"></div> : null}
+      {notifications.length > 0 ? <div className="h-25-vh"></div> : null}
     </div>
   );
 }

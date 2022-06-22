@@ -21,17 +21,16 @@ import Messages from "../pages/Messages";
 import ConversationInfo from "../pages/ConversationInfo";
 import AccountSettings from "../pages/AccountSettings";
 import DeleteAccount from "../pages/DeleteAccount";
-import { Authbox } from "../components/Authbox";
+import Authbox from "../components/Authbox";
+import RecommendationsBox from "../components/RecommendationsBox";
 import { isAuthenticated } from "../services/user";
-import { RecommendationsBox } from "../components/RecommendationsBox";
 
-export default function AppNavigator({ isAnonymous }) {
+export default function AppNavigator() {
   const { _id: user } = isAuthenticated();
 
   const protect = (element) => {
-    if (user !== "anonymous") {
-      return element;
-    }
+    if (user !== "anonymous") return element;
+
     return <Navigate to="/explore" />;
   };
 
@@ -108,7 +107,9 @@ export default function AppNavigator({ isAnonymous }) {
             <Routes>
               <Route
                 path="/explore"
-                element={isAnonymous ? <Authbox /> : <RecommendationsBox />}
+                element={
+                  user === "anonymous" ? <Authbox /> : <RecommendationsBox />
+                }
               />
               <Route path="*" element={<Explore />} />
             </Routes>

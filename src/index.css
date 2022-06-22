@@ -47,8 +47,8 @@ code {
 .main {
   min-height: 100vh;
 }
-.h-50-vh {
-  height: 50vh !important;
+.h-25-vh {
+  height: 25vh !important;
 }
 .h-100-vh {
   height: 100vh;

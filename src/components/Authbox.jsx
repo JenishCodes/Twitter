@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../services/user";
 
-export function Authbox() {
+export default function Authbox() {
   const navigate = useNavigate();
   return (
     <div className="py-3 px-4">

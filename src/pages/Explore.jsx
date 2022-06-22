@@ -79,7 +79,7 @@ export default function Explore() {
         ))}
       </div>
 
-      <div className="h-50-vh"></div>
+      <div className="h-25-vh"></div>
     </div>
   );
 }

@@ -22,7 +22,7 @@ export default function Signup() {
     }
 
     setLoading(true);
-    signup(name, email, password, username)
+    signup(name.trim(), email.trim(), password.trim(), username.trim())
       .then((user) => {
         setUser(user);
         navigate("/home");

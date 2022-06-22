@@ -4,7 +4,7 @@ import { getUserFromId, getUserRecommendations } from "../services/user";
 import List from "./List";
 import Loading from "./Loading";
 
-export function RecommendationsBox() {
+export default function RecommendationsBox() {
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);

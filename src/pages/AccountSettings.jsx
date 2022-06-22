@@ -143,7 +143,7 @@ export default function AccountSettings() {
         onClick={handleSubmit}
       >
         <Loading show={loading} className="me-3" size="medium" />
-        
+
         {setting_type === "email"
           ? "Update email"
           : setting_type === "password"

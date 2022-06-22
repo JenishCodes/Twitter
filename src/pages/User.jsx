@@ -145,6 +145,7 @@ export default function User() {
       {user ? (
         <div>
           <Profile user={user} />
+          <div className="py-2" />
           <Tabbar activeTab={profile_type} tabs={tabs}>
             {profile_type === "replies"
               ? replies.length > 0

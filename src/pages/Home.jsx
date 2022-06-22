@@ -10,7 +10,7 @@ export default function Home() {
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const { user, scrollY } = useContext(AuthContext);
+  const { scrollY } = useContext(AuthContext);
 
   useEffect(() => {
     if (
@@ -66,7 +66,7 @@ export default function Home() {
 
       <Loading show={loading} className="mt-5 text-app" />
 
-      {feed.length > 0 && <div className="h-50-vh"></div>}
+      {feed.length > 0 && <div className="h-25-vh"></div>}
     </div>
   );
 }

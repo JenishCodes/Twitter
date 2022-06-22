@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context";
 import { getUnseenNotififcationCount } from "../services/notification";
+import tweetIcon from "../icons/feather.svg";
 import Editor from "./Editor";
 
 export default function Sidebar() {
@@ -49,9 +50,8 @@ export default function Sidebar() {
               {!user.isAnonymous && (
                 <div className="w-100">
                   <div
-                    className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-2 px-sm-3 fs-3 pe-xl-4 text-primary btn"
+                    className="nav hover border-0 rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-2 px-sm-3 fs-3 pe-xl-4 text-primary btn"
                     onClick={() => navigate("/home")}
-                    title="Home"
                   >
                     <div className="nav-icon">
                       <i
@@ -72,9 +72,8 @@ export default function Sidebar() {
               )}
               <div className="w-100">
                 <div
-                  className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-2 px-sm-3 fs-3 pe-xl-4 text-primary btn"
+                  className="nav hover border-0 rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-2 px-sm-3 fs-3 pe-xl-4 text-primary btn"
                   onClick={() => navigate("/explore")}
-                  title="Explore"
                 >
                   <div className="nav-icon">
                     <i
@@ -95,7 +94,7 @@ export default function Sidebar() {
               {user.isAnonymous && (
                 <div className="w-100">
                   <div
-                    className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-2 px-sm-3 fs-3 pe-xl-4 text-primary btn"
+                    className="nav hover border-0 rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-2 px-sm-3 fs-3 pe-xl-4 text-primary btn"
                     onClick={() => navigate("/settings/display")}
                     title="Display"
                   >
@@ -119,7 +118,7 @@ export default function Sidebar() {
                       document.body.style.overflowY = "hidden";
                       setCompose(true);
                     }}
-                    className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-sm-3 fs-3 pe-xl-4 px-2 text-primary bg-app btn"
+                    className="nav hover border-0 rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-sm-3 fs-3 pe-xl-4 px-2 text-primary bg-app btn"
                   >
                     <div className="nav-icon">
                       <i className="bi bi-plus-circle"></i>
@@ -134,7 +133,7 @@ export default function Sidebar() {
                       setNotificationCount(0);
                       navigate("/notifications");
                     }}
-                    className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-sm-3 fs-3 pe-xl-4 px-2 text-primary btn"
+                    className="nav hover border-0 rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-sm-3 fs-3 pe-xl-4 px-2 text-primary btn"
                   >
                     <div className="nav-icon">
                       <i
@@ -165,7 +164,7 @@ export default function Sidebar() {
                 <div className="w-100">
                   <div
                     onClick={() => navigate("/messages")}
-                    className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-sm-3 fs-3 pe-xl-4 px-2 text-primary btn"
+                    className="nav hover border-0 rounded-pill mx-auto mx-xl-0 py-sm-2 py-0 align-items-center px-sm-3 fs-3 pe-xl-4 px-2 text-primary btn"
                   >
                     <div className="nav-icon">
                       <i
@@ -188,7 +187,7 @@ export default function Sidebar() {
                 <div className="w-100 d-none d-sm-block">
                   <div
                     onClick={() => navigate("/bookmarks")}
-                    className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 align-items-center px-sm-3 fs-3 pe-xl-4 text-primary btn"
+                    className="nav hover border-0 rounded-pill mx-auto mx-xl-0 py-sm-2 align-items-center px-sm-3 fs-3 pe-xl-4 text-primary btn"
                   >
                     <div className="nav-icon">
                       <i
@@ -211,12 +210,15 @@ export default function Sidebar() {
                 <div className="w-100 d-none d-sm-block">
                   <div
                     onClick={() => navigate("/" + user.account_name)}
-                    className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 align-items-center px-sm-3 fs-3 pe-xl-4 text-primary btn"
+                    className="nav hover border-0 rounded-pill mx-auto mx-xl-0 py-sm-2 align-items-center px-sm-3 fs-3 pe-xl-4 text-primary btn"
                   >
                     <div className="nav-icon">
                       <i
                         className={`bi bi-person${
-                          pathname.startsWith("/" + user.account_name)
+                          pathname.startsWith("/" + user.account_name) &&
+                          !pathname.startsWith(
+                            "/" + user.account_name + "/status/"
+                          )
                             ? "-fill"
                             : ""
                         }`}
@@ -224,7 +226,10 @@ export default function Sidebar() {
                     </div>
                     <span
                       className={`nav-title d-xl-block d-none${
-                        pathname.startsWith("/" + user.account_name)
+                        pathname.startsWith("/" + user.account_name) &&
+                        !pathname.startsWith(
+                          "/" + user.account_name + "/status/"
+                        )
                           ? " fw-bold"
                           : ""
                       }`}
@@ -238,7 +243,7 @@ export default function Sidebar() {
                 <div className="w-100 d-none d-sm-block">
                   <div
                     onClick={() => navigate("/settings")}
-                    className="nav hover rounded-pill mx-auto mx-xl-0 py-sm-2 align-items-center px-sm-3 fs-3 pe-xl-4 text-primary btn"
+                    className="nav hover border-0 rounded-pill mx-auto mx-xl-0 py-sm-2 align-items-center px-sm-3 fs-3 pe-xl-4 text-primary btn"
                   >
                     <div className="nav-icon">
                       <i
@@ -266,12 +271,18 @@ export default function Sidebar() {
                       setCompose(true);
                     }}
                     data-title="Tweet"
-                    className="nav filter compose-btn rounded-pill mx-auto bg-app py-2 fs-3 text-white btn"
+                    className="nav filter compose-btn rounded-pill mx-auto bg-app py-2 text-white btn"
                   >
                     <div className="nav-icon d-xl-none mx-auto">
-                      <i className="bi bi-plus-circle"></i>
+                      {/* <i className="bi bi-plus-circle"></i> */}
+                      <img
+                        style={{ height: "27px" }}
+                        src={tweetIcon}
+                        alt="tweet"
+                        className="mb-2"
+                      />
                     </div>
-                    <span className="nav-title d-xl-block mx-auto d-none">
+                    <span className="nav-title fw-bold d-xl-block mx-auto d-none">
                       Tweet
                     </span>
                   </div>
@@ -280,7 +291,7 @@ export default function Sidebar() {
             </div>
             <div
               onClick={() => navigate("/logout")}
-              className="hover rounded-pill flex-shrink-0 btn mb-3 mt-5 p-2 d-none d-sm-block"
+              className="hover rounded-pill flex-shrink-0 btn mb-3 mt-5 px-2 py-1 d-none d-sm-block"
             >
               {user.isAnonymous ? (
                 <div className="d-flex align-items-center justify-content-center">

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 export const AuthContext = React.createContext();
 
@@ -9,10 +9,6 @@ export function AuthProvider({ children }) {
   const [scrollY, setScrollY] = useState(0);
   const [toast, setToast] = useState(null);
   const socket = useRef();
-
-  useEffect(() => {
-    if (toast) setTimeout(() => setToast(null), 5000);
-  }, [toast]);
 
   return (
     <AuthContext.Provider

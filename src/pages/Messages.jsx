@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import List from "../components/List";
 import Header from "../components/Header";
-import { AuthContext } from "../context";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import { timeFormatter } from "../utils";
@@ -9,7 +8,6 @@ import { Helmet } from "react-helmet-async";
 import { getConversations } from "../services/conversation";
 
 export default function Messages() {
-  const { user } = useContext(AuthContext);
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -64,7 +62,7 @@ export default function Messages() {
 
       <Loading show={loading} className="my-5 text-app" />
 
-      {conversations.length > 0 && <div className="h-50-vh"></div>}
+      {conversations.length > 0 && <div className="h-25-vh"></div>}
     </div>
   );
 }

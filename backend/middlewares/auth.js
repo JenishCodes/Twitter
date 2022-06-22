@@ -25,7 +25,7 @@ exports.optionalAuth = function (req, res, next) {
         req.user = decoded._id;
       }
     }
-    
+
     next();
   } catch (err) {
     return res.status(400).send("Invalid token.");

@@ -34,7 +34,7 @@ const notificationSchema = new mongoose.Schema(
 
 notificationSchema.pre("validate", async function (next) {
   var userSettings;
-  
+
   if (mongoose.isValidObjectId(this.user)) {
     userSettings = await Setting.findOne({ user_id: this.user });
   } else {

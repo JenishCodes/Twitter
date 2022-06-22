@@ -160,7 +160,7 @@ export function getTweetEntities(text) {
 
       content = "";
       type = char === "#" ? "hashtag" : "user";
-    } else if (char === " " && type !== "normal") {
+    } else if ((char === " " || char === "\n") && type !== "normal") {
       entities.push({
         type,
         content,
@@ -199,7 +199,7 @@ export function extractEntities(tweet) {
 
   chars.forEach((char, i) => {
     if (char === "@" || char === "#") {
-      var end = tweet.indexOf(" ", i + 1);
+      var end = Math.min(tweet.indexOf(" ", i + 1), tweet.indexOf("\n", i + 1));
 
       if (end < 0) end = tweet.length + end + 1;
 
@@ -241,9 +241,11 @@ export const timeFormatter = (timestamp, format) => {
     return thenTime + " · " + thenDate;
   }
 
+  var seconds, interval;
+
   if (format === "Ago") {
-    var seconds = Math.floor((now - then) / 1000);
-    var interval = seconds / 31536000;
+    seconds = Math.floor((now - then) / 1000);
+    interval = seconds / 31536000;
 
     if (interval > 1) {
       return Math.floor(interval) + "y";
@@ -267,8 +269,8 @@ export const timeFormatter = (timestamp, format) => {
     return Math.floor(seconds) + "s";
   }
 
-  var seconds = Math.floor((now - then) / 1000);
-  var interval = seconds / 31536000;
+  seconds = Math.floor((now - then) / 1000);
+  interval = seconds / 31536000;
   if (interval < 1) {
     interval = seconds / 86400;
     if (interval < 1) {

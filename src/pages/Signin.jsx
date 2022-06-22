@@ -15,7 +15,7 @@ export default function Signin() {
 
   const handleSignin = () => {
     setLoading(true);
-    signin(credential, password)
+    signin(credential.trim(), password.trim())
       .then((user) => {
         setUser(user);
         navigate("/home");

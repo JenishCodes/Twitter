@@ -140,7 +140,7 @@ export default function Network() {
 
         {(friendship_type === "following" && following.length > 0) ||
           (friendship_type === "followers" && followers.length > 0 && (
-            <div className="h-50-vh"></div>
+            <div className="h-25-vh"></div>
           ))}
       </Tabbar>
     </div>

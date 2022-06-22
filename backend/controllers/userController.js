@@ -197,10 +197,12 @@ exports.getUserTweets = async function (user_id, page) {
       .populate("pinned_tweet name account_name profile_image_url _id")
       .select("pinned_tweet");
 
-    pinned_tweet = {
-      ...user.pinned_tweet._doc,
-      author: { ...user._doc, pinned_tweet: null },
-    };
+    if (user.pinned_tweet) {
+      pinned_tweet = {
+        ...user.pinned_tweet._doc,
+        author: { ...user._doc, pinned_tweet: null },
+      };
+    }
   }
 
   const data = await tweetController.getTweets(

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Header from "../components/Header";
 import Editor from "../components/Editor";
 import {
@@ -150,12 +150,12 @@ export default function Status() {
       });
       return;
     }
-    if (user.pinned_tweet_id === tweet._id) {
+    if (user.pinned_tweet === tweet._id) {
       editProfile({ pinned_tweet: null }).catch((err) => console.log(err));
-      setUser({ ...user, pinned_tweet_id: "" });
+      setUser({ ...user, pinned_tweet: "" });
     } else {
       editProfile({ pinned_tweet: tweet._id }).catch((err) => console.log(err));
-      setUser({ ...user, pinned_tweet_id: tweet._id });
+      setUser({ ...user, pinned_tweet: tweet._id });
     }
   };
 
@@ -458,13 +458,11 @@ export default function Status() {
                           >
                             <i
                               className={`bi bi-pin-angle${
-                                user.pinned_tweet_id === status_id
-                                  ? "-fill"
-                                  : ""
+                                user.pinned_tweet === status_id ? "-fill" : ""
                               } me-3 fs-3`}
                             ></i>
                             <div>
-                              {user.pinned_tweet_id === status_id
+                              {user.pinned_tweet === status_id
                                 ? "Unpin Tweet"
                                 : "Pin Tweet"}
                             </div>
@@ -716,7 +714,7 @@ export default function Status() {
         )
       )}
 
-      <div className="h-50-vh"></div>
+      <div className="h-25-vh"></div>
     </div>
   );
 }

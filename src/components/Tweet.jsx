@@ -41,7 +41,8 @@ export default function Tweet(props) {
     setBookmarked(user.bookmarks.includes(props.tweet._id));
   }, [props.tweet, user]);
 
-  const handlePinTweet = () => {
+  const handlePinTweet = (e) => {
+    e.stopPropagation();
     if (user.isAnonymous) {
       setToast({
         type: "app",
@@ -50,12 +51,12 @@ export default function Tweet(props) {
       return;
     }
 
-    if (user.pinned_tweet_id === data._id) {
+    if (user.pinned_tweet === data._id) {
       editProfile({ pinned_tweet: null }).catch((err) => console.log(err));
-      setUser({ ...user, pinned_tweet_id: "" });
+      setUser({ ...user, pinned_tweet: "" });
     } else {
       editProfile({ pinned_tweet: data._id }).catch((err) => console.log(err));
-      setUser({ ...user, pinned_tweet_id: data._id });
+      setUser({ ...user, pinned_tweet: data._id });
     }
     setMenuVisisble(!menuVisisble);
   };
@@ -257,11 +258,11 @@ export default function Tweet(props) {
                       >
                         <i
                           className={`bi bi-pin-angle${
-                            user.pinned_tweet_id === data._id ? "-fill" : ""
+                            user.pinned_tweet === data._id ? "-fill" : ""
                           } me-3 fs-3`}
                         ></i>
                         <div>
-                          {user.pinned_tweet_id === data._id
+                          {user.pinned_tweet === data._id
                             ? "Unpin Tweet"
                             : "Pin Tweet"}
                         </div>

@@ -95,7 +95,7 @@ export default function ConversationInfo() {
               onClick={() => navigate("/" + conversationUser.account_name)}
               data={{
                 title: conversationUser.name,
-                subtitle: conversationUser.account_name,
+                subtitle: "@" + conversationUser.account_name,
                 context: conversationUser.description,
                 image_url: conversationUser.profile_image_url,
               }}
@@ -120,7 +120,7 @@ export default function ConversationInfo() {
           </div>
           <hr className="mt-0" />
           <div
-            className="btn text-danger w-100 hover py-3"
+            className="btn rounded-0 text-danger w-100 hover py-3"
             onClick={() => setShowModal(true)}
           >
             Leave Conversation

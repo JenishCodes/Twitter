@@ -69,7 +69,7 @@ export default function Reactions() {
 
       <Loading show={loading} className="my-5 text-app" />
 
-      {data.length > 0 && <div className="h-50-vh"></div>}
+      {data.length > 0 && <div className="h-25-vh"></div>}
     </div>
   );
 }

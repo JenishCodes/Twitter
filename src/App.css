@@ -24,7 +24,7 @@
   padding-top: 57px;
 }
 .conversation .content::-webkit-scrollbar {
-  width: 5px;
+  width: 4px;
 }
 .conversation .content::-webkit-scrollbar-thumb {
   background: var(--text-muted);
@@ -195,6 +195,7 @@
 .sidebar .nav {
   transition-duration: 0.2s;
   width: max-content;
+  margin-bottom: 2px;
 }
 .sidebar .position-fixed {
   width: inherit;
@@ -213,6 +214,7 @@
   font-weight: bold;
   border-color: var(--app-color) !important;
   color: var(--text-primary) !important;
+  border-radius: 5px;
 }
 .tabbar .pages::-webkit-scrollbar {
   height: 2px;
@@ -220,15 +222,11 @@
 .tabbar .pages::-webkit-scrollbar-thumb {
   background: var(--text-muted);
 }
-.compose::-webkit-scrollbar {
-  width: 7px;
+.compose > .overflow-y-auto::-webkit-scrollbar {
+  width: 4px;
   border-radius: 20px;
 }
-.compose::-webkit-scrollbar-track {
-  background-clip: padding-box;
-  border-radius: 20px;
-}
-.compose::-webkit-scrollbar-thumb {
+.compose > .overflow-y-auto::-webkit-scrollbar-thumb {
   background-clip: padding-box;
   border-radius: 20px;
   background: var(--text-muted);
@@ -324,15 +322,18 @@
   height: 10px;
   width: 2px;
   margin-left: 39px;
+  background: var(--border);
 }
 .tweet-lowerlink {
   margin-top: 4px;
+  background: var(--border);
 }
 .tweet-upperlink {
   margin-left: 23px;
   margin-bottom: 4px;
   width: 2px;
   height: 12px;
+  background: var(--border);
 }
 @keyframes drawer-trasition {
   0% {
@@ -344,6 +345,13 @@
 }
 .sidebar .details {
   width: calc(100% - 48px);
+}
+.toast-container {
+  width: 310px;
+  left: 50%;
+  top: 5%;
+  transform: translateX(-50%);
+  z-index: 5;
 }
 
 @media screen and (max-width: 1199px) {
@@ -388,14 +396,16 @@
 @media screen and (min-width: 576px) {
   .compose {
     width: 90% !important;
-    border-radius: 20px;
     height: auto !important;
     transform: translateX(-50%);
     top: 10%;
     left: 50%;
     position: absolute;
-    max-height: 500px;
     max-width: 550px;
+    border-radius: 20px;
+  }
+  .compose > .overflow-y-auto {
+    max-height: 500px;
   }
   .compose .editor {
     border-bottom: none;
@@ -407,9 +417,9 @@
   }
   [data-title]:after {
     content: attr(data-title);
-    background-color: rgba(170, 195, 255, 0.25);
+    background-color: rgba(170, 195, 255, 0.5);
     font-size: 11px;
-    color: var(--text-primary);
+    color: white;
     font-weight: 600;
     position: absolute;
     padding: 2px 5px;
