@@ -45,10 +45,14 @@ export default function Messages() {
               data={{
                 image_url: conversation.user.profile_image_url,
                 title: conversation.user.name,
-                subtitle: conversation.lastMessage,
+                context: (
+                  <div className="oneline text-muted">
+                    {conversation.lastMessage}
+                  </div>
+                ),
               }}
               actionButton={
-                <div className="text-muted oneline">
+                <div className="text-muted">
                   {timeFormatter(conversation.updatedAt, "Ago")}
                 </div>
               }

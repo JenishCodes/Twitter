@@ -205,7 +205,7 @@ export async function signin(credential, password) {
   });
 
   api.defaults.headers.common["x-auth-token"] = res.headers["x-auth-token"];
-
+  
   localStorage.setItem("token", res.headers["x-auth-token"]);
   return res.data;
 }
@@ -223,6 +223,8 @@ export function logout() {
 export async function signinAnonymously() {
   try {
     const res = await api.post("/user/signinAnonymously");
+
+    api.defaults.headers.common["x-auth-token"] = res.data;
 
     localStorage.setItem("token", res.data);
   } catch (err) {

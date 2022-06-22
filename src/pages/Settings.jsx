@@ -35,8 +35,8 @@ export default function Settings() {
             title: "Username",
             subtitle: "@" + user.account_name,
             image: (
-              <div className="py-2">
-                <i className="bi bi-person-fill fs-2 mx-2"></i>
+              <div className="py-2 text-center">
+                <i className="bi bi-person-fill fs-2"></i>
               </div>
             ),
           }}
@@ -53,8 +53,8 @@ export default function Settings() {
             title: "Email",
             subtitle: user.email,
             image: (
-              <div className="py-2">
-                <i className="bi bi-envelope fs-2 mx-2"></i>
+              <div className="py-2 text-center">
+                <i className="bi bi-envelope fs-2"></i>
               </div>
             ),
           }}
@@ -66,8 +66,8 @@ export default function Settings() {
           data={{
             title: "Update Password",
             image: (
-              <div className="py-2">
-                <i className="bi bi-key fs-2 mx-2"></i>
+              <div className="py-2 text-center">
+                <i className="bi bi-key fs-2"></i>
               </div>
             ),
           }}
@@ -85,8 +85,8 @@ export default function Settings() {
             title: "New Followers",
             subtitle: "Get notification when someone follows you",
             image: (
-              <div className="text-primary py-2">
-                <i className="bi bi-person-plus-fill fs-2 mx-2"></i>
+              <div className="text-primary py-2 text-center">
+                <i className="bi bi-person-plus-fill fs-2"></i>
               </div>
             ),
           }}
@@ -106,8 +106,8 @@ export default function Settings() {
             subtitle:
               "Get notification when someone mention you in their tweet",
             image: (
-              <div className="text-primary py-2">
-                <i className="bi bi-at fs-2 mx-2"></i>
+              <div className="text-primar text-center py-2">
+                <i className="bi bi-at fs-2"></i>
               </div>
             ),
           }}
@@ -126,8 +126,8 @@ export default function Settings() {
             title: "Tweet Reply",
             subtitle: "Get notification when someone reply to your tweet",
             image: (
-              <div className="text-primary py-2">
-                <i className="bi bi-reply fs-2 mx-2"></i>
+              <div className="text-primary py-2 text-center">
+                <i className="bi bi-reply fs-2"></i>
               </div>
             ),
           }}
@@ -153,8 +153,8 @@ export default function Settings() {
               ? "Anyone can tag you"
               : "Only your followings can tag you",
             image: (
-              <div className="text-primary py-2">
-                <i className="bi bi-at fs-2 mx-2"></i>
+              <div className="text-primar text-center py-2">
+                <i className="bi bi-at fs-2"></i>
               </div>
             ),
           }}
@@ -175,8 +175,8 @@ export default function Settings() {
               ? "Anyone can tag you"
               : "Only your followings can tag you",
             image: (
-              <div className="text-primary py-2">
-                <i className="bi bi-envelope-fill fs-2 mx-2"></i>
+              <div className="text-primary py-2 text-center">
+                <i className="bi bi-envelope-fill fs-2"></i>
               </div>
             ),
           }}
@@ -197,8 +197,8 @@ export default function Settings() {
           data={{
             title: "Auto-Load Tweet Images",
             image: (
-              <div className="text-primary py-2">
-                <i className="bi bi-bar-chart-line fs-2 mx-2"></i>
+              <div className="text-primary py-2 text-center">
+                <i className="bi bi-bar-chart-line fs-2"></i>
               </div>
             ),
           }}
@@ -222,8 +222,8 @@ export default function Settings() {
           data={{
             title: "Display and accessibility",
             image: (
-              <div className="text-primary py-2">
-                <i className="bi bi-brush fs-2 mx-2"></i>
+              <div className="text-primary py-2 text-center">
+                <i className="bi bi-brush fs-2"></i>
               </div>
             ),
           }}
@@ -239,8 +239,8 @@ export default function Settings() {
           data={{
             title: "Logout from Twitter",
             image: (
-              <div className="py-2">
-                <i className="bi bi-box-arrow-right fs-2 mx-2"></i>
+              <div className="py-2 text-center">
+                <i className="bi bi-box-arrow-right fs-2"></i>
               </div>
             ),
           }}
@@ -252,8 +252,8 @@ export default function Settings() {
           data={{
             title: "Delete account permanently",
             image: (
-              <div className="text-danger py-2">
-                <i className="bi bi-trash fs-2 mx-2"></i>
+              <div className="text-danger py-2 text-center">
+                <i className="bi bi-trash fs-2"></i>
               </div>
             ),
           }}

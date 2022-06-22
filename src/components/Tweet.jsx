@@ -16,7 +16,7 @@ import { getTweetEntities, timeFormatter } from "../utils";
 import { editProfile } from "../services/user";
 
 export default function Tweet(props) {
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser, setToast } = useContext(AuthContext);
   const [liked, setLiked] = useState(false);
   const [retweeted, setRetweeted] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
@@ -41,11 +41,12 @@ export default function Tweet(props) {
     setBookmarked(user.bookmarks.includes(props.tweet._id));
   }, [props.tweet, user]);
 
-  const handlePinTweet = (e) => {
-    e.stopPropagation();
-
+  const handlePinTweet = () => {
     if (user.isAnonymous) {
-      navigate("/login");
+      setToast({
+        type: "app",
+        message: "You must be logged in to pin tweet",
+      });
       return;
     }
 
@@ -62,7 +63,11 @@ export default function Tweet(props) {
   const handleLike = (e) => {
     e.stopPropagation();
     if (user.isAnonymous) {
-      navigate("/login");
+      setToast({
+        type: "app",
+        message: "You must be logged in to like a tweet",
+      });
+
       return;
     }
     if (liked) {
@@ -91,7 +96,10 @@ export default function Tweet(props) {
   const handleRetweet = (e) => {
     e.stopPropagation();
     if (user.isAnonymous) {
-      navigate("/login");
+      setToast({
+        message: "You must be logged in to retweet",
+        type: "app",
+      });
       return;
     }
     if (retweeted) {
@@ -130,7 +138,10 @@ export default function Tweet(props) {
   const handleBookmark = (e) => {
     e.stopPropagation();
     if (user.isAnonymous) {
-      navigate("/login");
+      setToast({
+        message: "You must be logged in to bookmark tweets",
+        type: "app",
+      });
       return;
     }
     if (bookmarked) {
@@ -162,11 +173,7 @@ export default function Tweet(props) {
           props.upperlink ? " py-0" : " pt-2"
         }${props.lowerlink ? "" : " border-bottom"} w-100 text-start`}
       >
-        {props.upperlink && (
-          <div className="upperlink">
-            <div className="border bg-secondary m-auto"></div>
-          </div>
-        )}
+        {props.upperlink && <div className="border tweet-upperlink"></div>}
 
         {user.pinned_tweet === data._id && props.showPinned && (
           <div className="ms-5 fs-6 ps-3 text-muted fst-italic">
@@ -192,7 +199,7 @@ export default function Tweet(props) {
                 />
               </div>
               {props.lowerlink && (
-                <div className="flex-grow-1 border bg-secondary lowerlink"></div>
+                <div className="border tweet-lowerlink h-100"></div>
               )}
             </div>
           )}
@@ -242,7 +249,7 @@ export default function Tweet(props) {
                   className="dropdown-menu dropdown-menu-end bg-primary py-0"
                   aria-labelledby="tweet-menu"
                 >
-                  {data.author._id === user._id ? (
+                  {!user.isAnonymous && data.author._id === user._id ? (
                     props.tweet.referenced_tweet?.length === 0 && (
                       <div
                         className="d-flex align-items-center text-primary dropdown-item py-2 px-3 hover btn"
@@ -275,7 +282,7 @@ export default function Tweet(props) {
                       </div>
                     </div>
                   )}
-                  {data.author._id === user._id ? (
+                  {!user.isAnonymous && data.author._id === user._id ? (
                     <div
                       className="d-flex text-danger align-items-center dropdown-item py-2 px-3 hover btn"
                       onClick={(e) => {
@@ -288,7 +295,16 @@ export default function Tweet(props) {
                       <div>Delete</div>
                     </div>
                   ) : (
-                    <div className="d-flex align-items-center text-primary dropdown-item py-2 px-3 hover btn">
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setToast({
+                          message: "This functionality is not yet build.",
+                          type: "info",
+                        });
+                      }}
+                      className="d-flex align-items-center text-primary dropdown-item py-2 px-3 hover btn"
+                    >
                       <i className="bi bi-flag me-3 fs-3"></i>
                       <div>Report Tweet</div>
                     </div>
@@ -387,6 +403,14 @@ export default function Tweet(props) {
                 <div className="col-3">
                   <div
                     className="d-flex w-min h-100 align-items-center text-muted btn p-0"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigator.clipboard.writeText(window.location.toString());
+                      setToast({
+                        message: "Tweet link copied to clipboard.",
+                        type: "app",
+                      });
+                    }}
                     data-title="Share"
                   >
                     <i className="bi rounded-circle hover px-2 py-1 bi-share"></i>

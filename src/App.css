@@ -73,7 +73,7 @@
   height: calc(100% - 10px);
 }
 .editor {
-  margin-top: 6px;
+  margin-top: 4px;
 }
 .editor textarea {
   outline: none;
@@ -176,6 +176,9 @@
 }
 .sidebar > div {
   width: 275px;
+}
+.sidebar .position-fixed > div {
+  min-height: 100%;
 }
 .sidebar .nav-icon {
   margin-right: 20px;
@@ -317,19 +320,17 @@
   max-width: 90%;
   max-height: 400px;
 }
-.status .upperlink{
+.status-upperlink {
   height: 10px;
   width: 2px;
   margin-left: 39px;
 }
-.tweet .lowerlink {
-  margin-top: 6px;
+.tweet-lowerlink {
+  margin-top: 4px;
 }
-.tweet .upperlink {
-  width: 48px;
-  margin-bottom: 6px;
-}
-.tweet .upperlink > div {
+.tweet-upperlink {
+  margin-left: 23px;
+  margin-bottom: 4px;
   width: 2px;
   height: 12px;
 }

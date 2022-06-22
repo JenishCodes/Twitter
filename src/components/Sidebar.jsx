@@ -37,7 +37,7 @@ export default function Sidebar() {
         <Editor show={compose} setShow={setCompose} />
 
         <div className="position-fixed h-100 h-sm-auto w-inherit bottom-sm-0 bg-primary">
-          <div className="d-flex flex-sm-column px-xl-3 px-1 justify-content-between h-100">
+          <div className="d-flex flex-sm-column px-xl-3 px-1 justify-content-between h-auto">
             <div className="d-flex flex-sm-column flex-grow-1 align-items-center py-sm-0 py-1">
               <div className="w-100 d-none d-sm-block">
                 <div className="px-3 mx-auto mx-xl-0 py-2 nav rounded-pill py-2 align-items-center p-3 text-app">
@@ -280,7 +280,7 @@ export default function Sidebar() {
             </div>
             <div
               onClick={() => navigate("/logout")}
-              className="hover rounded-pill flex-shrink-0 btn my-3 p-2 d-none d-sm-block"
+              className="hover rounded-pill flex-shrink-0 btn mb-3 mt-5 p-2 d-none d-sm-block"
             >
               {user.isAnonymous ? (
                 <div className="d-flex align-items-center justify-content-center">

@@ -69,21 +69,25 @@ export default function Navigator() {
         <div
           className={`text-white bg-${toast.type} rounded-3 p-2 position-fixed`}
           style={{
-            width: "300px",
+            width: "310px",
             left: "50%",
             top: "5%",
             transform: "translateX(-50%)",
             zIndex: 5,
           }}
         >
-          <div className="d-flex align-items-center justify-content-between">
-            <div className="d-flex align-items-center">
-              <i className="bi bi-exclamation-circle fs-2"></i>
-              <div className="ms-2">{toast.message}</div>
+          <div className="d-flex">
+            <i
+              className={`bi bi-${
+                toast.type === "danger" ? "exclamation" : "info"
+              }-circle fs-2 mx-1`}
+            ></i>
+            <div className="mx-2 align-self-center flex-grow-1">
+              {toast.message}
             </div>
             <div
               onClick={() => setToast(null)}
-              className="btn-close pointer btn-close-white me-2 m-auto"
+              className="btn-close pointer btn-close-white m-1"
             ></div>
           </div>
         </div>

@@ -143,7 +143,7 @@ export default function Editor({
                     alt=""
                   />
                 </div>
-                <div className="flex-grow-1 border bg-secondary link"></div>
+                <div className="tweet-lowerlink border h-100"></div>
               </div>
               <div className="details">
                 <div className="info d-flex align-items-center position-relative">

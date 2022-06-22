@@ -26,7 +26,7 @@ import { Helmet } from "react-helmet-async";
 import { getRelationship } from "../services/friendship";
 
 export default function Status() {
-  const { user, scrollY, setUser } = useContext(AuthContext);
+  const { user, scrollY, setUser, setToast } = useContext(AuthContext);
   const { account_name, status_id } = useParams();
   const [tweet, setTweet] = useState();
   const [textEntities, setTextEntities] = useState([]);
@@ -39,9 +39,9 @@ export default function Status() {
   const [bookmarked, setBookmarked] = useState(false);
   const [retweeted, setRetweeted] = useState(false);
   const [hasMoreReplies, setHasMoreReplies] = useState(true);
-  const [menuVisisble, setMenuVisisble] = useState(false);
   const [relation, setRelation] = useState("strangers");
   const [loading, setLoading] = useState(true);
+  const [refLoading, setRefLoading] = useState(false);
   const [loadedRefs, setLoadedRefs] = useState(false);
   const navigate = useNavigate();
 
@@ -97,18 +97,25 @@ export default function Status() {
   }, [status_id]);
 
   useEffect(() => {
-    if (!loadedRefs && scrollY === 1 && tweet) {
+    if (!loadedRefs && scrollY < 2 && tweet) {
+      setRefLoading(true);
       getTweetReferences(status_id)
         .then((res) => setReferences(res))
         .catch((err) => console.log(err))
-        .finally(() => setLoadedRefs(true));
+        .finally(() => {
+          setRefLoading(false);
+          setLoadedRefs(true);
+        });
     }
   }, [loadedRefs, scrollY]);
 
   const handleLike = (e) => {
     e.stopPropagation();
     if (user.isAnonymous) {
-      navigate("/login");
+      setToast({
+        type: "app",
+        message: "You must be logged in to like a tweet.",
+      });
       return;
     }
 
@@ -135,10 +142,12 @@ export default function Status() {
     }
   };
 
-  const handlePinTweet = (e) => {
-    e.stopPropagation();
+  const handlePinTweet = () => {
     if (user.isAnonymous) {
-      navigate("/login");
+      setToast({
+        message: "You must be logged in to pin tweet",
+        type: "app",
+      });
       return;
     }
     if (user.pinned_tweet_id === tweet._id) {
@@ -148,13 +157,15 @@ export default function Status() {
       editProfile({ pinned_tweet: tweet._id }).catch((err) => console.log(err));
       setUser({ ...user, pinned_tweet_id: tweet._id });
     }
-    setMenuVisisble(!menuVisisble);
   };
 
   const handleRetweet = (e) => {
     e.stopPropagation();
     if (user.isAnonymous) {
-      navigate("/login");
+      setToast({
+        message: "You must be logged in to retweet",
+        type: "app",
+      });
       return;
     }
     if (retweeted) {
@@ -190,10 +201,12 @@ export default function Status() {
     }
   };
 
-  const handleBookmark = (e) => {
-    e.stopPropagation();
+  const handleBookmark = () => {
     if (user.isAnonymous) {
-      navigate("/login");
+      setToast({
+        message: "You must be logged in to bookmark tweets",
+        type: "app",
+      });
       return;
     }
     if (bookmarked) {
@@ -306,12 +319,13 @@ export default function Status() {
                     alt="Profile"
                   />
                   <div className="fw-bold mx-1">{user.name}</div>
-                  <div className="text-muted">{user.account_name + " · "}</div>
+                  <div className="text-muted">{user.account_name}</div>
+                  <div className="mx-1 text-muted">·</div>
                   <div className="text-muted">
                     {timeFormatter(tweet.createdAt, "Tweet")}
                   </div>
                 </div>
-                <div className="mx-1 mb-1">{tweet.text}</div>
+                <div className="m-1">{tweet.text}</div>
               </div>
             </div>
             <div className="px-3 py-2">
@@ -380,13 +394,19 @@ export default function Status() {
         )}
       </div>
 
-      {tweet && (!loadedRefs || references.length > 0) > 0 && (
-        <div className="border upperlink"></div>
+      <Loading
+        className="text-app"
+        show={refLoading && !loadedRefs}
+        size="medium"
+      />
+
+      {tweet && !refLoading && (!loadedRefs || references.length > 0) && (
+        <div className="border status-upperlink"></div>
       )}
 
       {tweet ? (
         <div className="status">
-          <div className="d-flex list px-3 pt-2">
+          <div className="d-flex list px-3 pt-1">
             <div className="me-3 image">
               <img
                 className="w-100 h-auto rounded-circle square"
@@ -473,7 +493,15 @@ export default function Status() {
                             {bookmarked ? "Remove Bookmark" : "Add Bookmark"}
                           </div>
                         </div>
-                        <div className="text-start text-primary d-flex align-items-center py-2 px-3 hover btn">
+                        <div
+                          onClick={() =>
+                            setToast({
+                              message: "This functionality is not yet build.",
+                              type: "app",
+                            })
+                          }
+                          className="text-start text-primary d-flex align-items-center py-2 px-3 hover btn"
+                        >
                           <i className="bi bi-flag me-3 fs-3"></i>
                           <div>Report Tweet</div>
                         </div>
@@ -584,7 +612,10 @@ export default function Status() {
                     `}
                   onClick={() => {
                     if (user.isAnonymous) {
-                      navigate("/login");
+                      setToast({
+                        message: "You must be logged in to reply.",
+                        type: "app",
+                      });
                       return;
                     }
                     setShow(true);
@@ -620,6 +651,16 @@ export default function Status() {
               <div className="flex-grow-1 text-center">
                 <div
                   className="text-muted btn py-1 px-2 hover rounded-circle"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(
+                      `${window.location.origin}/tweet/${tweet._id}`
+                    );
+                    setToast({
+                      message: "Tweet link copied to clipboard.",
+                      type: "app",
+                    });
+                  }}
                   data-title="Share"
                 >
                   <i className="bi fs-3 bi-share"></i>

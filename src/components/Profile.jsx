@@ -5,7 +5,7 @@ import { getRelationship, follow, unfollow } from "../services/friendship";
 import Modal from "./Modal";
 
 export default function Profile(props) {
-  const { user } = useContext(AuthContext);
+  const { user, setToast } = useContext(AuthContext);
   const [show, setShow] = useState(false);
   const [freindshipStatus, setFriendshipStatus] = useState("Follow");
   const [imageUrl, setImageUrl] = useState(null);
@@ -24,7 +24,10 @@ export default function Profile(props) {
 
   const handleClick = () => {
     if (user.isAnonymous) {
-      navigate("/login");
+      setToast({
+        type: "app",
+        message: "You must be logged in to follow a user.",
+      });
       return;
     }
 

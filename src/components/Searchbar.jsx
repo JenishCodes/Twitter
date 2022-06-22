@@ -271,8 +271,8 @@ export default function Searchbar() {
               <div className="text-center text-muted fw-bold mb-4 mt-2">
                 {query ? "No Search Results" : "No Search History"}
               </div>
-          )}
-        
+            )}
+
         <Loading show={loading} className="my-4 text-app" />
       </div>
     </div>

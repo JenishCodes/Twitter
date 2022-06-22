@@ -1,38 +1,31 @@
 import React from "react";
 
-export default function List(props) {
-  return props.data ? (
-    <div
-      className={`list px-3 py-2 ${props.className}`}
-      onClick={props.onClick}
-    >
-      <div className="d-flex">
-        <div className="me-3 image">
-          {props.data.image
-            ? props.data.image
-            : props.data.image_url && (
+export default function List({ data, className, actionButton, onClick }) {
+  return data ? (
+    <div className={`list px-3 py-2 ${className}`} onClick={onClick}>
+      <div className="d-flex align-items-center">
+        <div className="me-3 image align-self-start">
+          {data.image
+            ? data.image
+            : data.image_url && (
                 <img
                   className="w-100 h-auto rounded-circle square"
-                  src={props.data.image_url}
+                  src={data.image_url}
                   alt=""
                 />
               )}
         </div>
-        <div className="details align-self-center">
-          <div className="d-flex align-items-center justify-content-between">
-            <div className="w-100">
-              {props.data.title && (
-                <div className="fw-bold">{props.data.title}</div>
-              )}
-              {props.data.subtitle && (
-                <div className="text-muted oneline">{props.data.subtitle}</div>
+        <div className="details">
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              {data.title && <div className="fw-bold">{data.title}</div>}
+              {data.subtitle && (
+                <div className="text-muted">{data.subtitle}</div>
               )}
             </div>
-            {props.actionButton && (
-              <div className="ms-3">{props.actionButton}</div>
-            )}
+            {actionButton && <div className="ms-3">{actionButton}</div>}
           </div>
-          {props.data.context && <div>{props.data.context}</div>}
+          {data.context}
         </div>
       </div>
     </div>
