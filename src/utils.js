@@ -197,11 +197,18 @@ export function extractEntities(tweet) {
 
   const chars = Array.from(tweet);
 
+  var indexOfSpace, indexOfNewLine, end;
+
   chars.forEach((char, i) => {
     if (char === "@" || char === "#") {
-      var end = Math.min(tweet.indexOf(" ", i + 1), tweet.indexOf("\n", i + 1));
+      indexOfSpace = tweet.indexOf(" ", i + 1);
+      indexOfNewLine = tweet.indexOf("\n", i + 1);
 
-      if (end < 0) end = tweet.length + end + 1;
+      if (indexOfSpace === -1) indexOfSpace = tweet.length;
+
+      if (indexOfNewLine === -1) indexOfNewLine = tweet.length;
+
+      end = Math.min(indexOfSpace, indexOfNewLine);
 
       if (char === "@") {
         mentions.push({

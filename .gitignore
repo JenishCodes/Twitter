@@ -25,3 +25,6 @@ yarn-error.log*
 
 /backend/.gitignore
 /backend/Procfile
+
+tweets.json
+users.json
