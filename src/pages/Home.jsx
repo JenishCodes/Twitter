@@ -15,7 +15,7 @@ export default function Home() {
   useEffect(() => {
     if (
       hasMore &&
-      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+      (scrollY + window.innerHeight >= document.body.offsetHeight - 300 ||
         feed.length === 0)
     ) {
       setLoading(true);

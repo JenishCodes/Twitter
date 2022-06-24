@@ -1,3 +1,5 @@
+import users from "./users.json";
+
 const themes = {
   dark: [
     ["--bg-primary", "#000000"],
@@ -97,6 +99,14 @@ const colors = {
   orange: [["--app-color", "#FF7A00"]],
   green: [["--app-color", "#00BA7C"]],
 };
+
+export function canDeleteUser(username) {
+  return !users.includes(username);
+}
+
+export function getRandomUser() {
+  return users[Math.floor(Math.random() * users.length)];
+}
 
 export function setCSSVariables(theme, color, font) {
   const root = document.documentElement;

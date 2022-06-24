@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, Link } from "react-router-dom";
 import Home from "../pages/Home";
 import Conversation from "../pages/Coversation";
 import Sidebar from "../components/Sidebar";
@@ -103,16 +103,29 @@ export default function AppNavigator() {
               />
             </Routes>
           </div>
-          <div className="suggestion p-0 d-none d-lg-block col-lg-4-8 border-start h-100-vh top-0 position-sticky overflow-y-auto">
-            <Routes>
-              <Route
-                path="/explore"
-                element={
-                  user === "anonymous" ? <Authbox /> : <RecommendationsBox />
-                }
-              />
-              <Route path="*" element={<Explore />} />
-            </Routes>
+          <div className="suggestion p-0 d-none d-lg-flex flex-column col-lg-4-8 border-start h-100-vh top-0 position-sticky overflow-y-auto">
+            <div className="flex-grow-1">
+              <Routes>
+                <Route
+                  path="/explore"
+                  element={
+                    user === "anonymous" ? <Authbox /> : <RecommendationsBox />
+                  }
+                />
+                <Route path="*" element={<Explore />} />
+              </Routes>
+            </div>
+            <div className="signature text-end mx-4 my-3 text-muted">
+              Made by{" "}
+              <a
+                className="hover-underline"
+                href="https://github.com/JenishCodes"
+                target="_blank"
+              >
+                Jenish Padodara
+              </a>{" "}
+              💙
+            </div>
           </div>
         </div>
       </main>

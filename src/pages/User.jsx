@@ -56,7 +56,7 @@ export default function User() {
   const helper = (profile, data, setData, hasMore, setHasMore) => {
     if (
       hasMore &&
-      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+      (scrollY + window.innerHeight >= document.body.offsetHeight - 300 ||
         data.length === 0)
     ) {
       setTweetLoading(true);
@@ -71,6 +71,19 @@ export default function User() {
   };
 
   useEffect(() => {
+    // set all states to default
+    setUser(null);
+    setTweets([]);
+    setReplies([]);
+    setRetweets([]);
+    setFavorites([]);
+    setMentions([]);
+    setHasMoreTweets(true);
+    setHasMoreReplies(true);
+    setHasMoreRetweets(true);
+    setHasMoreFavorites(true);
+    setHasMoreMentions(true);
+
     setLoading(true);
     getUser(account_name)
       .then((res) => setUser(res))

@@ -25,7 +25,9 @@ export default function ConversationInfo() {
     getConversation(conversationId)
       .then((res) => {
         setConversationUser(res.user);
-        setStartedOn(timeFormatter(res.createdAt, "Status"));
+        setStartedOn(
+          timeFormatter(res.createdAt ? res.createdAt : Date.now(), "Status")
+        );
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));

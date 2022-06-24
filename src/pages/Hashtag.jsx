@@ -28,7 +28,7 @@ export default function Hashtag() {
   useEffect(() => {
     if (
       hasMore &&
-      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+      (scrollY + window.innerHeight >= document.body.offsetHeight - 300 ||
         tweets.length === 0)
     ) {
       fetchTweets();

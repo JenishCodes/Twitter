@@ -19,7 +19,7 @@ export default function Reactions() {
   useEffect(() => {
     if (
       hasMore &&
-      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+      (scrollY + window.innerHeight >= document.body.offsetHeight - 300 ||
         data.length === 0)
     ) {
       (reaction_type === "likes" ? getTweetFavoriters : getRetweeters)(

@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import Modal from "../components/Modal";
 import { AuthContext } from "../context";
-import { signup } from "../services/user";
+import { signinWithRandomCredential, signup } from "../services/user";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -23,6 +23,21 @@ export default function Signup() {
 
     setLoading(true);
     signup(name.trim(), email.trim(), password.trim(), username.trim())
+      .then((user) => {
+        setUser(user);
+        navigate("/home");
+      })
+      .catch((err) => setToast({ message: err.response.data, type: "danger" }))
+      .finally(() => setLoading(false));
+  };
+
+  const handleRandomSignin = () => {
+    setLoading(true);
+    setToast({
+      message: "Signing in with random credentials...",
+      type: "app",
+    });
+    signinWithRandomCredential()
       .then((user) => {
         setUser(user);
         navigate("/home");
@@ -96,7 +111,7 @@ export default function Signup() {
             />
             <label htmlFor="email-input">Email</label>
           </div>
-          <div className="form-floating mb-3">
+          <div className="form-floating">
             <input
               type="password"
               className="form-control rounded-5 border bg-transparent"
@@ -106,6 +121,12 @@ export default function Signup() {
               autoComplete="off"
             />
             <label htmlFor="password-input">Password</label>
+          </div>
+          <div
+            className="text-end text-muted hover-underline pointer"
+            onClick={handleRandomSignin}
+          >
+            Too lazy?
           </div>
           <div
             onClick={handleSignup}

@@ -32,12 +32,12 @@ exports.getConversation = async function (conversation_id, user_id) {
 
   const user = await userController.getUser(
     "id",
-    conversation.conversationId.replace(user_id, "").replace("~", ""),
+    conversation_id.replace(user_id, "").replace("~", ""),
     "name account_name profile_image_url auth_id description"
   );
 
   return {
-    ...conversation._doc,
+    ...conversation?._doc,
     user,
   };
 };

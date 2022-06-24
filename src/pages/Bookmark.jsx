@@ -15,7 +15,7 @@ export default function Bookmark() {
   useEffect(() => {
     if (
       hasMore &&
-      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+      (scrollY + window.innerHeight >= document.body.offsetHeight - 100 ||
         tweets.length === 0)
     ) {
       setLoading(true);

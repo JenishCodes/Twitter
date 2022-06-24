@@ -23,7 +23,7 @@ export default function Network() {
   const helper = (func, data, setData, hasMore, setHasMore) => {
     if (
       hasMore &&
-      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+      (scrollY + window.innerHeight >= document.body.offsetHeight - 300 ||
         data.length === 0)
     )
       setLoading(true);

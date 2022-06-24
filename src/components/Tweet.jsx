@@ -27,7 +27,21 @@ export default function Tweet(props) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setData(props.tweet);
+    if (props.tweet.message?.split(" ")[0] === user.account_name) {
+      if (props.tweet.message.includes("mentioned")) {
+        setData({
+          ...props.tweet,
+          message: "You are mentioned",
+        });
+      } else {
+        setData({
+          ...props.tweet,
+          message: "You " + props.tweet.message.split(" ").slice(1).join(" "),
+        });
+      }
+    } else {
+      setData(props.tweet);
+    }
 
     setTextEntities(getTweetEntities(props.tweet.text));
 
@@ -346,7 +360,7 @@ export default function Tweet(props) {
                 ) : (
                   <div className="w-100 text-center py-5">
                     <div
-                      className="btn rounded-pill hover bg-primary fs-7 py-1"
+                      className="btn rounded-pill hover bg-primary text-muted fs-7 py-1"
                       onClick={(e) => {
                         e.stopPropagation();
                         setImageLoaded(true);

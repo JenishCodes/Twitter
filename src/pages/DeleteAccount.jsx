@@ -4,9 +4,10 @@ import Loading from "../components/Loading";
 import Modal from "../components/Modal";
 import { AuthContext } from "../context";
 import { deleteUser } from "../services/user";
+import { canDeleteUser } from "../utils";
 
 export default function DeleteAccount() {
-  const { setUser, setToast } = useContext(AuthContext);
+  const { setUser, setToast, user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
   const { state } = useLocation();
@@ -20,6 +21,16 @@ export default function DeleteAccount() {
 
   const handleDeactivate = (e) => {
     e.preventDefault();
+
+    if (!canDeleteUser(user.accoun_name)) {
+      setToast({
+        type: "danger",
+        message:
+          "You can't delete your account because it is one of default users.",
+      });
+      return;
+    }
+    
     setLoading(true);
     deleteUser(password)
       .then(() => {

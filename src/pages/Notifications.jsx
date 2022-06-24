@@ -20,7 +20,7 @@ export default function Notifications() {
   useEffect(() => {
     if (
       hasMoreNotifications &&
-      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+      (scrollY + window.innerHeight >= document.body.offsetHeight - 200 ||
         notifications.length === 0)
     ) {
       getNotifications(notifications.length)

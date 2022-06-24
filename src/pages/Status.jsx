@@ -552,7 +552,7 @@ export default function Status() {
               <div className="media my-2">
                 <div className="media-body">
                   <img
-                    className="w-100 h-auto border pointer radius"
+                    className="w-100 h-auto pointer rounded-3"
                     src={tweet.media}
                     onClick={() => {
                       document.body.style.overflowY = "hidden";

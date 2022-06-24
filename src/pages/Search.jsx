@@ -59,7 +59,7 @@ export default function Search() {
   const helper = (func, params, hasMore, setHasMore, data, setData) => {
     if (
       hasMore &&
-      (scrollY + window.innerHeight >= document.body.offsetHeight ||
+      (scrollY + window.innerHeight >= document.body.offsetHeight - 300 ||
         data.length === 0)
     ) {
       setLoading(true);

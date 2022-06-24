@@ -193,7 +193,10 @@ export default function Searchbar() {
           <div className="btn hover rounded-circle py-1 px-2">
             <i
               className="bi bi-x-circle fs-4 text-muted"
-              onClick={() => setQuery("")}
+              onClick={() => {
+                setQuery("");
+                setResults(history);
+              }}
             ></i>
           </div>
         )}
@@ -213,8 +216,9 @@ export default function Searchbar() {
             </div>
           )}
         </div>
-        {results.length > 0
-          ? results.map((result, index) => (
+        {!loading ? (
+          results.length > 0 ? (
+            results.map((result, index) => (
               <List
                 key={index}
                 className="hover pointer"
@@ -267,13 +271,14 @@ export default function Searchbar() {
                 }
               />
             ))
-          : !loading && (
-              <div className="text-center text-muted fw-bold mb-4 mt-2">
-                {query ? "No Search Results" : "No Search History"}
-              </div>
-            )}
-
-        <Loading show={loading} className="my-4 text-app" />
+          ) : (
+            <div className="text-center text-muted fw-bold mb-4 mt-2">
+              {query ? "No Search Results" : "No Search History"}
+            </div>
+          )
+        ) : (
+          <Loading show={loading} className="my-4 text-app" />
+        )}
       </div>
     </div>
   );

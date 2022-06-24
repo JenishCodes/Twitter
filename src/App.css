@@ -272,9 +272,6 @@
   line-height: 1;
   padding: 12px 16px;
 }
-.sidebar .unread-tag {
-  top: 10%;
-}
 .modal .profile {
   height: min(100vw, 75vh);
 }
@@ -351,9 +348,13 @@
   left: 50%;
   top: 5%;
   transform: translateX(-50%);
-  z-index: 5;
+  z-index: 15;
+  pointer-events: all;
 }
-
+.signature{
+  bottom: 1rem;
+  right: 1.5rem;
+}
 @media screen and (max-width: 1199px) {
   .sidebar > div {
     width: 80px;

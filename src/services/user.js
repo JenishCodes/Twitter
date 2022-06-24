@@ -8,6 +8,7 @@ import {
 import { getUserFavorites } from "./favorite";
 import jwtDecode from "jwt-decode";
 import api from "./api";
+import { getRandomUser } from "../utils";
 
 export async function searchUser(name_query, deep_search, page, limit) {
   try {
@@ -205,7 +206,7 @@ export async function signin(credential, password) {
   });
 
   api.defaults.headers.common["x-auth-token"] = res.headers["x-auth-token"];
-  
+
   localStorage.setItem("token", res.headers["x-auth-token"]);
   return res.data;
 }
@@ -230,6 +231,10 @@ export async function signinAnonymously() {
   } catch (err) {
     throw err;
   }
+}
+
+export async function signinWithRandomCredential() {
+  return signin(getRandomUser(), "12345678");
 }
 
 export async function resetPassword(oldPassword, newPassword) {

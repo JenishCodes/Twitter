@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Loading from "../components/Loading";
 import { AuthContext } from "../context";
+import { canDeleteUser } from "../utils";
 
 export default function AccountSettings() {
   const [accountName, setAccountName] = useState("");
@@ -34,6 +35,15 @@ export default function AccountSettings() {
   }, []);
 
   const handleSubmit = () => {
+    if (!canDeleteUser(user.account_name)) {
+      setToast({
+        type: "danger",
+        message:
+          "You can't update account credentials because it is one of default users.",
+      });
+      return;
+    }
+
     setLoading(true);
 
     (setting_type === "account-name"
