@@ -46,7 +46,7 @@ exports.deleteMessage = async function (message_id) {
     await conversationController.updateConversationDetails(
       { conversationId },
       {
-        lastMessage: before?.text,
+        lastMessage: before ? before.text : null,
       }
     );
   }

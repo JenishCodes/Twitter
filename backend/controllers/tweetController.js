@@ -151,14 +151,14 @@ exports.getTweetReferences = async function (tweet_id) {
     .transform(function (doc) {
       const { referenced_tweet } = doc._doc;
       const newRefTweets = referenced_tweet.map((ref) => {
-        return { type: ref.type, ...ref.id?._doc };
+        return { type: ref.type, ...ref.id ? ref.id._doc : null };
       });
       return newRefTweets;
     });
 
   const data = await Promise.all(
     referenced_tweets.map(async (reference) => {
-      if (reference?.author) {
+      if (reference && reference.author) {
         const ref_tweet_author = await userController.getUser(
           "_id",
           reference.author,
@@ -194,7 +194,7 @@ exports.getTweets = async function (condition, page, fields) {
       return docs.map((doc) => {
         const { referenced_tweet, ...restDoc } = doc._doc;
         const newRefTweets = referenced_tweet.map((ref) => {
-          return { type: ref.type, ...ref.id?._doc };
+          return { type: ref.type, ...ref.id ? ref.id._doc : null };
         });
         return {
           ...restDoc,

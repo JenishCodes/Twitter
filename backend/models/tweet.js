@@ -106,7 +106,7 @@ tweetSchema.post("findOneAndRemove", async function (doc) {
     $inc: { tweets_count: -1 },
   });
 
-  if (doc.referenced_tweet?.length > 0) {
+  if (doc.referenced_tweet && doc.referenced_tweet.length > 0) {
     const reference = doc.referenced_tweet[doc.referenced_tweet.length - 1];
 
     if (reference.type === "replied_to") {

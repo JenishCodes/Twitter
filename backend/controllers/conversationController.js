@@ -37,7 +37,7 @@ exports.getConversation = async function (conversation_id, user_id) {
   );
 
   return {
-    ...conversation?._doc,
+    ...conversation ? conversation._doc : null,
     user,
   };
 };
