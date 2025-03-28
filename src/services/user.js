@@ -8,7 +8,7 @@ import {
 import { getUserFavorites } from "./favorite";
 import jwtDecode from "jwt-decode";
 import api from "./api";
-import { getRandomUser } from "../utils";
+import { DEFAULT_USERS, DEFAULT_PASSWORD } from "../utils";
 
 export async function searchUser(name_query, deep_search, page, limit) {
   try {
@@ -234,7 +234,7 @@ export async function signinAnonymously() {
 }
 
 export async function signinWithRandomCredential() {
-  return signin(getRandomUser(), "12345678");
+  return signin(DEFAULT_USERS, DEFAULT_PASSWORD);
 }
 
 export async function resetPassword(oldPassword, newPassword) {

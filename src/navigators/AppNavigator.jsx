@@ -122,9 +122,8 @@ export default function AppNavigator() {
                 href="https://github.com/JenishCodes"
                 target="_blank"
               >
-                Jenish Padodara
-              </a>{" "}
-              💙
+                @ThatGuy
+              </a>
             </div>
           </div>
         </div>

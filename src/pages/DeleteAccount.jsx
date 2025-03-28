@@ -4,7 +4,7 @@ import Loading from "../components/Loading";
 import Modal from "../components/Modal";
 import { AuthContext } from "../context";
 import { deleteUser } from "../services/user";
-import { canDeleteUser } from "../utils";
+import { DEFAULT_USERS } from "../utils";
 
 export default function DeleteAccount() {
   const { setUser, setToast, user } = useContext(AuthContext);
@@ -22,7 +22,7 @@ export default function DeleteAccount() {
   const handleDeactivate = (e) => {
     e.preventDefault();
 
-    if (!canDeleteUser(user.accoun_name)) {
+    if (DEFAULT_USERS == user.accoun_name) {
       setToast({
         type: "danger",
         message:

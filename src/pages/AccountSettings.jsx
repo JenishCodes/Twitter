@@ -9,7 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Loading from "../components/Loading";
 import { AuthContext } from "../context";
-import { canDeleteUser } from "../utils";
+import { DEFAULT_USERS } from "../utils";
 
 export default function AccountSettings() {
   const [accountName, setAccountName] = useState("");
@@ -35,7 +35,7 @@ export default function AccountSettings() {
   }, []);
 
   const handleSubmit = () => {
-    if (!canDeleteUser(user.account_name)) {
+    if (DEFAULT_USERS === user.account_name) {
       setToast({
         type: "danger",
         message:

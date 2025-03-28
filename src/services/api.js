@@ -17,7 +17,6 @@ axios.interceptors.response.use(null, (error) => {
   return Promise.reject(error);
 });
 
-axios.defaults.baseURL =
-  process.env.REACT_APP_SERVER_API || "http://127.0.0.1:3001";
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 export default axios;

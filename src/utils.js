@@ -1,6 +1,7 @@
-import users from "./users.json";
+export const DEFAULT_USERS = "elonmusk";
+export const DEFAULT_PASSWORD = "1234567890";
 
-const themes = {
+const THEMES = {
   dark: [
     ["--bg-primary", "#000000"],
     ["--bg-secondary", "#EFF3F4"],
@@ -44,7 +45,7 @@ const themes = {
     ],
   ],
 };
-const fonts = {
+const FONTS = {
   0: [
     ["--fs-1", "28px"],
     ["--fs-2", "21px"],
@@ -91,7 +92,7 @@ const fonts = {
     ["--fs-7", "16px"],
   ],
 };
-const colors = {
+const COLORS = {
   blue: [["--app-color", "#1D9BF0"]],
   yellow: [["--app-color", "#FFD400"]],
   pink: [["--app-color", "#F91880"]],
@@ -100,36 +101,32 @@ const colors = {
   green: [["--app-color", "#00BA7C"]],
 };
 
-export function canDeleteUser(username) {
-  return !users.includes(username);
-}
-
-export function getRandomUser() {
-  return users[Math.floor(Math.random() * users.length)];
-}
-
 export function setCSSVariables(theme, color, font) {
   const root = document.documentElement;
 
   root.style.setProperty("", color);
 
-  window.localStorage.setItem("theme", theme ? theme : "light");
-  window.localStorage.setItem("color", color ? color : "blue");
-  window.localStorage.setItem("font", font ? font : "2");
+  theme = theme ? theme : "light";
+  color = color ? color : "blue";
+  font = font ? font : "2";
 
-  root.style.setProperty("--theme", theme ? theme : "light");
-  root.style.setProperty("--color", color ? color : "blue");
-  root.style.setProperty("--font", font ? font : "2");
+  window.localStorage.setItem("theme", theme);
+  window.localStorage.setItem("color", color);
+  window.localStorage.setItem("font", font);
 
-  themes[theme].forEach((property) =>
+  root.style.setProperty("--theme", theme);
+  root.style.setProperty("--color", color);
+  root.style.setProperty("--font", font);
+
+  THEMES[theme].forEach((property) =>
     root.style.setProperty(property[0], property[1])
   );
 
-  colors[color].forEach((property) =>
+  COLORS[color].forEach((property) =>
     root.style.setProperty(property[0], property[1])
   );
 
-  fonts[font].forEach((property) =>
+  FONTS[font].forEach((property) =>
     root.style.setProperty(property[0], property[1])
   );
 }
