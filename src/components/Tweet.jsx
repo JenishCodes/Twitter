@@ -47,7 +47,7 @@ export default function Tweet(props) {
 
     if (user.isAnonymous) return;
 
-    setImageLoaded(user.settings.autoLoadImages);
+    setImageLoaded(user.settings?.autoLoadImages);
 
     isFavoriter(props.tweet._id).then((res) => setLiked(res));
     isRetweeter(props.tweet._id).then((res) => setRetweeted(res));

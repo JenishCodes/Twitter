@@ -315,6 +315,9 @@
   max-width: 90%;
   max-height: 400px;
 }
+.status .replies {
+  min-height: 75vh;
+}
 .status-upperlink {
   height: 10px;
   width: 2px;

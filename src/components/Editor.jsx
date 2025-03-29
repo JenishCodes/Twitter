@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context";
 import { searchHashtags } from "../services/hashtag";
@@ -25,6 +25,8 @@ export default function Editor({
   const [imageUrl, setImageUrl] = useState();
   const navigate = useNavigate();
   const tweet = useRef();
+
+  useEffect(() => tweet.current?.scrollIntoView(), [show]);
 
   const setTweetInnerHTML = (newText) => {
     tweet.current.innerHTML = parseTweet(newText);

@@ -49,7 +49,7 @@ export default function Navigator() {
   useEffect(() => {
     if (user && !user.isAnonymous) {
       socket.current = io(
-        process.env.REACT_APP_SERVER_API || "http://127.0.0.1:3001"
+        process.env.REACT_APP_API_URL
       );
       socket.current.emit("user-added", user._id);
     }

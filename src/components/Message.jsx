@@ -19,8 +19,8 @@ export default function Message(props) {
           </div>
         )}
         <div
-          className={`message-text text-white white-space-pre-line bg-${
-            align === "end" ? "app" : "muted"
+          className={`message-text white-space-pre-line ${
+            align === "end" ? "bg-app text-white" : "bg-muted text-primary"
           }`}
           style={{
             borderRadius:

@@ -159,7 +159,7 @@ export default function Chat() {
 
     sendMessage(message)
       .then((res) => {
-        socket.current.emit("messae-sent", res);
+        socket.current.emit("message-sent", res);
         handleNewMessage(res);
         setText("");
       })

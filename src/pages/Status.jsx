@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import Header from "../components/Header";
 import Editor from "../components/Editor";
 import {
@@ -26,7 +26,7 @@ import { Helmet } from "react-helmet-async";
 import { getRelationship } from "../services/friendship";
 
 export default function Status() {
-  const { user, scrollY, setUser, setToast } = useContext(AuthContext);
+  const { user, setUser, setToast } = useContext(AuthContext);
   const { account_name, status_id } = useParams();
   const [tweet, setTweet] = useState();
   const [textEntities, setTextEntities] = useState([]);
@@ -44,6 +44,7 @@ export default function Status() {
   const [refLoading, setRefLoading] = useState(false);
   const [loadedRefs, setLoadedRefs] = useState(false);
   const navigate = useNavigate();
+  const referencesRef = useRef(null);
 
   useEffect(() => {
     setLoading(true);
@@ -91,23 +92,21 @@ export default function Status() {
           .then((res) => setRelation(res.relation))
           .catch((err) => console.log(err));
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => {
+        setRefLoading(true);
+        getTweetReferences(status_id)
+          .then((res) => setReferences(res))
+          .catch((err) => console.log(err))
+          .finally(() => {
+            setRefLoading(false);
+            setLoadedRefs(true);
+            window.scroll(0, referencesRef.current.scrollHeight);
+          });
+      });
 
     handleLoadMore(true);
   }, [status_id]);
-
-  useEffect(() => {
-    if (!loadedRefs && scrollY < 2 && tweet) {
-      setRefLoading(true);
-      getTweetReferences(status_id)
-        .then((res) => setReferences(res))
-        .catch((err) => console.log(err))
-        .finally(() => {
-          setRefLoading(false);
-          setLoadedRefs(true);
-        });
-    }
-  }, [loadedRefs, scrollY]);
 
   const handleLike = (e) => {
     e.stopPropagation();
@@ -372,7 +371,7 @@ export default function Status() {
         </Modal>
       ) : null}
 
-      <div className="reference-list">
+      <div ref={referencesRef} className="reference-list">
         {references?.map((reference, index) =>
           reference ? (
             <Tweet
@@ -691,30 +690,30 @@ export default function Status() {
         reference_tweet={tweet}
       />
 
-      {replies.length > 0
-        ? replies.map((reply) => (
-            <Tweet key={reply._id} tweet={reply} reply_to={account_name} />
-          ))
-        : !loading && (
-            <div className="text-muted mt-5 text-center">No replies yet</div>
-          )}
+      <div className="replies">
+        {replies.length > 0
+          ? replies.map((reply) => (
+              <Tweet key={reply._id} tweet={reply} reply_to={account_name} />
+            ))
+          : !loading && (
+              <div className="text-muted mt-5 text-center">No replies yet</div>
+            )}
 
-      {loading ? (
-        <Loading show className="my-5 text-app" />
-      ) : (
-        hasMoreReplies && (
-          <div className="d-flex justify-content-center">
-            <div
-              className="btn hover rounded-circle mt-3"
-              onClick={handleLoadMore}
-            >
-              <i className="bi bi-plus-circle text-muted fs-3"></i>
+        {loading ? (
+          <Loading show className="my-5 text-app" />
+        ) : (
+          hasMoreReplies && (
+            <div className="d-flex justify-content-center">
+              <div
+                className="btn hover rounded-circle mt-3"
+                onClick={handleLoadMore}
+              >
+                <i className="bi bi-plus-circle text-muted fs-3"></i>
+              </div>
             </div>
-          </div>
-        )
-      )}
-
-      <div className="h-25-vh"></div>
+          )
+        )}
+      </div>
     </div>
   );
 }

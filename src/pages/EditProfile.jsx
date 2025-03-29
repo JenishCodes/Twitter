@@ -37,14 +37,17 @@ export default function EditProfile() {
 
   const handleClick = () => {
     setLoading(true);
-    editProfile(user._id, {
-      name,
-      description,
-      website,
-      location,
-      profile_image_url: image,
-      banner_image_url: banner,
-    })
+    editProfile(
+      {
+        name,
+        description,
+        website,
+        location,
+        profile_image_url: image,
+        banner_image_url: banner,
+      },
+      user._id
+    )
       .then((res) => {
         setUser(res);
         navigate(`/${user.account_name}`, { replace: true });
